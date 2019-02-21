@@ -2,6 +2,7 @@ package types
 
 import (
 	"github.com/metalkube/kni-installer/pkg/types/aws"
+	"github.com/metalkube/kni-installer/pkg/types/baremetal"
 	"github.com/metalkube/kni-installer/pkg/types/libvirt"
 	"github.com/metalkube/kni-installer/pkg/types/openstack"
 )
@@ -19,6 +20,7 @@ type ClusterPlatformMetadata struct {
 	AWS       *aws.Metadata       `json:"aws,omitempty"`
 	OpenStack *openstack.Metadata `json:"openstack,omitempty"`
 	Libvirt   *libvirt.Metadata   `json:"libvirt,omitempty"`
+	BareMetal *baremetal.Metadata `json:"baremetal,omitempty"`
 }
 
 // Platform returns a string representation of the platform
@@ -36,6 +38,9 @@ func (cpm *ClusterPlatformMetadata) Platform() string {
 	}
 	if cpm.OpenStack != nil {
 		return "openstack"
+	}
+	if cpm.BareMetal != nil {
+		return "baremetal"
 	}
 	return ""
 }

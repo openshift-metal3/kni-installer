@@ -15,6 +15,7 @@ import (
 	"github.com/metalkube/kni-installer/pkg/asset/installconfig"
 	icaws "github.com/metalkube/kni-installer/pkg/asset/installconfig/aws"
 	awstypes "github.com/metalkube/kni-installer/pkg/types/aws"
+	baremetaltypes "github.com/metalkube/kni-installer/pkg/types/baremetal"
 	libvirttypes "github.com/metalkube/kni-installer/pkg/types/libvirt"
 	nonetypes "github.com/metalkube/kni-installer/pkg/types/none"
 	openstacktypes "github.com/metalkube/kni-installer/pkg/types/openstack"
@@ -81,7 +82,7 @@ func (d *DNS) Generate(dependencies asset.Parents) error {
 			fmt.Sprintf("kubernetes.io/cluster/%s", installConfig.Config.ObjectMeta.Name): "owned",
 			"Name": fmt.Sprintf("%s_int", installConfig.Config.ObjectMeta.Name),
 		}}
-	case libvirttypes.Name, openstacktypes.Name, nonetypes.Name:
+	case libvirttypes.Name, openstacktypes.Name, baremetaltypes.Name, nonetypes.Name:
 	default:
 		return errors.New("invalid Platform")
 	}
