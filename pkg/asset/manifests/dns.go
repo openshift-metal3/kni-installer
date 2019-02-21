@@ -17,6 +17,7 @@ import (
 	icazure "github.com/openshift-metalkube/kni-installer/pkg/asset/installconfig/azure"
 	awstypes "github.com/openshift-metalkube/kni-installer/pkg/types/aws"
 	azuretypes "github.com/openshift-metalkube/kni-installer/pkg/types/azure"
+	baremetaltypes "github.com/openshift-metalkube/kni-installer/pkg/types/baremetal"
 	libvirttypes "github.com/openshift-metalkube/kni-installer/pkg/types/libvirt"
 	nonetypes "github.com/openshift-metalkube/kni-installer/pkg/types/none"
 	openstacktypes "github.com/openshift-metalkube/kni-installer/pkg/types/openstack"
@@ -96,7 +97,7 @@ func (d *DNS) Generate(dependencies asset.Parents) error {
 		config.Spec.PrivateZone = &configv1.DNSZone{
 			ID: dnsConfig.GetDNSZoneID(clusterID.InfraID+"-rg", installConfig.Config.ClusterDomain()),
 		}
-	case libvirttypes.Name, openstacktypes.Name, nonetypes.Name, vspheretypes.Name:
+	case libvirttypes.Name, openstacktypes.Name, baremetaltypes.Name, nonetypes.Name, vspheretypes.Name:
 	default:
 		return errors.New("invalid Platform")
 	}
