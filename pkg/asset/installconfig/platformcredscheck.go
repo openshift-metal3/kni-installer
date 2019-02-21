@@ -7,6 +7,7 @@ import (
 	"github.com/openshift-metalkube/kni-installer/pkg/asset"
 	awsconfig "github.com/openshift-metalkube/kni-installer/pkg/asset/installconfig/aws"
 	"github.com/openshift-metalkube/kni-installer/pkg/types/aws"
+	"github.com/openshift-metalkube/kni-installer/pkg/types/baremetal"
 	"github.com/openshift-metalkube/kni-installer/pkg/types/libvirt"
 	"github.com/openshift-metalkube/kni-installer/pkg/types/none"
 	"github.com/openshift-metalkube/kni-installer/pkg/types/openstack"
@@ -49,7 +50,7 @@ func (a *PlatformCredsCheck) Generate(dependencies asset.Parents) error {
 		opts := new(clientconfig.ClientOpts)
 		opts.Cloud = ic.Config.Platform.OpenStack.Cloud
 		_, err = clientconfig.GetCloudFromYAML(opts)
-	case libvirt.Name, none.Name, vsphere.Name:
+	case baremetal.Name, libvirt.Name, none.Name, vsphere.Name:
 		// no creds to check
 	default:
 		err = fmt.Errorf("unknown platform type %q", platform)

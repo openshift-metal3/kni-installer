@@ -9,11 +9,13 @@ import (
 
 	"github.com/openshift-metalkube/kni-installer/pkg/asset"
 	awsconfig "github.com/openshift-metalkube/kni-installer/pkg/asset/installconfig/aws"
+	baremetalconfig "github.com/openshift-metalkube/kni-installer/pkg/asset/installconfig/baremetal"
 	libvirtconfig "github.com/openshift-metalkube/kni-installer/pkg/asset/installconfig/libvirt"
 	openstackconfig "github.com/openshift-metalkube/kni-installer/pkg/asset/installconfig/openstack"
 	vsphereconfig "github.com/openshift-metalkube/kni-installer/pkg/asset/installconfig/vsphere"
 	"github.com/openshift-metalkube/kni-installer/pkg/types"
 	"github.com/openshift-metalkube/kni-installer/pkg/types/aws"
+	"github.com/openshift-metalkube/kni-installer/pkg/types/baremetal"
 	"github.com/openshift-metalkube/kni-installer/pkg/types/libvirt"
 	"github.com/openshift-metalkube/kni-installer/pkg/types/none"
 	"github.com/openshift-metalkube/kni-installer/pkg/types/openstack"
@@ -58,6 +60,11 @@ func (a *platform) Generate(asset.Parents) error {
 		}
 	case vsphere.Name:
 		a.VSphere, err = vsphereconfig.Platform()
+		if err != nil {
+			return err
+		}
+	case baremetal.Name:
+		a.BareMetal, err = baremetalconfig.Platform()
 		if err != nil {
 			return err
 		}
