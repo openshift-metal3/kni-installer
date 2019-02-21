@@ -2,6 +2,7 @@ package types
 
 import (
 	"github.com/openshift-metalkube/kni-installer/pkg/types/aws"
+	"github.com/openshift-metalkube/kni-installer/pkg/types/baremetal"
 	"github.com/openshift-metalkube/kni-installer/pkg/types/libvirt"
 	"github.com/openshift-metalkube/kni-installer/pkg/types/openstack"
 	"github.com/openshift-metalkube/kni-installer/pkg/types/vsphere"
@@ -35,6 +36,9 @@ type MachinePoolPlatform struct {
 
 	// VSphere is the configuration used when installing on vSphere.
 	VSphere *vsphere.MachinePool `json:"vsphere,omitempty"`
+
+	// BareMetal is the configuration used when installing on bare metal.
+	BareMetal *baremetal.MachinePool `json:"openstack,omitempty"`
 }
 
 // Name returns a string representation of the platform (e.g. "aws" if
@@ -52,6 +56,8 @@ func (p *MachinePoolPlatform) Name() string {
 		return openstack.Name
 	case p.VSphere != nil:
 		return vsphere.Name
+	case p.BareMetal != nil:
+		return baremetal.Name
 	default:
 		return ""
 	}

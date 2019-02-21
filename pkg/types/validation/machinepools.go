@@ -8,6 +8,8 @@ import (
 	"github.com/openshift-metalkube/kni-installer/pkg/types"
 	"github.com/openshift-metalkube/kni-installer/pkg/types/aws"
 	awsvalidation "github.com/openshift-metalkube/kni-installer/pkg/types/aws/validation"
+	"github.com/openshift-metalkube/kni-installer/pkg/types/baremetal"
+	baremetalvalidation "github.com/openshift-metalkube/kni-installer/pkg/types/baremetal/validation"
 	"github.com/openshift-metalkube/kni-installer/pkg/types/libvirt"
 	libvirtvalidation "github.com/openshift-metalkube/kni-installer/pkg/types/libvirt/validation"
 	"github.com/openshift-metalkube/kni-installer/pkg/types/openstack"
@@ -47,6 +49,9 @@ func validateMachinePoolPlatform(platform *types.Platform, p *types.MachinePoolP
 	}
 	if p.OpenStack != nil {
 		validate(openstack.Name, p.OpenStack, func(f *field.Path) field.ErrorList { return openstackvalidation.ValidateMachinePool(p.OpenStack, f) })
+	}
+	if p.BareMetal != nil {
+		validate(baremetal.Name, p.BareMetal, func(f *field.Path) field.ErrorList { return baremetalvalidation.ValidateMachinePool(p.BareMetal, f) })
 	}
 	return allErrs
 }
