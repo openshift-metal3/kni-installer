@@ -3,7 +3,7 @@ package validation
 import (
 	"sort"
 
-	"github.com/openshift/installer/pkg/types/gcp"
+	"github.com/openshift-metalkube/kni-installer/pkg/types/gcp"
 	"k8s.io/apimachinery/pkg/util/validation/field"
 )
 

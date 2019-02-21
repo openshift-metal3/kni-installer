@@ -9,8 +9,8 @@ import (
 	"github.com/pkg/errors"
 	"github.com/sirupsen/logrus"
 
+	"github.com/openshift-metalkube/kni-installer/pkg/version"
 	ccaws "github.com/openshift/cloud-credential-operator/pkg/aws"
-	"github.com/openshift/installer/pkg/version"
 )
 
 var installPermissions = []string{

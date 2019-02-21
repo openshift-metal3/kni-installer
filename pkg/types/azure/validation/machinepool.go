@@ -1,7 +1,7 @@
 package validation
 
 import (
-	"github.com/openshift/installer/pkg/types/azure"
+	"github.com/openshift-metalkube/kni-installer/pkg/types/azure"
 	"k8s.io/apimachinery/pkg/util/validation/field"
 )
 

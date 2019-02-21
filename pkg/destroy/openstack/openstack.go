@@ -6,8 +6,8 @@ import (
 	"strings"
 	"time"
 
-	"github.com/openshift/installer/pkg/destroy/providers"
-	"github.com/openshift/installer/pkg/types"
+	"github.com/openshift-metalkube/kni-installer/pkg/destroy/providers"
+	"github.com/openshift-metalkube/kni-installer/pkg/types"
 
 	"github.com/gophercloud/gophercloud/openstack/compute/v2/servers"
 	"github.com/gophercloud/gophercloud/openstack/loadbalancer/v2/apiversions"

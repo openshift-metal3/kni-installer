@@ -6,8 +6,8 @@ import (
 	"github.com/stretchr/testify/assert"
 	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
 
-	"github.com/openshift/installer/pkg/ipnet"
-	"github.com/openshift/installer/pkg/types"
+	"github.com/openshift-metalkube/kni-installer/pkg/ipnet"
+	"github.com/openshift-metalkube/kni-installer/pkg/types"
 )
 
 func TestConvertInstallConfig(t *testing.T) {

@@ -9,8 +9,8 @@ import (
 	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
 	"k8s.io/apimachinery/pkg/runtime"
 
-	"github.com/openshift/installer/pkg/types"
-	"github.com/openshift/installer/pkg/types/libvirt"
+	"github.com/openshift-metalkube/kni-installer/pkg/types"
+	"github.com/openshift-metalkube/kni-installer/pkg/types/libvirt"
 )
 
 // Machines returns a list of machines for a machinepool.

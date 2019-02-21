@@ -3,7 +3,7 @@ package providers
 import (
 	"github.com/sirupsen/logrus"
 
-	"github.com/openshift/installer/pkg/types"
+	"github.com/openshift-metalkube/kni-installer/pkg/types"
 )
 
 // Destroyer allows multiple implementations of destroy

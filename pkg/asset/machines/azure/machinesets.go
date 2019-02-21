@@ -7,9 +7,9 @@ import (
 	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
 	"k8s.io/apimachinery/pkg/runtime"
 
+	"github.com/openshift-metalkube/kni-installer/pkg/types"
+	"github.com/openshift-metalkube/kni-installer/pkg/types/azure"
 	clusterapi "github.com/openshift/cluster-api/pkg/apis/machine/v1beta1"
-	"github.com/openshift/installer/pkg/types"
-	"github.com/openshift/installer/pkg/types/azure"
 )
 
 // MachineSets returns a list of machinesets for a machinepool.

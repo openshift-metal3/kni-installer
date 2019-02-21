@@ -6,7 +6,7 @@ package mock
 
 import (
 	gomock "github.com/golang/mock/gomock"
-	asset "github.com/openshift/installer/pkg/asset"
+	asset "github.com/openshift-metalkube/kni-installer/pkg/asset"
 	reflect "reflect"
 )
 

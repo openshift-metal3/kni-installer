@@ -2,7 +2,7 @@
 package openstack
 
 import (
-	"github.com/openshift/installer/pkg/destroy/providers"
+	"github.com/openshift-metalkube/kni-installer/pkg/destroy/providers"
 )
 
 func init() {

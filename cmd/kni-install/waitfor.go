@@ -47,7 +47,7 @@ func newWaitForBootstrapCompleteCmd() *cobra.Command {
 			err = waitForBootstrapComplete(ctx, config, rootOpts.dir)
 			if err != nil {
 				logrus.Info("Use the following commands to gather logs from the cluster")
-				logrus.Info("openshift-install gather bootstrap --help")
+				logrus.Info("kni-install gather bootstrap --help")
 				logrus.Fatal(err)
 			}
 

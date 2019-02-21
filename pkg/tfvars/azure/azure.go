@@ -3,7 +3,7 @@ package azure
 import (
 	"encoding/json"
 
-	"github.com/openshift/installer/pkg/types/azure/defaults"
+	"github.com/openshift-metalkube/kni-installer/pkg/types/azure/defaults"
 	azureprovider "sigs.k8s.io/cluster-api-provider-azure/pkg/apis/azureprovider/v1alpha1"
 )
 
@@ -31,8 +31,8 @@ func TFVars(auth Auth, baseDomainResourceGroupName string, masterConfigs []*azur
 	masterConfig := masterConfigs[0]
 	region := masterConfig.Location
 	cfg := &config{
-		Auth:   auth,
-		Region: region,
+		Auth:                        auth,
+		Region:                      region,
 		BaseDomainResourceGroupName: baseDomainResourceGroupName,
 		BootstrapInstanceType:       defaults.BootstrapInstanceType(region),
 		MasterInstanceType:          masterConfig.VMSize,
