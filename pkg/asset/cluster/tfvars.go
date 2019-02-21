@@ -12,6 +12,7 @@ import (
 	"github.com/metalkube/kni-installer/pkg/asset/rhcos"
 	"github.com/metalkube/kni-installer/pkg/tfvars"
 	awstfvars "github.com/metalkube/kni-installer/pkg/tfvars/aws"
+	baremetaltfvars "github.com/metalkube/kni-installer/pkg/tfvars/baremetal"
 	libvirttfvars "github.com/metalkube/kni-installer/pkg/tfvars/libvirt"
 	openstacktfvars "github.com/metalkube/kni-installer/pkg/tfvars/openstack"
 	"github.com/metalkube/kni-installer/pkg/types/aws"
@@ -160,7 +161,14 @@ func (t *TerraformVariables) Generate(parents asset.Parents) error {
 			Data:     data,
 		})
 	case baremetal.Name:
-		// FIXME: baremetal
+		data, err = baremetaltfvars.TFVars()
+		if err != nil {
+			return errors.Wrapf(err, "failed to get %s Terraform variables", platform)
+		}
+		t.FileList = append(t.FileList, &asset.File{
+			Filename: fmt.Sprintf(TfPlatformVarsFileName, platform),
+			Data:     data,
+		})
 	default:
 		logrus.Warnf("unrecognized platform %s", platform)
 	}
