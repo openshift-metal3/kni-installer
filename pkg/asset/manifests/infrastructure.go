@@ -12,6 +12,7 @@ import (
 	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
 
 	"github.com/metalkube/kni-installer/pkg/types/aws"
+	"github.com/metalkube/kni-installer/pkg/types/baremetal"
 	"github.com/metalkube/kni-installer/pkg/types/libvirt"
 	"github.com/metalkube/kni-installer/pkg/types/none"
 	"github.com/metalkube/kni-installer/pkg/types/openstack"
@@ -57,6 +58,8 @@ func (i *Infrastructure) Generate(dependencies asset.Parents) error {
 		platform = configv1.LibvirtPlatform
 	case openstack.Name:
 		platform = configv1.OpenStackPlatform
+	case baremetal.Name:
+		platform = configv1.BareMetalPlatform
 	default:
 		platform = configv1.NonePlatform
 	}

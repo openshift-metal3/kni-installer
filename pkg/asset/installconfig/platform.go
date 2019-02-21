@@ -9,10 +9,12 @@ import (
 
 	"github.com/metalkube/kni-installer/pkg/asset"
 	awsconfig "github.com/metalkube/kni-installer/pkg/asset/installconfig/aws"
+	baremetalconfig "github.com/metalkube/kni-installer/pkg/asset/installconfig/baremetal"
 	libvirtconfig "github.com/metalkube/kni-installer/pkg/asset/installconfig/libvirt"
 	openstackconfig "github.com/metalkube/kni-installer/pkg/asset/installconfig/openstack"
 	"github.com/metalkube/kni-installer/pkg/types"
 	"github.com/metalkube/kni-installer/pkg/types/aws"
+	"github.com/metalkube/kni-installer/pkg/types/baremetal"
 	"github.com/metalkube/kni-installer/pkg/types/libvirt"
 	"github.com/metalkube/kni-installer/pkg/types/none"
 	"github.com/metalkube/kni-installer/pkg/types/openstack"
@@ -51,6 +53,11 @@ func (a *platform) Generate(asset.Parents) error {
 		a.None = &none.Platform{}
 	case openstack.Name:
 		a.OpenStack, err = openstackconfig.Platform()
+		if err != nil {
+			return err
+		}
+	case baremetal.Name:
+		a.BareMetal, err = baremetalconfig.Platform()
 		if err != nil {
 			return err
 		}
