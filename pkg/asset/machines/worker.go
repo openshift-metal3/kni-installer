@@ -25,6 +25,7 @@ import (
 	"github.com/openshift-metalkube/kni-installer/pkg/asset/installconfig"
 	"github.com/openshift-metalkube/kni-installer/pkg/asset/machines/aws"
 	"github.com/openshift-metalkube/kni-installer/pkg/asset/machines/azure"
+	"github.com/openshift-metalkube/kni-installer/pkg/asset/machines/baremetal"
 	"github.com/openshift-metalkube/kni-installer/pkg/asset/machines/libvirt"
 	"github.com/openshift-metalkube/kni-installer/pkg/asset/machines/machineconfig"
 	"github.com/openshift-metalkube/kni-installer/pkg/asset/machines/openstack"
@@ -80,6 +81,10 @@ func defaultOpenStackMachinePoolPlatform(flavor string) openstacktypes.MachinePo
 	return openstacktypes.MachinePool{
 		FlavorName: flavor,
 	}
+}
+
+func defaultBareMetalMachinePoolPlatform() baremetaltypes.MachinePool {
+	return baremetaltypes.MachinePool{}
 }
 
 // Worker generates the machinesets for `worker` machine pool.
@@ -197,6 +202,17 @@ func (w *Worker) Generate(dependencies asset.Parents) error {
 			}
 		case baremetaltypes.Name:
 			// FIXME: baremetal
+			mpool := defaultBareMetalMachinePoolPlatform()
+			mpool.Set(ic.Platform.BareMetal.DefaultMachinePlatform)
+			mpool.Set(pool.Platform.BareMetal)
+			pool.Platform.BareMetal = &mpool
+			sets, err := baremetal.MachineSets(clusterID.InfraID, ic, &pool, "worker", "worker-user-data")
+			if err != nil {
+				return errors.Wrap(err, "failed to create worker machine objects")
+			}
+			for _, set := range sets {
+				machineSets = append(machineSets, set)
+			}
 		case nonetypes.Name, vspheretypes.Name:
 		default:
 			return fmt.Errorf("invalid Platform")
