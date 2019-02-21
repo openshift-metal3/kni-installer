@@ -7,6 +7,7 @@ import (
 	"github.com/openshift-metalkube/kni-installer/pkg/asset"
 	awsconfig "github.com/openshift-metalkube/kni-installer/pkg/asset/installconfig/aws"
 	"github.com/openshift-metalkube/kni-installer/pkg/types/aws"
+	"github.com/openshift-metalkube/kni-installer/pkg/types/baremetal"
 	"github.com/openshift-metalkube/kni-installer/pkg/types/libvirt"
 	"github.com/openshift-metalkube/kni-installer/pkg/types/none"
 	"github.com/openshift-metalkube/kni-installer/pkg/types/openstack"
@@ -46,6 +47,7 @@ func (a *PlatformCredsCheck) Generate(dependencies asset.Parents) error {
 		}
 	case libvirt.Name:
 	case none.Name:
+	case baremetal.Name:
 	case openstack.Name:
 		opts := new(clientconfig.ClientOpts)
 		opts.Cloud = ic.Config.Platform.OpenStack.Cloud
