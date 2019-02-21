@@ -104,7 +104,9 @@ var (
 					logrus.Fatal(errors.Wrap(err, "loading kubeconfig"))
 				}
 
-				err = waitForBootstrapComplete(ctx, config, rootOpts.dir)
+				logrus.Fatal("FIXME!")
+
+				err = destroyBootstrap(ctx, config, rootOpts.dir)
 				if err != nil {
 					logrus.Fatal(err)
 				}
