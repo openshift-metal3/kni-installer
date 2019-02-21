@@ -1,5 +1,5 @@
 ignored = [
-  "github.com/openshift/installer/pkg/terraform/exec/plugins*"
+  "github.com/metalkube/kni-installer/pkg/terraform/exec/plugins*"
 ]
 
 [prune]

@@ -9,12 +9,12 @@ import (
 	"github.com/ghodss/yaml"
 
 	"github.com/gophercloud/utils/openstack/clientconfig"
-	"github.com/openshift/installer/pkg/asset"
-	"github.com/openshift/installer/pkg/asset/installconfig"
-	"github.com/openshift/installer/pkg/asset/machines"
-	osmachine "github.com/openshift/installer/pkg/asset/machines/openstack"
-	"github.com/openshift/installer/pkg/asset/password"
-	"github.com/openshift/installer/pkg/asset/templates/content/openshift"
+	"github.com/metalkube/kni-installer/pkg/asset"
+	"github.com/metalkube/kni-installer/pkg/asset/installconfig"
+	"github.com/metalkube/kni-installer/pkg/asset/machines"
+	osmachine "github.com/metalkube/kni-installer/pkg/asset/machines/openstack"
+	"github.com/metalkube/kni-installer/pkg/asset/password"
+	"github.com/metalkube/kni-installer/pkg/asset/templates/content/openshift"
 )
 
 const (

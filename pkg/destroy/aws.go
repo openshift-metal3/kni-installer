@@ -1,8 +1,8 @@
 package destroy
 
 import (
-	"github.com/openshift/installer/pkg/destroy/aws"
-	"github.com/openshift/installer/pkg/types"
+	"github.com/metalkube/kni-installer/pkg/destroy/aws"
+	"github.com/metalkube/kni-installer/pkg/types"
 	"github.com/sirupsen/logrus"
 )
 

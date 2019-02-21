@@ -2,8 +2,8 @@
 package libvirt
 
 import (
-	"github.com/openshift/installer/pkg/types"
-	"github.com/openshift/installer/pkg/types/libvirt"
+	"github.com/metalkube/kni-installer/pkg/types"
+	"github.com/metalkube/kni-installer/pkg/types/libvirt"
 )
 
 // Metadata converts an install configuration to libvirt metadata.

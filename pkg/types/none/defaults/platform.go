@@ -1,7 +1,7 @@
 package defaults
 
 import (
-	"github.com/openshift/installer/pkg/types/none"
+	"github.com/metalkube/kni-installer/pkg/types/none"
 )
 
 // SetPlatformDefaults sets the defaults for the platform.

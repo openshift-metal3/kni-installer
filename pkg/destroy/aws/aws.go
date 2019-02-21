@@ -20,7 +20,7 @@ import (
 	"github.com/pkg/errors"
 	"github.com/sirupsen/logrus"
 
-	"github.com/openshift/installer/pkg/version"
+	"github.com/metalkube/kni-installer/pkg/version"
 )
 
 var (
