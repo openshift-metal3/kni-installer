@@ -4,8 +4,8 @@ import (
 	"github.com/pkg/errors"
 	"github.com/sirupsen/logrus"
 
-	"github.com/openshift/installer/pkg/asset/cluster"
-	"github.com/openshift/installer/pkg/types"
+	"github.com/metalkube/kni-installer/pkg/asset/cluster"
+	"github.com/metalkube/kni-installer/pkg/types"
 )
 
 // Destroyer allows multiple implementations of destroy

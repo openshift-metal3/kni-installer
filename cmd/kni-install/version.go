@@ -6,7 +6,7 @@ import (
 
 	"github.com/spf13/cobra"
 
-	"github.com/openshift/installer/pkg/version"
+	"github.com/metalkube/kni-installer/pkg/version"
 )
 
 func newVersionCmd() *cobra.Command {

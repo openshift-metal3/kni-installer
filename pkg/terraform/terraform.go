@@ -6,13 +6,13 @@ import (
 	"path/filepath"
 	"runtime"
 
-	"github.com/openshift/installer/data"
+	"github.com/metalkube/kni-installer/data"
 	"github.com/pkg/errors"
 	"github.com/sirupsen/logrus"
 
-	"github.com/openshift/installer/pkg/lineprinter"
-	texec "github.com/openshift/installer/pkg/terraform/exec"
-	"github.com/openshift/installer/pkg/terraform/exec/plugins"
+	"github.com/metalkube/kni-installer/pkg/lineprinter"
+	texec "github.com/metalkube/kni-installer/pkg/terraform/exec"
+	"github.com/metalkube/kni-installer/pkg/terraform/exec/plugins"
 )
 
 const (

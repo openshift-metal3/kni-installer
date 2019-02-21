@@ -8,8 +8,8 @@ import (
 	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
 	"k8s.io/apimachinery/pkg/runtime"
 
-	"github.com/openshift/installer/pkg/types"
-	"github.com/openshift/installer/pkg/types/aws"
+	"github.com/metalkube/kni-installer/pkg/types"
+	"github.com/metalkube/kni-installer/pkg/types/aws"
 	"github.com/pkg/errors"
 )
 

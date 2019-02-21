@@ -6,7 +6,7 @@ import (
 	"github.com/stretchr/testify/assert"
 	"k8s.io/apimachinery/pkg/util/validation/field"
 
-	"github.com/openshift/installer/pkg/types/aws"
+	"github.com/metalkube/kni-installer/pkg/types/aws"
 )
 
 func TestValidatePlatform(t *testing.T) {

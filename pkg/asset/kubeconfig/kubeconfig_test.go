@@ -7,8 +7,8 @@ import (
 
 	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
 
-	"github.com/openshift/installer/pkg/asset/tls"
-	"github.com/openshift/installer/pkg/types"
+	"github.com/metalkube/kni-installer/pkg/asset/tls"
+	"github.com/metalkube/kni-installer/pkg/types"
 )
 
 type testCertKey struct {

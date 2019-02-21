@@ -3,7 +3,7 @@ package manifests
 import (
 	"fmt"
 
-	"github.com/openshift/installer/pkg/types"
+	"github.com/metalkube/kni-installer/pkg/types"
 	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
 )
 

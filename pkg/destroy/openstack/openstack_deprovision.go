@@ -6,8 +6,8 @@ import (
 	"strings"
 	"time"
 
-	"github.com/openshift/installer/pkg/destroy"
-	"github.com/openshift/installer/pkg/types"
+	"github.com/metalkube/kni-installer/pkg/destroy"
+	"github.com/metalkube/kni-installer/pkg/types"
 
 	"github.com/gophercloud/gophercloud/openstack/compute/v2/servers"
 	"github.com/gophercloud/gophercloud/openstack/networking/v2/extensions/layer3/floatingips"

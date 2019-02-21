@@ -1,7 +1,7 @@
 package tls
 
 import (
-	"github.com/openshift/installer/pkg/asset"
+	"github.com/metalkube/kni-installer/pkg/asset"
 	"github.com/pkg/errors"
 )
 

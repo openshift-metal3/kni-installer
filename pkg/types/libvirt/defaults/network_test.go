@@ -5,7 +5,7 @@ import (
 
 	"github.com/stretchr/testify/assert"
 
-	"github.com/openshift/installer/pkg/types/libvirt"
+	"github.com/metalkube/kni-installer/pkg/types/libvirt"
 )
 
 func defaultNetwork() *libvirt.Network {

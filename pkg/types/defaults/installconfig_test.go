@@ -6,16 +6,16 @@ import (
 	"github.com/stretchr/testify/assert"
 	"k8s.io/utils/pointer"
 
-	"github.com/openshift/installer/pkg/ipnet"
-	"github.com/openshift/installer/pkg/types"
-	"github.com/openshift/installer/pkg/types/aws"
-	awsdefaults "github.com/openshift/installer/pkg/types/aws/defaults"
-	"github.com/openshift/installer/pkg/types/libvirt"
-	libvirtdefaults "github.com/openshift/installer/pkg/types/libvirt/defaults"
-	"github.com/openshift/installer/pkg/types/none"
-	nonedefaults "github.com/openshift/installer/pkg/types/none/defaults"
-	"github.com/openshift/installer/pkg/types/openstack"
-	openstackdefaults "github.com/openshift/installer/pkg/types/openstack/defaults"
+	"github.com/metalkube/kni-installer/pkg/ipnet"
+	"github.com/metalkube/kni-installer/pkg/types"
+	"github.com/metalkube/kni-installer/pkg/types/aws"
+	awsdefaults "github.com/metalkube/kni-installer/pkg/types/aws/defaults"
+	"github.com/metalkube/kni-installer/pkg/types/libvirt"
+	libvirtdefaults "github.com/metalkube/kni-installer/pkg/types/libvirt/defaults"
+	"github.com/metalkube/kni-installer/pkg/types/none"
+	nonedefaults "github.com/metalkube/kni-installer/pkg/types/none/defaults"
+	"github.com/metalkube/kni-installer/pkg/types/openstack"
+	openstackdefaults "github.com/metalkube/kni-installer/pkg/types/openstack/defaults"
 )
 
 func defaultInstallConfig() *types.InstallConfig {

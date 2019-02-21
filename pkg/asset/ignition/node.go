@@ -6,7 +6,7 @@ import (
 	ignition "github.com/coreos/ignition/config/v2_2/types"
 	"github.com/vincent-petithory/dataurl"
 
-	"github.com/openshift/installer/pkg/asset"
+	"github.com/metalkube/kni-installer/pkg/asset"
 )
 
 // FilesFromAsset creates ignition files for each of the files in the specified

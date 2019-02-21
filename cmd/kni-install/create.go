@@ -24,13 +24,13 @@ import (
 	"k8s.io/client-go/tools/clientcmd"
 	clientwatch "k8s.io/client-go/tools/watch"
 
+	"github.com/metalkube/kni-installer/pkg/asset"
+	assetstore "github.com/metalkube/kni-installer/pkg/asset/store"
+	targetassets "github.com/metalkube/kni-installer/pkg/asset/targets"
+	destroybootstrap "github.com/metalkube/kni-installer/pkg/destroy/bootstrap"
 	configv1 "github.com/openshift/api/config/v1"
 	configclient "github.com/openshift/client-go/config/clientset/versioned"
 	routeclient "github.com/openshift/client-go/route/clientset/versioned"
-	"github.com/openshift/installer/pkg/asset"
-	assetstore "github.com/openshift/installer/pkg/asset/store"
-	targetassets "github.com/openshift/installer/pkg/asset/targets"
-	destroybootstrap "github.com/openshift/installer/pkg/destroy/bootstrap"
 	cov1helpers "github.com/openshift/library-go/pkg/config/clusteroperator/v1helpers"
 )
 

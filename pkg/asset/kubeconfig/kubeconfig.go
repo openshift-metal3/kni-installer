@@ -8,9 +8,9 @@ import (
 	"github.com/pkg/errors"
 	clientcmd "k8s.io/client-go/tools/clientcmd/api/v1"
 
-	"github.com/openshift/installer/pkg/asset"
-	"github.com/openshift/installer/pkg/asset/tls"
-	"github.com/openshift/installer/pkg/types"
+	"github.com/metalkube/kni-installer/pkg/asset"
+	"github.com/metalkube/kni-installer/pkg/asset/tls"
+	"github.com/metalkube/kni-installer/pkg/types"
 )
 
 type kubeconfig struct {
@@ -31,7 +31,7 @@ func (k *kubeconfig) generate(
 			{
 				Name: installConfig.ObjectMeta.Name,
 				Cluster: clientcmd.Cluster{
-					Server: fmt.Sprintf("https://api.%s:6443", installConfig.ClusterDomain()),
+					Server:                   fmt.Sprintf("https://api.%s:6443", installConfig.ClusterDomain()),
 					CertificateAuthorityData: ca.Cert(),
 				},
 			},

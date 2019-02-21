@@ -8,8 +8,8 @@ import (
 	"github.com/stretchr/testify/assert"
 	"k8s.io/apimachinery/pkg/util/validation/field"
 
-	"github.com/openshift/installer/pkg/types/openstack"
-	"github.com/openshift/installer/pkg/types/openstack/validation/mock"
+	"github.com/metalkube/kni-installer/pkg/types/openstack"
+	"github.com/metalkube/kni-installer/pkg/types/openstack/validation/mock"
 )
 
 func validPlatform() *openstack.Platform {
