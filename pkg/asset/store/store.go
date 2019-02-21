@@ -10,7 +10,7 @@ import (
 	"github.com/pkg/errors"
 	"github.com/sirupsen/logrus"
 
-	"github.com/openshift/installer/pkg/asset"
+	"github.com/openshift-metalkube/kni-installer/pkg/asset"
 )
 
 const (

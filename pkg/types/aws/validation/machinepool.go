@@ -3,7 +3,7 @@ package validation
 import (
 	"k8s.io/apimachinery/pkg/util/validation/field"
 
-	"github.com/openshift/installer/pkg/types/aws"
+	"github.com/openshift-metalkube/kni-installer/pkg/types/aws"
 )
 
 // ValidateMachinePool checks that the specified machine pool is valid.
