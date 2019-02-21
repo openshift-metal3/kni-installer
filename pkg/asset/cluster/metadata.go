@@ -5,12 +5,12 @@ import (
 	"io/ioutil"
 	"path/filepath"
 
-	"github.com/openshift/installer/pkg/asset"
-	"github.com/openshift/installer/pkg/asset/cluster/aws"
-	"github.com/openshift/installer/pkg/asset/cluster/libvirt"
-	"github.com/openshift/installer/pkg/asset/cluster/openstack"
-	"github.com/openshift/installer/pkg/asset/installconfig"
-	"github.com/openshift/installer/pkg/types"
+	"github.com/metalkube/kni-installer/pkg/asset"
+	"github.com/metalkube/kni-installer/pkg/asset/cluster/aws"
+	"github.com/metalkube/kni-installer/pkg/asset/cluster/libvirt"
+	"github.com/metalkube/kni-installer/pkg/asset/cluster/openstack"
+	"github.com/metalkube/kni-installer/pkg/asset/installconfig"
+	"github.com/metalkube/kni-installer/pkg/types"
 	"github.com/pkg/errors"
 )
 

@@ -1,6 +1,6 @@
 package tls
 
-import "github.com/openshift/installer/pkg/asset"
+import "github.com/metalkube/kni-installer/pkg/asset"
 
 // ServiceAccountKeyPair is the asset that generates the service-account public/private key pair.
 type ServiceAccountKeyPair struct {

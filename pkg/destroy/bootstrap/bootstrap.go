@@ -8,9 +8,9 @@ import (
 	"path/filepath"
 	"strings"
 
-	"github.com/openshift/installer/pkg/asset/cluster"
-	"github.com/openshift/installer/pkg/terraform"
-	"github.com/openshift/installer/pkg/types/libvirt"
+	"github.com/metalkube/kni-installer/pkg/asset/cluster"
+	"github.com/metalkube/kni-installer/pkg/terraform"
+	"github.com/metalkube/kni-installer/pkg/types/libvirt"
 	"github.com/pkg/errors"
 )
 
@@ -40,7 +40,7 @@ func Destroy(dir string) (err error) {
 		copyNames = append(copyNames, "disable-bootstrap.tfvars")
 	}
 
-	tempDir, err := ioutil.TempDir("", "openshift-install-")
+	tempDir, err := ioutil.TempDir("", "kni-install-")
 	if err != nil {
 		return errors.Wrap(err, "failed to create temporary directory for Terraform execution")
 	}

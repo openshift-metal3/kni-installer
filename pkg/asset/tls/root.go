@@ -4,7 +4,7 @@ import (
 	"crypto/x509"
 	"crypto/x509/pkix"
 
-	"github.com/openshift/installer/pkg/asset"
+	"github.com/metalkube/kni-installer/pkg/asset"
 )
 
 // RootCA contains the private key and the cert that's

@@ -4,7 +4,7 @@ import (
 	"crypto/x509"
 	"crypto/x509/pkix"
 
-	"github.com/openshift/installer/pkg/asset"
+	"github.com/metalkube/kni-installer/pkg/asset"
 )
 
 // AggregatorCA is the asset that generates the aggregator-ca key/cert pair.

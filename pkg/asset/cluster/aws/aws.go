@@ -4,8 +4,8 @@ package aws
 import (
 	"fmt"
 
-	"github.com/openshift/installer/pkg/types"
-	"github.com/openshift/installer/pkg/types/aws"
+	"github.com/metalkube/kni-installer/pkg/types"
+	"github.com/metalkube/kni-installer/pkg/types/aws"
 )
 
 // Metadata converts an install configuration to AWS metadata.

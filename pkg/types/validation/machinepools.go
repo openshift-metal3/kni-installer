@@ -5,13 +5,13 @@ import (
 
 	"k8s.io/apimachinery/pkg/util/validation/field"
 
-	"github.com/openshift/installer/pkg/types"
-	"github.com/openshift/installer/pkg/types/aws"
-	awsvalidation "github.com/openshift/installer/pkg/types/aws/validation"
-	"github.com/openshift/installer/pkg/types/libvirt"
-	libvirtvalidation "github.com/openshift/installer/pkg/types/libvirt/validation"
-	"github.com/openshift/installer/pkg/types/openstack"
-	openstackvalidation "github.com/openshift/installer/pkg/types/openstack/validation"
+	"github.com/metalkube/kni-installer/pkg/types"
+	"github.com/metalkube/kni-installer/pkg/types/aws"
+	awsvalidation "github.com/metalkube/kni-installer/pkg/types/aws/validation"
+	"github.com/metalkube/kni-installer/pkg/types/libvirt"
+	libvirtvalidation "github.com/metalkube/kni-installer/pkg/types/libvirt/validation"
+	"github.com/metalkube/kni-installer/pkg/types/openstack"
+	openstackvalidation "github.com/metalkube/kni-installer/pkg/types/openstack/validation"
 )
 
 // ValidateMachinePool checks that the specified machine pool is valid.

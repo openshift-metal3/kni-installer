@@ -4,9 +4,9 @@ package libvirt
 import (
 	survey "gopkg.in/AlecAivazis/survey.v1"
 
-	"github.com/openshift/installer/pkg/types/libvirt"
-	libvirtdefaults "github.com/openshift/installer/pkg/types/libvirt/defaults"
-	"github.com/openshift/installer/pkg/validate"
+	"github.com/metalkube/kni-installer/pkg/types/libvirt"
+	libvirtdefaults "github.com/metalkube/kni-installer/pkg/types/libvirt/defaults"
+	"github.com/metalkube/kni-installer/pkg/validate"
 )
 
 // Platform collects libvirt-specific configuration.
