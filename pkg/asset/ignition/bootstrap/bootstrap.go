@@ -250,6 +250,7 @@ func (a *Bootstrap) addSystemdUnits(uri string, templateData *bootstrapTemplateD
 		"progress.service":                {},
 		"kubelet.service":                 {},
 		"chown-gatewayd-key.service":      {},
+		"keepalived.service":              {},
 		"systemd-journal-gatewayd.socket": {},
 	}
 
