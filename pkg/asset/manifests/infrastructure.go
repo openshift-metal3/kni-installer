@@ -13,6 +13,7 @@ import (
 
 	"github.com/openshift-metalkube/kni-installer/pkg/types/aws"
 	"github.com/openshift-metalkube/kni-installer/pkg/types/azure"
+	"github.com/openshift-metalkube/kni-installer/pkg/types/baremetal"
 	"github.com/openshift-metalkube/kni-installer/pkg/types/libvirt"
 	"github.com/openshift-metalkube/kni-installer/pkg/types/none"
 	"github.com/openshift-metalkube/kni-installer/pkg/types/openstack"
@@ -67,6 +68,8 @@ func (i *Infrastructure) Generate(dependencies asset.Parents) error {
 		platform = configv1.VSpherePlatformType
 	case azure.Name:
 		platform = configv1.AzurePlatformType
+	case baremetal.Name:
+		platform = configv1.BareMetalPlatform
 	default:
 		platform = configv1.NonePlatformType
 	}

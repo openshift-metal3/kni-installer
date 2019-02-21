@@ -6,6 +6,7 @@ import (
 	"github.com/openshift-metalkube/kni-installer/pkg/ipnet"
 	"github.com/openshift-metalkube/kni-installer/pkg/types/aws"
 	"github.com/openshift-metalkube/kni-installer/pkg/types/azure"
+	"github.com/openshift-metalkube/kni-installer/pkg/types/baremetal"
 	"github.com/openshift-metalkube/kni-installer/pkg/types/libvirt"
 	"github.com/openshift-metalkube/kni-installer/pkg/types/none"
 	"github.com/openshift-metalkube/kni-installer/pkg/types/openstack"
@@ -25,12 +26,13 @@ var (
 	// platform names in alphabetical order. This is the list of
 	// platforms presented to the user in the interactive wizard.
 	PlatformNames = []string{
-		aws.Name,
+		baremetal.Name,
 	}
 	// HiddenPlatformNames is a slice with all the
 	// hidden-but-supported platform names. This list isn't presented
 	// to the user in the interactive wizard.
 	HiddenPlatformNames = []string{
+		aws.Name,
 		none.Name,
 		azure.Name,
 		openstack.Name,
@@ -103,6 +105,10 @@ type Platform struct {
 	// Azure is the configuration used when installing on Azure.
 	// +optional
 	Azure *azure.Platform `json:"azure,omitempty"`
+
+	// BareMetal is the configuration used when installing on bare metal.
+	// +optional
+	BareMetal *baremetal.Platform `json:"baremetal,omitempty"`
 }
 
 // Name returns a string representation of the platform (e.g. "aws" if
@@ -124,6 +130,8 @@ func (p *Platform) Name() string {
 		return vsphere.Name
 	case p.Azure != nil:
 		return azure.Name
+	case p.BareMetal != nil:
+		return baremetal.Name
 	default:
 		return ""
 	}
