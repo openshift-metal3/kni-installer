@@ -4,8 +4,8 @@ import (
 	"crypto/x509"
 	"crypto/x509/pkix"
 
-	"github.com/openshift/installer/pkg/asset"
-	"github.com/openshift/installer/pkg/asset/installconfig"
+	"github.com/metalkube/kni-installer/pkg/asset"
+	"github.com/metalkube/kni-installer/pkg/asset/installconfig"
 )
 
 // MCSCertKey is the asset that generates the MCS key/cert pair.

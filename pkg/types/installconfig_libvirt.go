@@ -5,7 +5,7 @@ package types
 import (
 	"sort"
 
-	"github.com/openshift/installer/pkg/types/libvirt"
+	"github.com/metalkube/kni-installer/pkg/types/libvirt"
 )
 
 func init() {

@@ -3,7 +3,7 @@ package validation
 import (
 	"k8s.io/apimachinery/pkg/util/validation/field"
 
-	"github.com/openshift/installer/pkg/types/libvirt"
+	"github.com/metalkube/kni-installer/pkg/types/libvirt"
 )
 
 // ValidateMachinePool checks that the specified machine pool is valid.

@@ -4,7 +4,7 @@ import (
 	"bytes"
 	"encoding/pem"
 
-	"github.com/openshift/installer/pkg/asset"
+	"github.com/metalkube/kni-installer/pkg/asset"
 	"github.com/pkg/errors"
 )
 

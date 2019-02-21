@@ -9,10 +9,10 @@ import (
 	"github.com/pkg/errors"
 	"github.com/sirupsen/logrus"
 
-	"github.com/openshift/installer/pkg/asset"
-	"github.com/openshift/installer/pkg/asset/installconfig"
-	"github.com/openshift/installer/pkg/asset/password"
-	"github.com/openshift/installer/pkg/terraform"
+	"github.com/metalkube/kni-installer/pkg/asset"
+	"github.com/metalkube/kni-installer/pkg/asset/installconfig"
+	"github.com/metalkube/kni-installer/pkg/asset/password"
+	"github.com/metalkube/kni-installer/pkg/terraform"
 )
 
 var (
@@ -61,7 +61,7 @@ func (c *Cluster) Generate(parents asset.Parents) (err error) {
 	}
 
 	// Copy the terraform.tfvars to a temp directory where the terraform will be invoked within.
-	tmpDir, err := ioutil.TempDir("", "openshift-install-")
+	tmpDir, err := ioutil.TempDir("", "kni-install-")
 	if err != nil {
 		return errors.Wrap(err, "failed to create temp dir for terraform execution")
 	}

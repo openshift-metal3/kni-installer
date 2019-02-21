@@ -8,7 +8,7 @@ import (
 
 	"github.com/stretchr/testify/assert"
 
-	"github.com/openshift/installer/pkg/asset"
+	"github.com/metalkube/kni-installer/pkg/asset"
 )
 
 func TestFetchByName(t *testing.T) {
@@ -46,7 +46,7 @@ func TestFetchByName(t *testing.T) {
 
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			tempDir, err := ioutil.TempDir("", "openshift-install-")
+			tempDir, err := ioutil.TempDir("", "kni-install-")
 			if err != nil {
 				t.Fatal(err)
 			}
@@ -74,7 +74,7 @@ func TestFetchByName(t *testing.T) {
 }
 
 func TestFetchByPattern(t *testing.T) {
-	tempDir, err := ioutil.TempDir("", "openshift-install-")
+	tempDir, err := ioutil.TempDir("", "kni-install-")
 	if err != nil {
 		t.Fatal(err)
 	}

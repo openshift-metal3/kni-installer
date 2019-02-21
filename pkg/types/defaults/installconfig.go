@@ -1,12 +1,12 @@
 package defaults
 
 import (
-	"github.com/openshift/installer/pkg/ipnet"
-	"github.com/openshift/installer/pkg/types"
-	awsdefaults "github.com/openshift/installer/pkg/types/aws/defaults"
-	libvirtdefaults "github.com/openshift/installer/pkg/types/libvirt/defaults"
-	nonedefaults "github.com/openshift/installer/pkg/types/none/defaults"
-	openstackdefaults "github.com/openshift/installer/pkg/types/openstack/defaults"
+	"github.com/metalkube/kni-installer/pkg/ipnet"
+	"github.com/metalkube/kni-installer/pkg/types"
+	awsdefaults "github.com/metalkube/kni-installer/pkg/types/aws/defaults"
+	libvirtdefaults "github.com/metalkube/kni-installer/pkg/types/libvirt/defaults"
+	nonedefaults "github.com/metalkube/kni-installer/pkg/types/none/defaults"
+	openstackdefaults "github.com/metalkube/kni-installer/pkg/types/openstack/defaults"
 )
 
 var (

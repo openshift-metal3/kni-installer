@@ -7,7 +7,7 @@ import (
 	"github.com/pborman/uuid"
 	utilrand "k8s.io/apimachinery/pkg/util/rand"
 
-	"github.com/openshift/installer/pkg/asset"
+	"github.com/metalkube/kni-installer/pkg/asset"
 )
 
 const (
