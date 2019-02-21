@@ -7,12 +7,12 @@ import (
 	"github.com/pkg/errors"
 	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
 
-	"github.com/openshift/installer/pkg/asset"
-	"github.com/openshift/installer/pkg/types"
-	"github.com/openshift/installer/pkg/types/conversion"
-	"github.com/openshift/installer/pkg/types/defaults"
-	openstackvalidation "github.com/openshift/installer/pkg/types/openstack/validation"
-	"github.com/openshift/installer/pkg/types/validation"
+	"github.com/openshift-metalkube/kni-installer/pkg/asset"
+	"github.com/openshift-metalkube/kni-installer/pkg/types"
+	"github.com/openshift-metalkube/kni-installer/pkg/types/conversion"
+	"github.com/openshift-metalkube/kni-installer/pkg/types/defaults"
+	openstackvalidation "github.com/openshift-metalkube/kni-installer/pkg/types/openstack/validation"
+	"github.com/openshift-metalkube/kni-installer/pkg/types/validation"
 )
 
 const (

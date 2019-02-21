@@ -5,7 +5,7 @@ import (
 	"encoding/json"
 	"io/ioutil"
 
-	"github.com/openshift/installer/data"
+	"github.com/openshift-metalkube/kni-installer/data"
 	"github.com/pkg/errors"
 )
 

@@ -7,7 +7,7 @@ import (
 	"github.com/pkg/errors"
 	ini "gopkg.in/ini.v1"
 
-	vspheretypes "github.com/openshift/installer/pkg/types/vsphere"
+	vspheretypes "github.com/openshift-metalkube/kni-installer/pkg/types/vsphere"
 )
 
 type config struct {

@@ -9,7 +9,7 @@ import (
 
 	mcfgv1 "github.com/openshift/machine-config-operator/pkg/apis/machineconfiguration.openshift.io/v1"
 
-	"github.com/openshift/installer/pkg/asset"
+	"github.com/openshift-metalkube/kni-installer/pkg/asset"
 )
 
 const (

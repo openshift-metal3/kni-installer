@@ -10,15 +10,15 @@ import (
 	corev1 "k8s.io/api/core/v1"
 	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
 
-	"github.com/openshift/installer/pkg/asset"
-	"github.com/openshift/installer/pkg/asset/installconfig"
-	osmachine "github.com/openshift/installer/pkg/asset/machines/openstack"
-	vspheremanifests "github.com/openshift/installer/pkg/asset/manifests/vsphere"
-	awstypes "github.com/openshift/installer/pkg/types/aws"
-	libvirttypes "github.com/openshift/installer/pkg/types/libvirt"
-	nonetypes "github.com/openshift/installer/pkg/types/none"
-	openstacktypes "github.com/openshift/installer/pkg/types/openstack"
-	vspheretypes "github.com/openshift/installer/pkg/types/vsphere"
+	"github.com/openshift-metalkube/kni-installer/pkg/asset"
+	"github.com/openshift-metalkube/kni-installer/pkg/asset/installconfig"
+	osmachine "github.com/openshift-metalkube/kni-installer/pkg/asset/machines/openstack"
+	vspheremanifests "github.com/openshift-metalkube/kni-installer/pkg/asset/manifests/vsphere"
+	awstypes "github.com/openshift-metalkube/kni-installer/pkg/types/aws"
+	libvirttypes "github.com/openshift-metalkube/kni-installer/pkg/types/libvirt"
+	nonetypes "github.com/openshift-metalkube/kni-installer/pkg/types/none"
+	openstacktypes "github.com/openshift-metalkube/kni-installer/pkg/types/openstack"
+	vspheretypes "github.com/openshift-metalkube/kni-installer/pkg/types/vsphere"
 )
 
 var (

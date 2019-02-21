@@ -7,7 +7,7 @@ import (
 	ignition "github.com/coreos/ignition/config/v2_2/types"
 	"github.com/vincent-petithory/dataurl"
 
-	"github.com/openshift/installer/pkg/types"
+	"github.com/openshift-metalkube/kni-installer/pkg/types"
 )
 
 // pointerIgnitionConfig generates a config which references the remote config
