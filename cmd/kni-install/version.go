@@ -6,8 +6,8 @@ import (
 
 	"github.com/spf13/cobra"
 
-	"github.com/openshift/installer/pkg/asset/ignition/bootstrap"
-	"github.com/openshift/installer/pkg/version"
+	"github.com/openshift-metalkube/kni-installer/pkg/asset/ignition/bootstrap"
+	"github.com/openshift-metalkube/kni-installer/pkg/version"
 )
 
 func newVersionCmd() *cobra.Command {

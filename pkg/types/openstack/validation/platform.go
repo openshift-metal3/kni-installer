@@ -5,7 +5,7 @@ import (
 
 	"k8s.io/apimachinery/pkg/util/validation/field"
 
-	"github.com/openshift/installer/pkg/types/openstack"
+	"github.com/openshift-metalkube/kni-installer/pkg/types/openstack"
 )
 
 // ValidatePlatform checks that the specified platform is valid.

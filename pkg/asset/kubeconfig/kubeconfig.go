@@ -8,9 +8,9 @@ import (
 	"github.com/pkg/errors"
 	clientcmd "k8s.io/client-go/tools/clientcmd/api/v1"
 
-	"github.com/openshift/installer/pkg/asset"
-	"github.com/openshift/installer/pkg/asset/tls"
-	"github.com/openshift/installer/pkg/types"
+	"github.com/openshift-metalkube/kni-installer/pkg/asset"
+	"github.com/openshift-metalkube/kni-installer/pkg/asset/tls"
+	"github.com/openshift-metalkube/kni-installer/pkg/types"
 )
 
 type kubeconfig struct {
@@ -32,7 +32,7 @@ func (k *kubeconfig) generate(
 			{
 				Name: cluster,
 				Cluster: clientcmd.Cluster{
-					Server: apiURL,
+					Server:                   apiURL,
 					CertificateAuthorityData: ca.Cert(),
 				},
 			},

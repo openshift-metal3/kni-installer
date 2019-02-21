@@ -7,9 +7,9 @@ import (
 	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
 	"k8s.io/utils/pointer"
 
-	"github.com/openshift/installer/pkg/ipnet"
-	"github.com/openshift/installer/pkg/types"
-	vspheretypes "github.com/openshift/installer/pkg/types/vsphere"
+	"github.com/openshift-metalkube/kni-installer/pkg/ipnet"
+	"github.com/openshift-metalkube/kni-installer/pkg/types"
+	vspheretypes "github.com/openshift-metalkube/kni-installer/pkg/types/vsphere"
 )
 
 // TestRedactedInstallConfig tests the redactedInstallConfig function.

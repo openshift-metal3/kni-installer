@@ -1,9 +1,9 @@
 package destroy
 
 import (
-	session "github.com/openshift/installer/pkg/asset/installconfig/aws"
-	"github.com/openshift/installer/pkg/destroy/aws"
-	"github.com/openshift/installer/pkg/types"
+	session "github.com/openshift-metalkube/kni-installer/pkg/asset/installconfig/aws"
+	"github.com/openshift-metalkube/kni-installer/pkg/destroy/aws"
+	"github.com/openshift-metalkube/kni-installer/pkg/types"
 	"github.com/sirupsen/logrus"
 )
 

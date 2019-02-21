@@ -3,7 +3,7 @@ package validation
 import (
 	"testing"
 
-	"github.com/openshift/installer/pkg/types/azure"
+	"github.com/openshift-metalkube/kni-installer/pkg/types/azure"
 	"github.com/stretchr/testify/assert"
 	"k8s.io/apimachinery/pkg/util/validation/field"
 )
@@ -17,7 +17,7 @@ func TestValidatePlatform(t *testing.T) {
 		{
 			name: "invalid region",
 			platform: &azure.Platform{
-				Region: "",
+				Region:                      "",
 				BaseDomainResourceGroupName: "group",
 			},
 			valid: false,
@@ -25,7 +25,7 @@ func TestValidatePlatform(t *testing.T) {
 		{
 			name: "invalid baseDomainResourceGroupName",
 			platform: &azure.Platform{
-				Region: "eastus",
+				Region:                      "eastus",
 				BaseDomainResourceGroupName: "",
 			},
 			valid: false,
@@ -33,7 +33,7 @@ func TestValidatePlatform(t *testing.T) {
 		{
 			name: "minimal",
 			platform: &azure.Platform{
-				Region: "eastus",
+				Region:                      "eastus",
 				BaseDomainResourceGroupName: "group",
 			},
 			valid: true,
@@ -41,7 +41,7 @@ func TestValidatePlatform(t *testing.T) {
 		{
 			name: "valid machine pool",
 			platform: &azure.Platform{
-				Region: "eastus",
+				Region:                      "eastus",
 				BaseDomainResourceGroupName: "group",
 				DefaultMachinePlatform:      &azure.MachinePool{},
 			},
