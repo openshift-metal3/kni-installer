@@ -3,11 +3,11 @@ package types
 import (
 	"fmt"
 
-	"github.com/openshift/installer/pkg/ipnet"
-	"github.com/openshift/installer/pkg/types/aws"
-	"github.com/openshift/installer/pkg/types/libvirt"
-	"github.com/openshift/installer/pkg/types/none"
-	"github.com/openshift/installer/pkg/types/openstack"
+	"github.com/openshift-metalkube/kni-installer/pkg/ipnet"
+	"github.com/openshift-metalkube/kni-installer/pkg/types/aws"
+	"github.com/openshift-metalkube/kni-installer/pkg/types/libvirt"
+	"github.com/openshift-metalkube/kni-installer/pkg/types/none"
+	"github.com/openshift-metalkube/kni-installer/pkg/types/openstack"
 	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
 )
 

@@ -18,7 +18,7 @@ import (
 
 // cachedImage leaves non-file:// image URIs unalterered.
 // Other URIs are retrieved with a local cache at
-// $XDG_CACHE_HOME/openshift-install/libvirt [1].  This allows you to
+// $XDG_CACHE_HOME/kni-install/libvirt [1].  This allows you to
 // use the same remote image URI multiple times without needing to
 // worry about redundant downloads, although you will want to
 // periodically blow away your cache.
@@ -38,7 +38,7 @@ func cachedImage(uri string) (string, error) {
 	// }
 	baseCacheDir := filepath.Join(os.Getenv("HOME"), ".cache")
 
-	cacheDir := filepath.Join(baseCacheDir, "openshift-install", "libvirt")
+	cacheDir := filepath.Join(baseCacheDir, "kni-install", "libvirt")
 	httpCacheDir := filepath.Join(cacheDir, "http")
 	err := os.MkdirAll(httpCacheDir, 0777)
 	if err != nil {
