@@ -104,6 +104,9 @@ var (
 					logrus.Fatal(errors.Wrap(err, "loading kubeconfig"))
 				}
 
+				logrus.Warn("FIXME! Exiting after bootstrap cluster create for baremetal testing")
+				return
+
 				err = waitForBootstrapComplete(ctx, config, rootOpts.dir)
 				if err != nil {
 					logrus.Fatal(err)
