@@ -2,6 +2,7 @@ package types
 
 import (
 	"github.com/metalkube/kni-installer/pkg/types/aws"
+	"github.com/metalkube/kni-installer/pkg/types/baremetal"
 	"github.com/metalkube/kni-installer/pkg/types/libvirt"
 	"github.com/metalkube/kni-installer/pkg/types/openstack"
 )
@@ -31,6 +32,9 @@ type MachinePoolPlatform struct {
 
 	// OpenStack is the configuration used when installing on OpenStack.
 	OpenStack *openstack.MachinePool `json:"openstack,omitempty"`
+
+	// BareMetal is the configuration used when installing on bare metal.
+	BareMetal *baremetal.MachinePool `json:"openstack,omitempty"`
 }
 
 // Name returns a string representation of the platform (e.g. "aws" if
@@ -48,6 +52,9 @@ func (p *MachinePoolPlatform) Name() string {
 	}
 	if p.OpenStack != nil {
 		return openstack.Name
+	}
+	if p.BareMetal != nil {
+		return baremetal.Name
 	}
 	return ""
 }

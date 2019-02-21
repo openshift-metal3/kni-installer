@@ -4,6 +4,7 @@ import (
 	"github.com/metalkube/kni-installer/pkg/ipnet"
 	"github.com/metalkube/kni-installer/pkg/types"
 	awsdefaults "github.com/metalkube/kni-installer/pkg/types/aws/defaults"
+	baremetaldefaults "github.com/metalkube/kni-installer/pkg/types/baremetal/defaults"
 	libvirtdefaults "github.com/metalkube/kni-installer/pkg/types/libvirt/defaults"
 	nonedefaults "github.com/metalkube/kni-installer/pkg/types/none/defaults"
 	openstackdefaults "github.com/metalkube/kni-installer/pkg/types/openstack/defaults"
@@ -72,6 +73,8 @@ func SetInstallConfigDefaults(c *types.InstallConfig) {
 		libvirtdefaults.SetPlatformDefaults(c.Platform.Libvirt)
 	case c.Platform.OpenStack != nil:
 		openstackdefaults.SetPlatformDefaults(c.Platform.OpenStack)
+	case c.Platform.BareMetal != nil:
+		baremetaldefaults.SetPlatformDefaults(c.Platform.BareMetal)
 	case c.Platform.None != nil:
 		nonedefaults.SetPlatformDefaults(c.Platform.None)
 	}

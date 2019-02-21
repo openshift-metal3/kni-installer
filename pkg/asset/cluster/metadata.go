@@ -7,6 +7,7 @@ import (
 
 	"github.com/metalkube/kni-installer/pkg/asset"
 	"github.com/metalkube/kni-installer/pkg/asset/cluster/aws"
+	"github.com/metalkube/kni-installer/pkg/asset/cluster/baremetal"
 	"github.com/metalkube/kni-installer/pkg/asset/cluster/libvirt"
 	"github.com/metalkube/kni-installer/pkg/asset/cluster/openstack"
 	"github.com/metalkube/kni-installer/pkg/asset/installconfig"
@@ -62,6 +63,8 @@ func (m *Metadata) Generate(parents asset.Parents) (err error) {
 		metadata.ClusterPlatformMetadata.Libvirt = libvirt.Metadata(installConfig.Config)
 	case installConfig.Config.Platform.OpenStack != nil:
 		metadata.ClusterPlatformMetadata.OpenStack = openstack.Metadata(clusterID.InfraID, installConfig.Config)
+	case installConfig.Config.Platform.BareMetal != nil:
+		metadata.ClusterPlatformMetadata.BareMetal = baremetal.Metadata(clusterID.InfraID, installConfig.Config)
 	default:
 		return errors.Errorf("no known platform")
 	}
