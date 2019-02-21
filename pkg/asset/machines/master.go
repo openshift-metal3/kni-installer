@@ -23,6 +23,7 @@ import (
 	"github.com/openshift-metalkube/kni-installer/pkg/asset/installconfig"
 	"github.com/openshift-metalkube/kni-installer/pkg/asset/machines/aws"
 	"github.com/openshift-metalkube/kni-installer/pkg/asset/machines/azure"
+	"github.com/openshift-metalkube/kni-installer/pkg/asset/machines/baremetal"
 	"github.com/openshift-metalkube/kni-installer/pkg/asset/machines/libvirt"
 	"github.com/openshift-metalkube/kni-installer/pkg/asset/machines/machineconfig"
 	"github.com/openshift-metalkube/kni-installer/pkg/asset/machines/openstack"
@@ -154,7 +155,14 @@ func (m *Master) Generate(dependencies asset.Parents) error {
 		azure.ConfigMasters(machines, clusterID.InfraID)
 	case baremetaltypes.Name:
 		// FIXME: baremetal
-		return nil
+		mpool := defaultBareMetalMachinePoolPlatform()
+		mpool.Set(ic.Platform.BareMetal.DefaultMachinePlatform)
+		mpool.Set(pool.Platform.BareMetal)
+		pool.Platform.BareMetal = &mpool
+		machines, err = baremetal.Machines(clusterID.InfraID, ic, pool, "master", "master-user-data")
+		if err != nil {
+			return errors.Wrap(err, "failed to create master machine objects")
+		}
 	case nonetypes.Name, vspheretypes.Name:
 	default:
 		return fmt.Errorf("invalid Platform")
