@@ -15,6 +15,7 @@ import (
 	"github.com/openshift-metalkube/kni-installer/pkg/asset/rhcos"
 	awstypes "github.com/openshift-metalkube/kni-installer/pkg/types/aws"
 	awsdefaults "github.com/openshift-metalkube/kni-installer/pkg/types/aws/defaults"
+	baremetaltypes "github.com/openshift-metalkube/kni-installer/pkg/types/baremetal"
 	libvirttypes "github.com/openshift-metalkube/kni-installer/pkg/types/libvirt"
 	nonetypes "github.com/openshift-metalkube/kni-installer/pkg/types/none"
 	openstacktypes "github.com/openshift-metalkube/kni-installer/pkg/types/openstack"
@@ -126,6 +127,9 @@ func (m *Master) Generate(dependencies asset.Parents) error {
 			return errors.Wrap(err, "failed to create master machine objects")
 		}
 		openstack.ConfigMasters(machines, clusterID.InfraID)
+	case baremetaltypes.Name:
+		// FIXME: baremetal
+		return nil
 	default:
 		return fmt.Errorf("invalid Platform")
 	}
