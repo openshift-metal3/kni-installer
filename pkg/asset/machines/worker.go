@@ -19,6 +19,7 @@ import (
 	"github.com/metalkube/kni-installer/pkg/asset/rhcos"
 	awstypes "github.com/metalkube/kni-installer/pkg/types/aws"
 	awsdefaults "github.com/metalkube/kni-installer/pkg/types/aws/defaults"
+	baremetaltypes "github.com/metalkube/kni-installer/pkg/types/baremetal"
 	libvirttypes "github.com/metalkube/kni-installer/pkg/types/libvirt"
 	nonetypes "github.com/metalkube/kni-installer/pkg/types/none"
 	openstacktypes "github.com/metalkube/kni-installer/pkg/types/openstack"
@@ -142,6 +143,8 @@ func (w *Worker) Generate(dependencies asset.Parents) error {
 			for _, set := range sets {
 				machineSets = append(machineSets, set)
 			}
+		case baremetaltypes.Name:
+			// FIXME: baremetal
 		default:
 			return fmt.Errorf("invalid Platform")
 		}

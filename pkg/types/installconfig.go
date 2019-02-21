@@ -5,6 +5,7 @@ import (
 
 	"github.com/metalkube/kni-installer/pkg/ipnet"
 	"github.com/metalkube/kni-installer/pkg/types/aws"
+	"github.com/metalkube/kni-installer/pkg/types/baremetal"
 	"github.com/metalkube/kni-installer/pkg/types/libvirt"
 	"github.com/metalkube/kni-installer/pkg/types/none"
 	"github.com/metalkube/kni-installer/pkg/types/openstack"
@@ -23,12 +24,13 @@ var (
 	// platform names in alphabetical order. This is the list of
 	// platforms presented to the user in the interactive wizard.
 	PlatformNames = []string{
-		aws.Name,
+		baremetal.Name,
 	}
 	// HiddenPlatformNames is a slice with all the
 	// hidden-but-supported platform names. This list isn't presented
 	// to the user in the interactive wizard.
 	HiddenPlatformNames = []string{
+		aws.Name,
 		none.Name,
 		openstack.Name,
 	}
@@ -91,6 +93,10 @@ type Platform struct {
 	// OpenStack is the configuration used when installing on OpenStack.
 	// +optional
 	OpenStack *openstack.Platform `json:"openstack,omitempty"`
+
+	// BareMetal is the configuration used when installing on bare metal.
+	// +optional
+	BareMetal *baremetal.Platform `json:"baremetal,omitempty"`
 }
 
 // Name returns a string representation of the platform (e.g. "aws" if
@@ -111,6 +117,9 @@ func (p *Platform) Name() string {
 	}
 	if p.OpenStack != nil {
 		return openstack.Name
+	}
+	if p.BareMetal != nil {
+		return baremetal.Name
 	}
 	return ""
 }
