@@ -7,12 +7,12 @@ import (
 	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
 	"k8s.io/utils/pointer"
 
-	"github.com/openshift/installer/pkg/asset"
-	"github.com/openshift/installer/pkg/asset/ignition/machine"
-	"github.com/openshift/installer/pkg/asset/installconfig"
-	"github.com/openshift/installer/pkg/asset/rhcos"
-	"github.com/openshift/installer/pkg/types"
-	awstypes "github.com/openshift/installer/pkg/types/aws"
+	"github.com/openshift-metalkube/kni-installer/pkg/asset"
+	"github.com/openshift-metalkube/kni-installer/pkg/asset/ignition/machine"
+	"github.com/openshift-metalkube/kni-installer/pkg/asset/installconfig"
+	"github.com/openshift-metalkube/kni-installer/pkg/asset/rhcos"
+	"github.com/openshift-metalkube/kni-installer/pkg/types"
+	awstypes "github.com/openshift-metalkube/kni-installer/pkg/types/aws"
 )
 
 func TestMasterGenerateMachineConfigs(t *testing.T) {

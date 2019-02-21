@@ -8,14 +8,14 @@ import (
 	"github.com/sirupsen/logrus"
 	"k8s.io/apimachinery/pkg/util/validation/field"
 
-	"github.com/openshift/installer/pkg/types"
-	"github.com/openshift/installer/pkg/types/aws"
-	awsvalidation "github.com/openshift/installer/pkg/types/aws/validation"
-	"github.com/openshift/installer/pkg/types/libvirt"
-	libvirtvalidation "github.com/openshift/installer/pkg/types/libvirt/validation"
-	"github.com/openshift/installer/pkg/types/openstack"
-	openstackvalidation "github.com/openshift/installer/pkg/types/openstack/validation"
-	"github.com/openshift/installer/pkg/validate"
+	"github.com/openshift-metalkube/kni-installer/pkg/types"
+	"github.com/openshift-metalkube/kni-installer/pkg/types/aws"
+	awsvalidation "github.com/openshift-metalkube/kni-installer/pkg/types/aws/validation"
+	"github.com/openshift-metalkube/kni-installer/pkg/types/libvirt"
+	libvirtvalidation "github.com/openshift-metalkube/kni-installer/pkg/types/libvirt/validation"
+	"github.com/openshift-metalkube/kni-installer/pkg/types/openstack"
+	openstackvalidation "github.com/openshift-metalkube/kni-installer/pkg/types/openstack/validation"
+	"github.com/openshift-metalkube/kni-installer/pkg/validate"
 )
 
 const (

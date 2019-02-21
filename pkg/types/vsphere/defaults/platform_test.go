@@ -5,7 +5,7 @@ import (
 
 	"github.com/stretchr/testify/assert"
 
-	"github.com/openshift/installer/pkg/types/vsphere"
+	"github.com/openshift-metalkube/kni-installer/pkg/types/vsphere"
 )
 
 func defaultPlatform() *vsphere.Platform {
