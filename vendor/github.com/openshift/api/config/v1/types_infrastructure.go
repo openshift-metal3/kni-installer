@@ -89,6 +89,9 @@ const (
 	// NonePlatformType means there is no infrastructure provider.
 	NonePlatformType PlatformType = "None"
 
+	// BareMetalPlatform represents bare metal infrastructure.
+	BareMetalPlatform PlatformType = "BareMetal"
+
 	// VSpherePlatformType represents VMWare vSphere infrastructure.
 	VSpherePlatformType PlatformType = "VSphere"
 )
