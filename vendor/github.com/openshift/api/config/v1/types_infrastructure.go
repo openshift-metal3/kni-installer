@@ -32,8 +32,8 @@ type InfrastructureStatus struct {
 	// value controls whether infrastructure automation such as service load
 	// balancers, dynamic volume provisioning, machine creation and deletion, and
 	// other integrations are enabled. If None, no infrastructure automation is
-	// enabled. Allowed values are "AWS", "Azure", "GCP", "Libvirt",
-	// "OpenStack", "VSphere", and "None". Individual components may not support
+	// enabled. Allowed values are "AWS", "Azure", "GCP", "Libvirt", "OpenStack",
+	// "BareMetal", "VSphere", and "None". Individual components may not support
 	// all platforms, and must handle unrecognized platforms as None if they do
 	// not support that platform.
 	Platform PlatformType `json:"platform,omitempty"`
@@ -67,6 +67,9 @@ const (
 
 	// OpenStackPlatform represents OpenStack infrastructure.
 	OpenStackPlatform PlatformType = "OpenStack"
+
+	// BareMetalPlatform represents bare metal infrastructure.
+	BareMetalPlatform PlatformType = "BareMetal"
 
 	// NonePlatform means there is no infrastructure provider.
 	NonePlatform PlatformType = "None"
