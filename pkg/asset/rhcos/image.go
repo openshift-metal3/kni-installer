@@ -13,6 +13,7 @@ import (
 	"github.com/metalkube/kni-installer/pkg/asset/installconfig"
 	"github.com/metalkube/kni-installer/pkg/rhcos"
 	"github.com/metalkube/kni-installer/pkg/types/aws"
+	"github.com/metalkube/kni-installer/pkg/types/baremetal"
 	"github.com/metalkube/kni-installer/pkg/types/libvirt"
 	"github.com/metalkube/kni-installer/pkg/types/none"
 	"github.com/metalkube/kni-installer/pkg/types/openstack"
@@ -60,6 +61,8 @@ func (i *Image) Generate(p asset.Parents) error {
 		osimage, err = rhcos.QEMU(ctx, rhcos.DefaultChannel)
 	case openstack.Name:
 		osimage = "rhcos"
+	case baremetal.Name:
+		// FIXME: baremetal
 	case none.Name:
 	default:
 		return errors.New("invalid Platform")

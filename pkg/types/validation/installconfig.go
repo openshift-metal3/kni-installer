@@ -11,6 +11,8 @@ import (
 	"github.com/metalkube/kni-installer/pkg/types"
 	"github.com/metalkube/kni-installer/pkg/types/aws"
 	awsvalidation "github.com/metalkube/kni-installer/pkg/types/aws/validation"
+	"github.com/metalkube/kni-installer/pkg/types/baremetal"
+	baremetalvalidation "github.com/metalkube/kni-installer/pkg/types/baremetal/validation"
 	"github.com/metalkube/kni-installer/pkg/types/libvirt"
 	libvirtvalidation "github.com/metalkube/kni-installer/pkg/types/libvirt/validation"
 	"github.com/metalkube/kni-installer/pkg/types/openstack"
@@ -215,6 +217,11 @@ func validatePlatform(platform *types.Platform, fldPath *field.Path, openStackVa
 	if platform.OpenStack != nil {
 		validate(openstack.Name, platform.OpenStack, func(f *field.Path) field.ErrorList {
 			return openstackvalidation.ValidatePlatform(platform.OpenStack, f, openStackValidValuesFetcher)
+		})
+	}
+	if platform.BareMetal != nil {
+		validate(baremetal.Name, platform.BareMetal, func(f *field.Path) field.ErrorList {
+			return baremetalvalidation.ValidatePlatform(platform.BareMetal, f)
 		})
 	}
 	return allErrs
