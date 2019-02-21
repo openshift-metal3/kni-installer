@@ -1,7 +1,7 @@
 package defaults
 
 import (
-	"github.com/openshift/installer/pkg/types/azure"
+	"github.com/openshift-metalkube/kni-installer/pkg/types/azure"
 )
 
 // SetPlatformDefaults sets the defaults for the platform.

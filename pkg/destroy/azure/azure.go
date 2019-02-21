@@ -17,9 +17,9 @@ import (
 	utilerrors "k8s.io/apimachinery/pkg/util/errors"
 	"k8s.io/apimachinery/pkg/util/sets"
 
-	session "github.com/openshift/installer/pkg/asset/installconfig/azure"
-	"github.com/openshift/installer/pkg/destroy"
-	"github.com/openshift/installer/pkg/types"
+	session "github.com/openshift-metalkube/kni-installer/pkg/asset/installconfig/azure"
+	"github.com/openshift-metalkube/kni-installer/pkg/destroy"
+	"github.com/openshift-metalkube/kni-installer/pkg/types"
 )
 
 // ClusterUninstaller holds the various options for the cluster we want to delete.

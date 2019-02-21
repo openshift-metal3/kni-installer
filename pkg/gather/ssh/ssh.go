@@ -6,7 +6,7 @@ import (
 	"os"
 	"path/filepath"
 
-	"github.com/openshift/installer/pkg/lineprinter"
+	"github.com/openshift-metalkube/kni-installer/pkg/lineprinter"
 	"github.com/pkg/errors"
 	"github.com/pkg/sftp"
 	"github.com/sirupsen/logrus"

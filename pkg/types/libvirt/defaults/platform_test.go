@@ -5,7 +5,7 @@ import (
 
 	"github.com/stretchr/testify/assert"
 
-	"github.com/openshift/installer/pkg/types/libvirt"
+	"github.com/openshift-metalkube/kni-installer/pkg/types/libvirt"
 )
 
 func defaultPlatform() *libvirt.Platform {

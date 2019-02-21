@@ -5,7 +5,7 @@ import (
 
 	"github.com/pkg/errors"
 
-	tfexec "github.com/openshift/installer/pkg/terraform/exec"
+	tfexec "github.com/openshift-metalkube/kni-installer/pkg/terraform/exec"
 )
 
 // State in local sparse representation of terraform state that includes

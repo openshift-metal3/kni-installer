@@ -5,12 +5,12 @@ import (
 	"github.com/pkg/errors"
 	survey "gopkg.in/AlecAivazis/survey.v1"
 
-	"github.com/openshift/installer/pkg/asset"
-	awsconfig "github.com/openshift/installer/pkg/asset/installconfig/aws"
-	azureconfig "github.com/openshift/installer/pkg/asset/installconfig/azure"
-	"github.com/openshift/installer/pkg/types/aws"
-	"github.com/openshift/installer/pkg/types/azure"
-	"github.com/openshift/installer/pkg/validate"
+	"github.com/openshift-metalkube/kni-installer/pkg/asset"
+	awsconfig "github.com/openshift-metalkube/kni-installer/pkg/asset/installconfig/aws"
+	azureconfig "github.com/openshift-metalkube/kni-installer/pkg/asset/installconfig/azure"
+	"github.com/openshift-metalkube/kni-installer/pkg/types/aws"
+	"github.com/openshift-metalkube/kni-installer/pkg/types/azure"
+	"github.com/openshift-metalkube/kni-installer/pkg/validate"
 )
 
 type baseDomain struct {
