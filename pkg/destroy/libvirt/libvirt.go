@@ -9,8 +9,8 @@ import (
 	"github.com/pkg/errors"
 	"github.com/sirupsen/logrus"
 
-	"github.com/openshift/installer/pkg/destroy"
-	"github.com/openshift/installer/pkg/types"
+	"github.com/metalkube/kni-installer/pkg/destroy"
+	"github.com/metalkube/kni-installer/pkg/types"
 )
 
 // filterFunc allows filtering based on names.

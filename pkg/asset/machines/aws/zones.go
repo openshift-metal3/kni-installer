@@ -5,7 +5,7 @@ import (
 
 	"github.com/aws/aws-sdk-go/aws"
 	"github.com/aws/aws-sdk-go/service/ec2"
-	awsutil "github.com/openshift/installer/pkg/asset/installconfig/aws"
+	awsutil "github.com/metalkube/kni-installer/pkg/asset/installconfig/aws"
 )
 
 // AvailabilityZones retrieves a list of availability zones for the given region.

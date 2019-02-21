@@ -9,12 +9,12 @@ import (
 	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
 	"k8s.io/utils/pointer"
 
-	"github.com/openshift/installer/pkg/ipnet"
-	"github.com/openshift/installer/pkg/types"
-	"github.com/openshift/installer/pkg/types/aws"
-	"github.com/openshift/installer/pkg/types/libvirt"
-	"github.com/openshift/installer/pkg/types/openstack"
-	"github.com/openshift/installer/pkg/types/openstack/validation/mock"
+	"github.com/metalkube/kni-installer/pkg/ipnet"
+	"github.com/metalkube/kni-installer/pkg/types"
+	"github.com/metalkube/kni-installer/pkg/types/aws"
+	"github.com/metalkube/kni-installer/pkg/types/libvirt"
+	"github.com/metalkube/kni-installer/pkg/types/openstack"
+	"github.com/metalkube/kni-installer/pkg/types/openstack/validation/mock"
 )
 
 func validInstallConfig() *types.InstallConfig {

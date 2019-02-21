@@ -7,15 +7,15 @@ import (
 	"github.com/pkg/errors"
 	survey "gopkg.in/AlecAivazis/survey.v1"
 
-	"github.com/openshift/installer/pkg/asset"
-	awsconfig "github.com/openshift/installer/pkg/asset/installconfig/aws"
-	libvirtconfig "github.com/openshift/installer/pkg/asset/installconfig/libvirt"
-	openstackconfig "github.com/openshift/installer/pkg/asset/installconfig/openstack"
-	"github.com/openshift/installer/pkg/types"
-	"github.com/openshift/installer/pkg/types/aws"
-	"github.com/openshift/installer/pkg/types/libvirt"
-	"github.com/openshift/installer/pkg/types/none"
-	"github.com/openshift/installer/pkg/types/openstack"
+	"github.com/metalkube/kni-installer/pkg/asset"
+	awsconfig "github.com/metalkube/kni-installer/pkg/asset/installconfig/aws"
+	libvirtconfig "github.com/metalkube/kni-installer/pkg/asset/installconfig/libvirt"
+	openstackconfig "github.com/metalkube/kni-installer/pkg/asset/installconfig/openstack"
+	"github.com/metalkube/kni-installer/pkg/types"
+	"github.com/metalkube/kni-installer/pkg/types/aws"
+	"github.com/metalkube/kni-installer/pkg/types/libvirt"
+	"github.com/metalkube/kni-installer/pkg/types/none"
+	"github.com/metalkube/kni-installer/pkg/types/openstack"
 )
 
 // Platform is an asset that queries the user for the platform on which to install

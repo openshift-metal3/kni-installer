@@ -5,7 +5,7 @@ import (
 	"encoding/json"
 	"fmt"
 
-	"github.com/openshift/installer/pkg/types/aws/defaults"
+	"github.com/metalkube/kni-installer/pkg/types/aws/defaults"
 	"github.com/pkg/errors"
 	"sigs.k8s.io/cluster-api-provider-aws/pkg/apis/awsproviderconfig/v1beta1"
 )

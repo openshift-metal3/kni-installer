@@ -8,8 +8,8 @@ import (
 	"github.com/pkg/errors"
 	survey "gopkg.in/AlecAivazis/survey.v1"
 
-	"github.com/openshift/installer/pkg/types/openstack"
-	openstackvalidation "github.com/openshift/installer/pkg/types/openstack/validation"
+	"github.com/metalkube/kni-installer/pkg/types/openstack"
+	openstackvalidation "github.com/metalkube/kni-installer/pkg/types/openstack/validation"
 )
 
 // Platform collects OpenStack-specific configuration.

@@ -3,7 +3,7 @@ package installconfig
 import (
 	"github.com/pborman/uuid"
 
-	"github.com/openshift/installer/pkg/asset"
+	"github.com/metalkube/kni-installer/pkg/asset"
 )
 
 // ClusterID is the unique ID of the cluster, immutable during the cluster's life

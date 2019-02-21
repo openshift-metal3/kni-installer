@@ -3,8 +3,8 @@
 package openstack
 
 import (
-	"github.com/openshift/installer/pkg/types"
-	"github.com/openshift/installer/pkg/types/openstack"
+	"github.com/metalkube/kni-installer/pkg/types"
+	"github.com/metalkube/kni-installer/pkg/types/openstack"
 )
 
 // Metadata converts an install configuration to OpenStack metadata.
