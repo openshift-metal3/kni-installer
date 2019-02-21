@@ -5,6 +5,7 @@ import (
 	"github.com/openshift-metalkube/kni-installer/pkg/types"
 	awsdefaults "github.com/openshift-metalkube/kni-installer/pkg/types/aws/defaults"
 	azuredefaults "github.com/openshift-metalkube/kni-installer/pkg/types/azure/defaults"
+	baremetaldefaults "github.com/openshift-metalkube/kni-installer/pkg/types/baremetal/defaults"
 	gcpdefaults "github.com/openshift-metalkube/kni-installer/pkg/types/gcp/defaults"
 	libvirtdefaults "github.com/openshift-metalkube/kni-installer/pkg/types/libvirt/defaults"
 	nonedefaults "github.com/openshift-metalkube/kni-installer/pkg/types/none/defaults"
@@ -69,6 +70,8 @@ func SetInstallConfigDefaults(c *types.InstallConfig) {
 		openstackdefaults.SetPlatformDefaults(c.Platform.OpenStack)
 	case c.Platform.VSphere != nil:
 		vspheredefaults.SetPlatformDefaults(c.Platform.VSphere, c)
+	case c.Platform.BareMetal != nil:
+		baremetaldefaults.SetPlatformDefaults(c.Platform.BareMetal)
 	case c.Platform.None != nil:
 		nonedefaults.SetPlatformDefaults(c.Platform.None)
 	}

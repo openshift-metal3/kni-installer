@@ -6,6 +6,7 @@ import (
 	"github.com/openshift-metalkube/kni-installer/pkg/ipnet"
 	"github.com/openshift-metalkube/kni-installer/pkg/types/aws"
 	"github.com/openshift-metalkube/kni-installer/pkg/types/azure"
+	"github.com/openshift-metalkube/kni-installer/pkg/types/baremetal"
 	"github.com/openshift-metalkube/kni-installer/pkg/types/gcp"
 	"github.com/openshift-metalkube/kni-installer/pkg/types/libvirt"
 	"github.com/openshift-metalkube/kni-installer/pkg/types/none"
@@ -34,6 +35,7 @@ var (
 	// hidden-but-supported platform names. This list isn't presented
 	// to the user in the interactive wizard.
 	HiddenPlatformNames = []string{
+		baremetal.Name,
 		none.Name,
 		openstack.Name,
 		vsphere.Name,
@@ -95,6 +97,10 @@ type Platform struct {
 	// +optional
 	Azure *azure.Platform `json:"azure,omitempty"`
 
+	// BareMetal is the configuration used when installing on bare metal.
+	// +optional
+	BareMetal *baremetal.Platform `json:"baremetal,omitempty"`
+
 	// GCP is the configuration used when installing on Google Cloud Platform.
 	// +optional
 	GCP *gcp.Platform `json:"gcp,omitempty"`
@@ -127,6 +133,8 @@ func (p *Platform) Name() string {
 		return aws.Name
 	case p.Azure != nil:
 		return azure.Name
+	case p.BareMetal != nil:
+		return baremetal.Name
 	case p.GCP != nil:
 		return gcp.Name
 	case p.Libvirt != nil:

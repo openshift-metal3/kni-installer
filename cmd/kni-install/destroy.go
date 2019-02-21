@@ -9,6 +9,7 @@ import (
 	"github.com/openshift-metalkube/kni-installer/pkg/destroy"
 	_ "github.com/openshift-metalkube/kni-installer/pkg/destroy/aws"
 	_ "github.com/openshift-metalkube/kni-installer/pkg/destroy/azure"
+	_ "github.com/openshift-metalkube/kni-installer/pkg/destroy/baremetal"
 	"github.com/openshift-metalkube/kni-installer/pkg/destroy/bootstrap"
 	_ "github.com/openshift-metalkube/kni-installer/pkg/destroy/libvirt"
 	_ "github.com/openshift-metalkube/kni-installer/pkg/destroy/openstack"
