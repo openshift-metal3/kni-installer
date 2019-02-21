@@ -5,7 +5,7 @@ import (
 	"encoding/json"
 	"fmt"
 
-	"github.com/openshift/installer/pkg/types/aws/defaults"
+	"github.com/openshift-metalkube/kni-installer/pkg/types/aws/defaults"
 	"github.com/pkg/errors"
 	"sigs.k8s.io/cluster-api-provider-aws/pkg/apis/awsproviderconfig/v1beta1"
 )
@@ -71,9 +71,9 @@ func TFVars(masterConfigs []*v1beta1.AWSMachineProviderConfig, workerConfigs []*
 	instanceClass := defaults.InstanceClass(masterConfig.Placement.Region)
 
 	cfg := &config{
-		Region:    masterConfig.Placement.Region,
-		ExtraTags: tags,
-		AMI:       *masterConfig.AMI.ID,
+		Region:                  masterConfig.Placement.Region,
+		ExtraTags:               tags,
+		AMI:                     *masterConfig.AMI.ID,
 		MasterAvailabilityZones: masterAvailabilityZones,
 		WorkerAvailabilityZones: workerAvailabilityZones,
 		BootstrapInstanceType:   fmt.Sprintf("%s.large", instanceClass),

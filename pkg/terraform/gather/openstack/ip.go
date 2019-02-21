@@ -7,7 +7,7 @@ import (
 	"k8s.io/apimachinery/pkg/apis/meta/v1/unstructured"
 	utilerrors "k8s.io/apimachinery/pkg/util/errors"
 
-	"github.com/openshift/installer/pkg/terraform"
+	"github.com/openshift-metalkube/kni-installer/pkg/terraform"
 )
 
 // BootstrapIP returns the ip address for bootstrap host.
