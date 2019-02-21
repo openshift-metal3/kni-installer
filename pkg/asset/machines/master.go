@@ -10,6 +10,7 @@ import (
 	"github.com/metalkube/kni-installer/pkg/asset/ignition/machine"
 	"github.com/metalkube/kni-installer/pkg/asset/installconfig"
 	"github.com/metalkube/kni-installer/pkg/asset/machines/aws"
+	"github.com/metalkube/kni-installer/pkg/asset/machines/baremetal"
 	"github.com/metalkube/kni-installer/pkg/asset/machines/libvirt"
 	"github.com/metalkube/kni-installer/pkg/asset/machines/openstack"
 	"github.com/metalkube/kni-installer/pkg/asset/rhcos"
@@ -128,8 +129,14 @@ func (m *Master) Generate(dependencies asset.Parents) error {
 		}
 		openstack.ConfigMasters(machines, clusterID.InfraID)
 	case baremetaltypes.Name:
-		// FIXME: baremetal
-		return nil
+		mpool := defaultBareMetalMachinePoolPlatform()
+		mpool.Set(ic.Platform.BareMetal.DefaultMachinePlatform)
+		mpool.Set(pool.Platform.BareMetal)
+		pool.Platform.BareMetal = &mpool
+		machines, err = baremetal.Machines(clusterID.ClusterID, ic, pool, "master", "master-user-data")
+		if err != nil {
+			return errors.Wrap(err, "failed to create master machine objects")
+		}
 	default:
 		return fmt.Errorf("invalid Platform")
 	}
