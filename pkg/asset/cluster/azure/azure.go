@@ -2,8 +2,8 @@
 package azure
 
 import (
-	"github.com/openshift/installer/pkg/types"
-	"github.com/openshift/installer/pkg/types/azure"
+	"github.com/openshift-metalkube/kni-installer/pkg/types"
+	"github.com/openshift-metalkube/kni-installer/pkg/types/azure"
 )
 
 // Metadata converts an install configuration to Azure metadata.

@@ -5,7 +5,7 @@ package main
 import (
 	"log"
 
-	"github.com/openshift/installer/data"
+	"github.com/openshift-metalkube/kni-installer/data"
 	"github.com/shurcooL/vfsgen"
 )
 

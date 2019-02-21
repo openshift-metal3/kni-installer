@@ -14,26 +14,26 @@ import (
 	azureprovider "sigs.k8s.io/cluster-api-provider-azure/pkg/apis/azureprovider/v1alpha1"
 	openstackprovider "sigs.k8s.io/cluster-api-provider-openstack/pkg/apis/openstackproviderconfig/v1alpha1"
 
-	"github.com/openshift/installer/pkg/asset"
-	"github.com/openshift/installer/pkg/asset/ignition"
-	"github.com/openshift/installer/pkg/asset/ignition/bootstrap"
-	"github.com/openshift/installer/pkg/asset/ignition/machine"
-	"github.com/openshift/installer/pkg/asset/installconfig"
-	azureconfig "github.com/openshift/installer/pkg/asset/installconfig/azure"
-	"github.com/openshift/installer/pkg/asset/machines"
-	"github.com/openshift/installer/pkg/asset/rhcos"
-	"github.com/openshift/installer/pkg/tfvars"
-	awstfvars "github.com/openshift/installer/pkg/tfvars/aws"
-	azuretfvars "github.com/openshift/installer/pkg/tfvars/azure"
-	libvirttfvars "github.com/openshift/installer/pkg/tfvars/libvirt"
-	openstacktfvars "github.com/openshift/installer/pkg/tfvars/openstack"
-	"github.com/openshift/installer/pkg/types/aws"
-	"github.com/openshift/installer/pkg/types/azure"
-	"github.com/openshift/installer/pkg/types/libvirt"
-	"github.com/openshift/installer/pkg/types/none"
-	"github.com/openshift/installer/pkg/types/openstack"
-	"github.com/openshift/installer/pkg/types/vsphere"
-	"github.com/openshift/installer/pkg/version"
+	"github.com/openshift-metalkube/kni-installer/pkg/asset"
+	"github.com/openshift-metalkube/kni-installer/pkg/asset/ignition"
+	"github.com/openshift-metalkube/kni-installer/pkg/asset/ignition/bootstrap"
+	"github.com/openshift-metalkube/kni-installer/pkg/asset/ignition/machine"
+	"github.com/openshift-metalkube/kni-installer/pkg/asset/installconfig"
+	azureconfig "github.com/openshift-metalkube/kni-installer/pkg/asset/installconfig/azure"
+	"github.com/openshift-metalkube/kni-installer/pkg/asset/machines"
+	"github.com/openshift-metalkube/kni-installer/pkg/asset/rhcos"
+	"github.com/openshift-metalkube/kni-installer/pkg/tfvars"
+	awstfvars "github.com/openshift-metalkube/kni-installer/pkg/tfvars/aws"
+	azuretfvars "github.com/openshift-metalkube/kni-installer/pkg/tfvars/azure"
+	libvirttfvars "github.com/openshift-metalkube/kni-installer/pkg/tfvars/libvirt"
+	openstacktfvars "github.com/openshift-metalkube/kni-installer/pkg/tfvars/openstack"
+	"github.com/openshift-metalkube/kni-installer/pkg/types/aws"
+	"github.com/openshift-metalkube/kni-installer/pkg/types/azure"
+	"github.com/openshift-metalkube/kni-installer/pkg/types/libvirt"
+	"github.com/openshift-metalkube/kni-installer/pkg/types/none"
+	"github.com/openshift-metalkube/kni-installer/pkg/types/openstack"
+	"github.com/openshift-metalkube/kni-installer/pkg/types/vsphere"
+	"github.com/openshift-metalkube/kni-installer/pkg/version"
 )
 
 const (
@@ -267,11 +267,11 @@ func injectInstallInfo(bootstrap []byte) (string, error) {
 		invoker = "<unknown>"
 	}
 
-	config.Storage.Files = append(config.Storage.Files, ignition.FileFromString("/opt/openshift/manifests/openshift-install.yml", "root", 0644, fmt.Sprintf(`---
+	config.Storage.Files = append(config.Storage.Files, ignition.FileFromString("/opt/openshift/manifests/kni-install.yml", "root", 0644, fmt.Sprintf(`---
 apiVersion: v1
 kind: ConfigMap
 metadata:
-  name: openshift-install
+  name: kni-install
   namespace: openshift-config
 data:
   version: "%s"

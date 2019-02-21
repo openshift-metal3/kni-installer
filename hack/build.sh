@@ -16,7 +16,7 @@ fi
 LAUNCH_PATH="${PWD}"
 cd "$(dirname "$0")/.."
 
-PACKAGE_PATH="$(go list -e -f '{{.Dir}}' github.com/openshift/installer)"
+PACKAGE_PATH="$(go list -e -f '{{.Dir}}' github.com/openshift-metalkube/kni-installer)"
 if test -z "${PACKAGE_PATH}"
 then
 	echo "build from your \${GOPATH} (${LAUNCH_PATH} is not in $(go env GOPATH))" 2>&1
@@ -32,9 +32,9 @@ fi
 
 MODE="${MODE:-release}"
 GIT_COMMIT="${SOURCE_GIT_COMMIT:-$(git rev-parse --verify 'HEAD^{commit}')}"
-LDFLAGS="${LDFLAGS} -X github.com/openshift/installer/pkg/version.Raw=$(git describe --always --abbrev=40 --dirty) -X github.com/openshift/installer/pkg/version.Commit=${GIT_COMMIT}"
+LDFLAGS="${LDFLAGS} -X github.com/openshift-metalkube/kni-installer/pkg/version.Raw=$(git describe --always --abbrev=40 --dirty) -X github.com/openshift-metalkube/kni-installer/pkg/version.Commit=${GIT_COMMIT}"
 TAGS="${TAGS:-}"
-OUTPUT="${OUTPUT:-bin/openshift-install}"
+OUTPUT="${OUTPUT:-bin/kni-install}"
 export CGO_ENABLED=0
 
 case "${MODE}" in
@@ -43,7 +43,7 @@ release)
 	TAGS="${TAGS} release"
 	if test -n "${RELEASE_IMAGE}"
 	then
-		LDFLAGS="${LDFLAGS} -X github.com/openshift/installer/pkg/asset/ignition/bootstrap.defaultReleaseImageOriginal=${RELEASE_IMAGE}"
+		LDFLAGS="${LDFLAGS} -X github.com/openshift-metalkube/kni-installer/pkg/asset/ignition/bootstrap.defaultReleaseImageOriginal=${RELEASE_IMAGE}"
 	fi
 	if test "${SKIP_GENERATION}" != y
 	then
@@ -62,4 +62,4 @@ then
 	export CGO_ENABLED=1
 fi
 
-go build -ldflags "${LDFLAGS}" -tags "${TAGS}" -o "${OUTPUT}" ./cmd/openshift-install
+go build -ldflags "${LDFLAGS}" -tags "${TAGS}" -o "${OUTPUT}" ./cmd/kni-install

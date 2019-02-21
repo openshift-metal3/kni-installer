@@ -7,19 +7,19 @@ import (
 	"github.com/pkg/errors"
 	survey "gopkg.in/AlecAivazis/survey.v1"
 
-	"github.com/openshift/installer/pkg/asset"
-	awsconfig "github.com/openshift/installer/pkg/asset/installconfig/aws"
-	azureconfig "github.com/openshift/installer/pkg/asset/installconfig/azure"
-	libvirtconfig "github.com/openshift/installer/pkg/asset/installconfig/libvirt"
-	openstackconfig "github.com/openshift/installer/pkg/asset/installconfig/openstack"
-	vsphereconfig "github.com/openshift/installer/pkg/asset/installconfig/vsphere"
-	"github.com/openshift/installer/pkg/types"
-	"github.com/openshift/installer/pkg/types/aws"
-	"github.com/openshift/installer/pkg/types/azure"
-	"github.com/openshift/installer/pkg/types/libvirt"
-	"github.com/openshift/installer/pkg/types/none"
-	"github.com/openshift/installer/pkg/types/openstack"
-	"github.com/openshift/installer/pkg/types/vsphere"
+	"github.com/openshift-metalkube/kni-installer/pkg/asset"
+	awsconfig "github.com/openshift-metalkube/kni-installer/pkg/asset/installconfig/aws"
+	azureconfig "github.com/openshift-metalkube/kni-installer/pkg/asset/installconfig/azure"
+	libvirtconfig "github.com/openshift-metalkube/kni-installer/pkg/asset/installconfig/libvirt"
+	openstackconfig "github.com/openshift-metalkube/kni-installer/pkg/asset/installconfig/openstack"
+	vsphereconfig "github.com/openshift-metalkube/kni-installer/pkg/asset/installconfig/vsphere"
+	"github.com/openshift-metalkube/kni-installer/pkg/types"
+	"github.com/openshift-metalkube/kni-installer/pkg/types/aws"
+	"github.com/openshift-metalkube/kni-installer/pkg/types/azure"
+	"github.com/openshift-metalkube/kni-installer/pkg/types/libvirt"
+	"github.com/openshift-metalkube/kni-installer/pkg/types/none"
+	"github.com/openshift-metalkube/kni-installer/pkg/types/openstack"
+	"github.com/openshift-metalkube/kni-installer/pkg/types/vsphere"
 )
 
 // Platform is an asset that queries the user for the platform on which to install
@@ -88,7 +88,7 @@ func (a *platform) queryUserForPlatform() (platform string, err error) {
 			Prompt: &survey.Select{
 				Message: "Platform",
 				Options: types.PlatformNames,
-				Help:    "The platform on which the cluster will run.  For a full list of platforms, including those not supported by this wizard, see https://github.com/openshift/installer",
+				Help:    "The platform on which the cluster will run.  For a full list of platforms, including those not supported by this wizard, see https://github.com/openshift-metalkube/kni-installer",
 			},
 			Validate: survey.ComposeValidators(survey.Required, func(ans interface{}) error {
 				choice := ans.(string)

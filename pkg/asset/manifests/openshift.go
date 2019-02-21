@@ -8,19 +8,19 @@ import (
 	"github.com/ghodss/yaml"
 
 	"github.com/gophercloud/utils/openstack/clientconfig"
-	"github.com/openshift/installer/pkg/asset"
-	"github.com/openshift/installer/pkg/asset/installconfig"
-	"github.com/openshift/installer/pkg/asset/installconfig/azure"
-	"github.com/openshift/installer/pkg/asset/machines"
-	openstackmanifests "github.com/openshift/installer/pkg/asset/manifests/openstack"
+	"github.com/openshift-metalkube/kni-installer/pkg/asset"
+	"github.com/openshift-metalkube/kni-installer/pkg/asset/installconfig"
+	"github.com/openshift-metalkube/kni-installer/pkg/asset/installconfig/azure"
+	"github.com/openshift-metalkube/kni-installer/pkg/asset/machines"
+	openstackmanifests "github.com/openshift-metalkube/kni-installer/pkg/asset/manifests/openstack"
 
-	osmachine "github.com/openshift/installer/pkg/asset/machines/openstack"
-	"github.com/openshift/installer/pkg/asset/password"
-	"github.com/openshift/installer/pkg/asset/templates/content/openshift"
-	awstypes "github.com/openshift/installer/pkg/types/aws"
-	azuretypes "github.com/openshift/installer/pkg/types/azure"
-	openstacktypes "github.com/openshift/installer/pkg/types/openstack"
-	vspheretypes "github.com/openshift/installer/pkg/types/vsphere"
+	osmachine "github.com/openshift-metalkube/kni-installer/pkg/asset/machines/openstack"
+	"github.com/openshift-metalkube/kni-installer/pkg/asset/password"
+	"github.com/openshift-metalkube/kni-installer/pkg/asset/templates/content/openshift"
+	awstypes "github.com/openshift-metalkube/kni-installer/pkg/types/aws"
+	azuretypes "github.com/openshift-metalkube/kni-installer/pkg/types/azure"
+	openstacktypes "github.com/openshift-metalkube/kni-installer/pkg/types/openstack"
+	vspheretypes "github.com/openshift-metalkube/kni-installer/pkg/types/vsphere"
 )
 
 const (

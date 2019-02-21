@@ -22,10 +22,10 @@ import (
 	"github.com/sirupsen/logrus"
 	"k8s.io/apimachinery/pkg/util/wait"
 
-	awssession "github.com/openshift/installer/pkg/asset/installconfig/aws"
-	"github.com/openshift/installer/pkg/destroy/providers"
-	"github.com/openshift/installer/pkg/types"
-	"github.com/openshift/installer/pkg/version"
+	awssession "github.com/openshift-metalkube/kni-installer/pkg/asset/installconfig/aws"
+	"github.com/openshift-metalkube/kni-installer/pkg/destroy/providers"
+	"github.com/openshift-metalkube/kni-installer/pkg/types"
+	"github.com/openshift-metalkube/kni-installer/pkg/version"
 )
 
 var (
@@ -673,7 +673,7 @@ func deleteEC2Instance(ec2Client *ec2.EC2, iamClient *iam.IAM, id string, logger
 // This is a bit of hack. Some objects, like Instance Profiles, can not be tagged in AWS.
 // We "normally" find those objects by their relation to other objects. We have found,
 // however, that people regularly delete all of their instances and roles outside of
-// openshift-install destroy cluster. This means that we are unable to find the Instance
+// kni-install destroy cluster. This means that we are unable to find the Instance
 // Profiles.
 //
 // This code is a place to find specific objects like this which might be dangling.

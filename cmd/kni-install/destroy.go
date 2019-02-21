@@ -5,13 +5,13 @@ import (
 	"github.com/sirupsen/logrus"
 	"github.com/spf13/cobra"
 
-	assetstore "github.com/openshift/installer/pkg/asset/store"
-	"github.com/openshift/installer/pkg/destroy"
-	_ "github.com/openshift/installer/pkg/destroy/aws"
-	_ "github.com/openshift/installer/pkg/destroy/azure"
-	"github.com/openshift/installer/pkg/destroy/bootstrap"
-	_ "github.com/openshift/installer/pkg/destroy/libvirt"
-	_ "github.com/openshift/installer/pkg/destroy/openstack"
+	assetstore "github.com/openshift-metalkube/kni-installer/pkg/asset/store"
+	"github.com/openshift-metalkube/kni-installer/pkg/destroy"
+	_ "github.com/openshift-metalkube/kni-installer/pkg/destroy/aws"
+	_ "github.com/openshift-metalkube/kni-installer/pkg/destroy/azure"
+	"github.com/openshift-metalkube/kni-installer/pkg/destroy/bootstrap"
+	_ "github.com/openshift-metalkube/kni-installer/pkg/destroy/libvirt"
+	_ "github.com/openshift-metalkube/kni-installer/pkg/destroy/openstack"
 )
 
 func newDestroyCmd() *cobra.Command {
