@@ -6,7 +6,7 @@ import (
 	"github.com/stretchr/testify/assert"
 	"k8s.io/utils/pointer"
 
-	"github.com/openshift/installer/pkg/types"
+	"github.com/openshift-metalkube/kni-installer/pkg/types"
 )
 
 func defaultMachinePool(name string) *types.MachinePool {

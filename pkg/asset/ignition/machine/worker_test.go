@@ -5,12 +5,12 @@ import (
 
 	"github.com/stretchr/testify/assert"
 
-	"github.com/openshift/installer/pkg/asset"
-	"github.com/openshift/installer/pkg/asset/installconfig"
-	"github.com/openshift/installer/pkg/asset/tls"
-	"github.com/openshift/installer/pkg/ipnet"
-	"github.com/openshift/installer/pkg/types"
-	"github.com/openshift/installer/pkg/types/aws"
+	"github.com/openshift-metalkube/kni-installer/pkg/asset"
+	"github.com/openshift-metalkube/kni-installer/pkg/asset/installconfig"
+	"github.com/openshift-metalkube/kni-installer/pkg/asset/tls"
+	"github.com/openshift-metalkube/kni-installer/pkg/ipnet"
+	"github.com/openshift-metalkube/kni-installer/pkg/types"
+	"github.com/openshift-metalkube/kni-installer/pkg/types/aws"
 )
 
 // TestWorkerGenerate tests generating the worker asset.

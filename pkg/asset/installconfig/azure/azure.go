@@ -9,7 +9,7 @@ import (
 
 	"github.com/Azure/go-autorest/autorest/to"
 
-	"github.com/openshift/installer/pkg/types/azure"
+	"github.com/openshift-metalkube/kni-installer/pkg/types/azure"
 
 	"github.com/pkg/errors"
 	survey "gopkg.in/AlecAivazis/survey.v1"
