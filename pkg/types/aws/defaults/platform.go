@@ -1,7 +1,7 @@
 package defaults
 
 import (
-	"github.com/openshift/installer/pkg/types/aws"
+	"github.com/openshift-metalkube/kni-installer/pkg/types/aws"
 )
 
 var (

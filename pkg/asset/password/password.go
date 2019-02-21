@@ -5,7 +5,7 @@ import (
 	"math/big"
 	"path/filepath"
 
-	"github.com/openshift/installer/pkg/asset"
+	"github.com/openshift-metalkube/kni-installer/pkg/asset"
 	"golang.org/x/crypto/bcrypt"
 )
 
