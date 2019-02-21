@@ -13,13 +13,13 @@ import (
 	"github.com/spf13/cobra"
 	"k8s.io/apimachinery/pkg/apis/meta/v1/unstructured"
 
-	"github.com/openshift/installer/pkg/asset/installconfig"
-	assetstore "github.com/openshift/installer/pkg/asset/store"
-	"github.com/openshift/installer/pkg/terraform"
-	"github.com/openshift/installer/pkg/types"
-	awstypes "github.com/openshift/installer/pkg/types/aws"
-	libvirttypes "github.com/openshift/installer/pkg/types/libvirt"
-	openstacktypes "github.com/openshift/installer/pkg/types/openstack"
+	"github.com/openshift-metalkube/kni-installer/pkg/asset/installconfig"
+	assetstore "github.com/openshift-metalkube/kni-installer/pkg/asset/store"
+	"github.com/openshift-metalkube/kni-installer/pkg/terraform"
+	"github.com/openshift-metalkube/kni-installer/pkg/types"
+	awstypes "github.com/openshift-metalkube/kni-installer/pkg/types/aws"
+	libvirttypes "github.com/openshift-metalkube/kni-installer/pkg/types/libvirt"
+	openstacktypes "github.com/openshift-metalkube/kni-installer/pkg/types/openstack"
 )
 
 func newGatherCmd() *cobra.Command {
