@@ -15,6 +15,7 @@ import (
 	libvirttfvars "github.com/openshift-metalkube/kni-installer/pkg/tfvars/libvirt"
 	openstacktfvars "github.com/openshift-metalkube/kni-installer/pkg/tfvars/openstack"
 	"github.com/openshift-metalkube/kni-installer/pkg/types/aws"
+	"github.com/openshift-metalkube/kni-installer/pkg/types/baremetal"
 	"github.com/openshift-metalkube/kni-installer/pkg/types/libvirt"
 	"github.com/openshift-metalkube/kni-installer/pkg/types/none"
 	"github.com/openshift-metalkube/kni-installer/pkg/types/openstack"
@@ -158,6 +159,8 @@ func (t *TerraformVariables) Generate(parents asset.Parents) error {
 			Filename: fmt.Sprintf(TfPlatformVarsFileName, platform),
 			Data:     data,
 		})
+	case baremetal.Name:
+		// FIXME: baremetal
 	default:
 		logrus.Warnf("unrecognized platform %s", platform)
 	}
