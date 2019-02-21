@@ -7,7 +7,7 @@ import (
 	mcfgv1 "github.com/openshift/machine-config-operator/pkg/apis/machineconfiguration.openshift.io/v1"
 	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
 
-	"github.com/openshift/installer/pkg/asset/ignition"
+	"github.com/openshift-metalkube/kni-installer/pkg/asset/ignition"
 )
 
 // ForHyperthreadingDisabled creates the MachineConfig to disable hyperthreading.

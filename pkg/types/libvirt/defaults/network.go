@@ -1,9 +1,9 @@
 package defaults
 
 import (
-	"github.com/openshift/installer/pkg/ipnet"
+	"github.com/openshift-metalkube/kni-installer/pkg/ipnet"
 
-	"github.com/openshift/installer/pkg/types/libvirt"
+	"github.com/openshift-metalkube/kni-installer/pkg/types/libvirt"
 )
 
 const (

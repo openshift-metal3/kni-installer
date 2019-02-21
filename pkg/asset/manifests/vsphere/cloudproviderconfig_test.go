@@ -5,7 +5,7 @@ import (
 
 	"github.com/stretchr/testify/assert"
 
-	vspheretypes "github.com/openshift/installer/pkg/types/vsphere"
+	vspheretypes "github.com/openshift-metalkube/kni-installer/pkg/types/vsphere"
 )
 
 func TestCloudProviderConfig(t *testing.T) {

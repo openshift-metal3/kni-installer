@@ -2,7 +2,7 @@
 package vsphere
 
 import (
-	"github.com/openshift/installer/pkg/types/vsphere"
+	"github.com/openshift-metalkube/kni-installer/pkg/types/vsphere"
 )
 
 // Platform collects vSphere-specific configuration.

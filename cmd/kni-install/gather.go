@@ -10,16 +10,16 @@ import (
 	"github.com/sirupsen/logrus"
 	"github.com/spf13/cobra"
 
-	"github.com/openshift/installer/pkg/asset/installconfig"
-	assetstore "github.com/openshift/installer/pkg/asset/store"
-	"github.com/openshift/installer/pkg/terraform"
-	gatheraws "github.com/openshift/installer/pkg/terraform/gather/aws"
-	gatherlibvirt "github.com/openshift/installer/pkg/terraform/gather/libvirt"
-	gatheropenstack "github.com/openshift/installer/pkg/terraform/gather/openstack"
-	"github.com/openshift/installer/pkg/types"
-	awstypes "github.com/openshift/installer/pkg/types/aws"
-	libvirttypes "github.com/openshift/installer/pkg/types/libvirt"
-	openstacktypes "github.com/openshift/installer/pkg/types/openstack"
+	"github.com/openshift-metalkube/kni-installer/pkg/asset/installconfig"
+	assetstore "github.com/openshift-metalkube/kni-installer/pkg/asset/store"
+	"github.com/openshift-metalkube/kni-installer/pkg/terraform"
+	gatheraws "github.com/openshift-metalkube/kni-installer/pkg/terraform/gather/aws"
+	gatherlibvirt "github.com/openshift-metalkube/kni-installer/pkg/terraform/gather/libvirt"
+	gatheropenstack "github.com/openshift-metalkube/kni-installer/pkg/terraform/gather/openstack"
+	"github.com/openshift-metalkube/kni-installer/pkg/types"
+	awstypes "github.com/openshift-metalkube/kni-installer/pkg/types/aws"
+	libvirttypes "github.com/openshift-metalkube/kni-installer/pkg/types/libvirt"
+	openstacktypes "github.com/openshift-metalkube/kni-installer/pkg/types/openstack"
 )
 
 func newGatherCmd() *cobra.Command {

@@ -1,8 +1,8 @@
 package conversion
 
 import (
-	"github.com/openshift/installer/pkg/ipnet"
-	"github.com/openshift/installer/pkg/types"
+	"github.com/openshift-metalkube/kni-installer/pkg/ipnet"
+	"github.com/openshift-metalkube/kni-installer/pkg/types"
 	"github.com/pkg/errors"
 )
 
