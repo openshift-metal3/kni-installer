@@ -34,6 +34,7 @@ import (
 	awsdefaults "github.com/openshift-metalkube/kni-installer/pkg/types/aws/defaults"
 	azuretypes "github.com/openshift-metalkube/kni-installer/pkg/types/azure"
 	azuredefaults "github.com/openshift-metalkube/kni-installer/pkg/types/azure/defaults"
+	baremetaltypes "github.com/openshift-metalkube/kni-installer/pkg/types/baremetal"
 	libvirttypes "github.com/openshift-metalkube/kni-installer/pkg/types/libvirt"
 	nonetypes "github.com/openshift-metalkube/kni-installer/pkg/types/none"
 	openstacktypes "github.com/openshift-metalkube/kni-installer/pkg/types/openstack"
@@ -194,6 +195,8 @@ func (w *Worker) Generate(dependencies asset.Parents) error {
 			for _, set := range sets {
 				machineSets = append(machineSets, set)
 			}
+		case baremetaltypes.Name:
+			// FIXME: baremetal
 		case nonetypes.Name, vspheretypes.Name:
 		default:
 			return fmt.Errorf("invalid Platform")
