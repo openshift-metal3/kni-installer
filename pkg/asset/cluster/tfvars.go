@@ -161,7 +161,12 @@ func (t *TerraformVariables) Generate(parents asset.Parents) error {
 			Data:     data,
 		})
 	case baremetal.Name:
-		data, err = baremetaltfvars.TFVars()
+		// FIXME:: baremetal
+		data, err = baremetaltfvars.TFVars(
+			installConfig.Config.Platform.BareMetal.URI,
+			string(*rhcosImage),
+			"baremetal",
+			"brovc")
 		if err != nil {
 			return errors.Wrapf(err, "failed to get %s Terraform variables", platform)
 		}
