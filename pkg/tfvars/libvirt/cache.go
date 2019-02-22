@@ -16,6 +16,12 @@ import (
 	"golang.org/x/sys/unix"
 )
 
+// FIXME: baremetal
+// Export cachedImage for reuse by baremetal
+func CachedImage(uri string) (string, error) {
+	return cachedImage(uri)
+}
+
 // cachedImage leaves non-file:// image URIs unalterered.
 // Other URIs are retrieved with a local cache at
 // $XDG_CACHE_HOME/kni-install/libvirt [1].  This allows you to
