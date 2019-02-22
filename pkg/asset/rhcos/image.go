@@ -62,7 +62,7 @@ func (i *Image) Generate(p asset.Parents) error {
 	case openstack.Name:
 		osimage = "rhcos"
 	case baremetal.Name:
-		// FIXME: baremetal
+		osimage, err = rhcos.QEMU(ctx, rhcos.DefaultChannel)
 	case none.Name:
 	default:
 		return errors.New("invalid Platform")
