@@ -35,6 +35,31 @@ Forking is painful, but ...
   openshift/installer, it's quite beneficial for us to be working in
   that codebase from the start.
 
+## What's next?
+
+### Bootstrap Ignition Customizations
+
+We need to make bare metal specific bootstrap ignition customizations.
+How best to do it? With per platform directories for assets?
+
+### Provisioning Master Nodes
+
+How do we prototype the Ironic based provisioning initially? With a
+path that is completely different from the other platforms?
+
+Would we move to terraform next as something more workable in the
+medium term, since that's what other platforms do?
+
+When we would switch to using baremetal-operator? Would all other
+platforms have to switch from terraform at the same time, or could it
+be bare metal specific initially?
+
+### Using External Ironic
+
+Users may use Ironic to discover and introspect nodes before launching
+kni-install. Does it make sense for kni-install to reuse this rather
+than re-running Ironic on the bootstrap VM.
+
 ## How to rebase?
 
 The kni-installer rebasing branch regularly rebases to latest
