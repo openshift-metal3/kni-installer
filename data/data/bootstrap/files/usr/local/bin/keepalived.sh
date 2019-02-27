@@ -48,7 +48,7 @@ fi
 
 API_DNS=$(sudo awk -F[/:] '/apiServerURL/ {print $5}' /opt/openshift/manifests/cluster-infrastructure-02-config.yml)
 export MASTER_VIP=$(dig +noall +answer "$API_DNS" | awk '{print $NF}')
-INTERFACE=$(get_iface_in_vip_subnet "$MASTER_VIP") envsubst < /etc/keepalived/keepalived.conf.tmpl > /etc/keepalived/keepalived.conf
+env INTERFACE=$(get_iface_in_vip_subnet "$MASTER_VIP") envsubst < /etc/keepalived/keepalived.conf.template > /etc/keepalived/keepalived.conf
 
 podman run \
         --rm \
