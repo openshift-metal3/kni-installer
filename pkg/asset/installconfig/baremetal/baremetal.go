@@ -26,8 +26,25 @@ func Platform() (*baremetal.Platform, error) {
 		return nil, err
 	}
 
+	// FIXME: bare metal - use net.IP type
+	var masterVIP string
+	err = survey.Ask([]*survey.Question{
+		{
+			Prompt: &survey.Input{
+				Message: "Master API VIP",
+				Help:    "The virtual IP address to use for the kubernetes API.",
+				Default: "", // FIXME: bare metal - add a default
+			},
+			Validate: survey.ComposeValidators(survey.Required, ipValidator),
+		},
+	}, &masterVIP)
+	if err != nil {
+		return nil, err
+	}
+
 	return &baremetal.Platform{
-		URI: uri,
+		URI:       uri,
+		MasterVIP: masterVIP,
 	}, nil
 }
 
@@ -35,4 +52,10 @@ func Platform() (*baremetal.Platform, error) {
 // url and has non-empty scheme.
 func uriValidator(ans interface{}) error {
 	return validate.URI(ans.(string))
+}
+
+// ipValidator validates if the answer provided in prompt is a valid
+// IP address.
+func ipValidator(ans interface{}) error {
+	return validate.MasterVIP(ans.(string))
 }

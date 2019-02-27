@@ -13,6 +13,9 @@ func ValidatePlatform(p *baremetal.Platform, fldPath *field.Path) field.ErrorLis
 	if err := validate.URI(p.URI); err != nil {
 		allErrs = append(allErrs, field.Invalid(fldPath.Child("uri"), p.URI, err.Error()))
 	}
+	if err := validate.MasterVIP(p.MasterVIP); err != nil {
+		allErrs = append(allErrs, field.Invalid(fldPath.Child("masterVIP"), p.URI, err.Error()))
+	}
 	if p.DefaultMachinePlatform != nil {
 		allErrs = append(allErrs, ValidateMachinePool(p.DefaultMachinePlatform, fldPath.Child("defaultMachinePlatform"))...)
 	}

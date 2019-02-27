@@ -113,3 +113,9 @@ func URI(uri string) error {
 	}
 	return nil
 }
+
+// MasterVIP checks if the given IP is a valid IP address.
+func MasterVIP(vip string) error {
+	// FIXME: bare metal - add validation
+	return nil
+}
