@@ -1,15 +1,15 @@
 resource "libvirt_volume" "bootstrap" {
-  name           = "${var.cluster_name}-bootstrap"
+  name           = "${var.cluster_id}-bootstrap"
   base_volume_id = "${var.base_volume_id}"
 }
 
 resource "libvirt_ignition" "bootstrap" {
-  name    = "${var.cluster_name}-bootstrap.ign"
+  name    = "${var.cluster_id}-bootstrap.ign"
   content = "${var.ignition}"
 }
 
 resource "libvirt_domain" "bootstrap" {
-  name = "${var.cluster_name}-bootstrap"
+  name = "${var.cluster_id}-bootstrap"
 
   memory = "4096"
 
