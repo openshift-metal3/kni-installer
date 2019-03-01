@@ -62,23 +62,76 @@ than re-running Ironic on the bootstrap VM.
 
 ## How to rebase?
 
-The kni-installer rebasing branch regularly rebases to latest
+The kni-installer `rebasing` branch regularly rebases to latest
 openshift/installer whereas the master branch will never rebase and
 only merges from openshift/installer.
 
-So, the procedure is roughly:
+### Prepare the repo
 
-FIXME: add instructions for rebasing any changes on kni-installer
-master onto the rebasing branch, and then tidying up the patch
-series.
+Checkout this repo and add `github.com/openshift/installer` as a
+remote that we'll call `upstream`:
 
-- Checkout the rebasing branch and find the "Rename to kni-install"
-  commit. Let's call that $RENAME_COMMIT.
-- Fetch latest openshift/installer - let's say you've named its
-  git remote "upstream". It's a good idea to familiarize yourself
-  with the changes since your last rebase.
-- Create a temporary branch from latest openshift/install and
-  redo the rename:
+```sh
+git clone git@github.com:metalkube/kni-installer.git
+cd kni-installer
+git remote add -f upstream git@github.com:openshift/installer.git
+```
+
+### Update the rebasing branch
+
+Identify the last upstream commit that we merged:
+
+```sh
+BASE_COMMIT=$(git merge-base upstream/master origin/master)
+```
+
+Identify the changes that have been recently merged into `master`
+which need to be incorporated into the `rebasing` branch. The
+`rebasing` branch should always be tagged with a name that identifies
+its corresponding commit on master, so:
+
+```sh
+MASTER_COMMIT=$(git describe --tags rebasing | sed 's/.*-//')
+git checkout -b tmp-rebase origin/master
+git rebase --onto rebasing $MASTER_COMMIT
+git branch -M rebasing
+```
+
+Tidy up the `rebasing` branch into a coherent patch series:
+
+```sh
+git rebase -i $BASE_COMMIT
+git diff origin/master         # confirm there are no differences
+```
+
+Force-push the updated `rebasing` branch (and its corresponding tag)
+which matches the latest `master` branch:
+
+```sh
+git push origin +rebasing:rebasing
+git tag rebasing-$(date -I)-$(git rev-parse --short origin/master) rebasing
+git push origin tag rebasing-$(date -I)-$(git rev-parse --short origin/master)
+```
+
+### Rebase to latest upstream
+
+Still on the `rebasing` branch, identify the "Rename to kni-install"
+commit:
+
+```sh
+RENAME_COMMIT=$(git log --oneline $BASE_COMMIT..HEAD | tail -1 | awk '{print $1}')
+```
+
+Fetch latest openshift/installer. It's a good idea to familiarize
+yourself with the changes since the last rebase.
+
+```sh
+git fetch -t upstream
+git log --graph $BASE_COMMIT..upstream/master
+```
+
+Create a temporary branch from latest openshift/install and redo the
+rename commit:
 
 ```sh
 git checkout -b tmp-rebase upstream/master
@@ -90,17 +143,52 @@ TAGS=libvirt ./hack/build.sh
 git commit -a -c $RENAME_COMMIT
 ```
 
-- Now switch back to your rebasing branch and rebase all the
-  changes onto this new commit.
+Now switch back to your rebasing branch and rebase all the changes
+onto this new commit. This is where you will have to carefully resolve
+merge conflicts!
 
 ```sh
 git rebase --onto tmp-rebase $RENAME_COMMIT
+git branch -D tmp-rebase
+BASE_COMMIT=$(git merge-base upstream/master HEAD)
+```
+
+It's a good idea at this point to check that each commit in the series
+builds:
+
+```sh
+git rebase -i $BASE_COMMIT
 TAGS=libvirt ./hack/build.sh
 ```
 
-- Obviously, fix any merge conflicts. It's a good idea to check
-  that individual commit builds.
+### Merge latest upstream
 
-FIXME: add a procedure for merging latest upstream/master into
-kni-installer master, re-using the tree from the rebasing
-branch.
+With all the hard rebasing work done, we can now update the master
+branch to incorporate this work as a merge commit!
+
+```sh
+git checkout master
+git merge --ff-only origin/master
+git merge upstream/master
+```
+
+This merge will more than likely fail with conflicts, but we can
+resolve those by using the source tree from the `rebasing` branch.
+
+```sh
+git checkout rebasing .
+git commit -a -m 'Merge latest openshift/installer'
+```
+
+### Push your changes
+
+Now we push the merged `master` branch, the rebased `rebasing` branch,
+and the corresponding `rebasing` tag.
+
+```sh
+git push origin master:master
+git push origin +rebasing:rebasing
+git tag rebasing-$(date -I)-$(git rev-parse --short origin/master) rebasing
+git push origin tag rebasing-$(date -I)-$(git rev-parse --short
+origin/master)
+```
