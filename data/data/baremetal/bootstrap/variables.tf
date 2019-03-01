@@ -1,11 +1,11 @@
-variable "base_volume_id" {
-  type        = "string"
-  description = "The ID of the base volume for the bootstrap node."
-}
-
 variable "cluster_id" {
   type        = "string"
   description = "The identifier for the cluster."
+}
+
+variable "image" {
+  description = "The URL of the OS disk image"
+  type        = "string"
 }
 
 variable "ignition" {
