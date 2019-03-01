@@ -8,7 +8,7 @@ import (
 )
 
 // Metadata converts an install configuration to bare metal metadata.
-func Metadata(clusterID string, config *types.InstallConfig) *baremetal.Metadata {
+func Metadata(infraID string, config *types.InstallConfig) *baremetal.Metadata {
 	return &baremetal.Metadata{
 		URI: config.Platform.BareMetal.URI,
 	}

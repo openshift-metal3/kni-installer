@@ -52,18 +52,19 @@ func (m *Metadata) Generate(parents asset.Parents) (err error) {
 
 	metadata := &types.ClusterMetadata{
 		ClusterName: installConfig.Config.ObjectMeta.Name,
-		ClusterID:   clusterID.ClusterID,
+		ClusterID:   clusterID.UUID,
+		InfraID:     clusterID.InfraID,
 	}
 
 	switch {
 	case installConfig.Config.Platform.AWS != nil:
-		metadata.ClusterPlatformMetadata.AWS = aws.Metadata(clusterID.ClusterID, installConfig.Config)
+		metadata.ClusterPlatformMetadata.AWS = aws.Metadata(clusterID.UUID, clusterID.InfraID, installConfig.Config)
 	case installConfig.Config.Platform.Libvirt != nil:
 		metadata.ClusterPlatformMetadata.Libvirt = libvirt.Metadata(installConfig.Config)
 	case installConfig.Config.Platform.OpenStack != nil:
-		metadata.ClusterPlatformMetadata.OpenStack = openstack.Metadata(clusterID.ClusterID, installConfig.Config)
+		metadata.ClusterPlatformMetadata.OpenStack = openstack.Metadata(clusterID.InfraID, installConfig.Config)
 	case installConfig.Config.Platform.BareMetal != nil:
-		metadata.ClusterPlatformMetadata.BareMetal = baremetal.Metadata(clusterID.ClusterID, installConfig.Config)
+		metadata.ClusterPlatformMetadata.BareMetal = baremetal.Metadata(clusterID.InfraID, installConfig.Config)
 	default:
 		return errors.Errorf("no known platform")
 	}

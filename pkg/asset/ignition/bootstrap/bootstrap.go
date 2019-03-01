@@ -32,7 +32,6 @@ const (
 	rootDir              = "/opt/openshift"
 	bootstrapIgnFilename = "bootstrap.ign"
 	etcdCertSignerImage  = "quay.io/coreos/kube-etcd-signer-server:678cc8e6841e2121ebfdb6e2db568fce290b67d6"
-	etcdctlImage         = "quay.io/coreos/etcd:v3.2.14"
 	ignitionUser         = "core"
 )
 
@@ -45,7 +44,6 @@ var (
 type bootstrapTemplateData struct {
 	EtcdCertSignerImage string
 	EtcdCluster         string
-	EtcdctlImage        string
 	PullSecret          string
 	ReleaseImage        string
 }
@@ -62,13 +60,13 @@ var _ asset.WritableAsset = (*Bootstrap)(nil)
 func (a *Bootstrap) Dependencies() []asset.Asset {
 	return []asset.Asset{
 		&installconfig.InstallConfig{},
-		&kubeconfig.Admin{},
 		&kubeconfig.AdminClient{},
 		&kubeconfig.Kubelet{},
 		&kubeconfig.KubeletClient{},
 		&machines.Master{},
 		&manifests.Manifests{},
 		&manifests.Openshift{},
+		&tls.AdminKubeConfigCABundle{},
 		&tls.AggregatorCA{},
 		&tls.AggregatorCABundle{},
 		&tls.AggregatorClientCertKey{},
@@ -90,6 +88,8 @@ func (a *Bootstrap) Dependencies() []asset.Asset {
 		&tls.KubeAPIServerServiceNetworkCABundle{},
 		&tls.KubeAPIServerServiceNetworkServerCertKey{},
 		&tls.KubeAPIServerServiceNetworkSignerCertKey{},
+		&tls.KubeAPIServerCompleteCABundle{},
+		&tls.KubeAPIServerCompleteClientCABundle{},
 		&tls.KubeAPIServerToKubeletCABundle{},
 		&tls.KubeAPIServerToKubeletClientCertKey{},
 		&tls.KubeAPIServerToKubeletSignerCertKey{},
@@ -98,6 +98,7 @@ func (a *Bootstrap) Dependencies() []asset.Asset {
 		&tls.KubeControlPlaneKubeControllerManagerClientCertKey{},
 		&tls.KubeControlPlaneKubeSchedulerClientCertKey{},
 		&tls.KubeControlPlaneSignerCertKey{},
+		&tls.KubeletBootstrapCABundle{},
 		&tls.KubeletCertKey{},
 		&tls.KubeletClientCABundle{},
 		&tls.KubeletClientCertKey{},
@@ -180,7 +181,6 @@ func (a *Bootstrap) getTemplateData(installConfig *types.InstallConfig) (*bootst
 
 	return &bootstrapTemplateData{
 		EtcdCertSignerImage: etcdCertSignerImage,
-		EtcdctlImage:        etcdctlImage,
 		PullSecret:          installConfig.PullSecret,
 		ReleaseImage:        releaseImage,
 		EtcdCluster:         strings.Join(etcdEndpoints, ","),
@@ -370,11 +370,11 @@ func (a *Bootstrap) addParentFiles(dependencies asset.Parents) {
 	}
 
 	for _, asset := range []asset.WritableAsset{
-		&kubeconfig.Admin{},
 		&kubeconfig.AdminClient{},
 		&kubeconfig.Kubelet{},
 		&kubeconfig.KubeletClient{},
 		&kubeconfig.KubeletClient{},
+		&tls.AdminKubeConfigCABundle{},
 		&tls.AggregatorCA{},
 		&tls.AggregatorCABundle{},
 		&tls.AggregatorClientCertKey{},
@@ -395,6 +395,8 @@ func (a *Bootstrap) addParentFiles(dependencies asset.Parents) {
 		&tls.KubeAPIServerServiceNetworkCABundle{},
 		&tls.KubeAPIServerServiceNetworkServerCertKey{},
 		&tls.KubeAPIServerServiceNetworkSignerCertKey{},
+		&tls.KubeAPIServerCompleteCABundle{},
+		&tls.KubeAPIServerCompleteClientCABundle{},
 		&tls.KubeAPIServerToKubeletCABundle{},
 		&tls.KubeAPIServerToKubeletClientCertKey{},
 		&tls.KubeAPIServerToKubeletSignerCertKey{},
@@ -403,6 +405,7 @@ func (a *Bootstrap) addParentFiles(dependencies asset.Parents) {
 		&tls.KubeControlPlaneKubeControllerManagerClientCertKey{},
 		&tls.KubeControlPlaneKubeSchedulerClientCertKey{},
 		&tls.KubeControlPlaneSignerCertKey{},
+		&tls.KubeletBootstrapCABundle{},
 		&tls.KubeletCertKey{},
 		&tls.KubeletClientCABundle{},
 		&tls.KubeletClientCertKey{},

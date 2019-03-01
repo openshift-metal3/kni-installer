@@ -20,6 +20,7 @@ var installPermissions = []string{
 	"ec2:AttachInternetGateway",
 	"ec2:AuthorizeSecurityGroupEgress",
 	"ec2:AuthorizeSecurityGroupIngress",
+	"ec2:CopyImage",
 	"ec2:CreateDhcpOptions",
 	"ec2:CreateInternetGateway",
 	"ec2:CreateNatGateway",
@@ -31,6 +32,7 @@ var installPermissions = []string{
 	"ec2:CreateVpc",
 	"ec2:CreateVpcEndpoint",
 	"ec2:CreateVolume",
+	"ec2:DeregisterImage",
 	"ec2:DescribeAccountAttributes",
 	"ec2:DescribeAddresses",
 	"ec2:DescribeAvailabilityZones",
@@ -195,7 +197,7 @@ func ValidateCreds(ssn *session.Session) error {
 	}
 
 	// Check whether we can do an installation
-	logger := logrus.New()
+	logger := logrus.StandardLogger()
 	canInstall, err := credvalidator.CheckPermissionsAgainstActions(client, installPermissions, logger)
 	if err != nil {
 		return errors.Wrap(err, "checking install permissions")
@@ -209,6 +211,9 @@ func ValidateCreds(ssn *session.Session) error {
 	if err != nil {
 		return errors.Wrap(err, "mint credentials check")
 	}
+	if canMint {
+		return nil
+	}
 
 	// Check whether we can use the current credentials in passthrough mode to satisfy
 	// cluster services needing to interact with the cloud
@@ -216,10 +221,9 @@ func ValidateCreds(ssn *session.Session) error {
 	if err != nil {
 		return errors.Wrap(err, "passthrough credentials check")
 	}
-
-	if !canMint && !canPassthrough {
-		return errors.New("AWS credentials cannot be used to either create new creds or use as-is")
+	if canPassthrough {
+		return nil
 	}
 
-	return nil
+	return errors.New("AWS credentials cannot be used to either create new creds or use as-is")
 }

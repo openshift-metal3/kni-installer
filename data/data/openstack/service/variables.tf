@@ -8,13 +8,9 @@ variable "swift_container" {
   description = "The Swift container name for bootstrap ignition file."
 }
 
-variable "cluster_name" {
-  type        = "string"
-  description = "The name of the cluster."
-}
-
 variable "cluster_id" {
-  type = "string"
+  type        = "string"
+  description = "The identifier for the cluster."
 }
 
 variable "cluster_domain" {
@@ -44,6 +40,10 @@ variable "master_ips" {
 
 variable "master_port_names" {
   type = "list"
+}
+
+variable "bootstrap_ip" {
+  type = "string"
 }
 
 variable "lb_floating_ip" {
