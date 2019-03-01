@@ -1,14 +1,15 @@
+variable "availability_zones" {
+  type        = "list"
+  description = "List of the availability zones in which to create the masters. The length of this list must match instance_count."
+}
+
+variable "az_to_subnet_id" {
+  type        = "map"
+  description = "Map from availability zone name to the ID of the subnet in that availability zone"
+}
+
 variable "cluster_id" {
   type = "string"
-}
-
-variable "cluster_name" {
-  type = "string"
-}
-
-variable "dns_server_ip" {
-  type    = "string"
-  default = ""
 }
 
 variable "instance_type" {
@@ -47,10 +48,6 @@ variable "root_volume_size" {
 variable "root_volume_type" {
   type        = "string"
   description = "The type of volume for the root block device."
-}
-
-variable "subnet_ids" {
-  type = "list"
 }
 
 variable "tags" {
