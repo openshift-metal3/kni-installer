@@ -1,6 +1,6 @@
 resource "libvirt_volume" "bootstrap" {
-  name           = "${var.cluster_id}-bootstrap"
-  base_volume_id = "${var.base_volume_id}"
+  name   = "${var.cluster_id}-bootstrap"
+  source = "${var.image}"
 }
 
 resource "libvirt_ignition" "bootstrap" {
