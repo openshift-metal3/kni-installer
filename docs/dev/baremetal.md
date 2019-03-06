@@ -108,9 +108,9 @@ Force-push the updated `rebasing` branch (and its corresponding tag)
 which matches the latest `master` branch:
 
 ```sh
-git push origin +rebasing:rebasing
 git tag rebasing-$(date -I)-$(git rev-parse --short origin/master) rebasing
 git push origin tag rebasing-$(date -I)-$(git rev-parse --short origin/master)
+git push origin +rebasing:rebasing
 ```
 
 ### Rebase to latest upstream
@@ -148,6 +148,7 @@ onto this new commit. This is where you will have to carefully resolve
 merge conflicts!
 
 ```sh
+git checkout rebasing
 git rebase --onto tmp-rebase $RENAME_COMMIT
 git branch -D tmp-rebase
 BASE_COMMIT=$(git merge-base upstream/master HEAD)
@@ -182,13 +183,13 @@ git commit -a -m 'Merge latest openshift/installer'
 
 ### Push your changes
 
-Now we push the merged `master` branch, the rebased `rebasing` branch,
-and the corresponding `rebasing` tag.
+Now we submit a PR for the merged `master` branch, and when it has
+mered, push the rebased `rebasing` branch, and the corresponding
+`rebasing` tag:
 
 ```sh
-git push origin master:master
-git push origin +rebasing:rebasing
+git fetch origin
 git tag rebasing-$(date -I)-$(git rev-parse --short origin/master) rebasing
-git push origin tag rebasing-$(date -I)-$(git rev-parse --short
-origin/master)
+git push origin tag rebasing-$(date -I)-$(git rev-parse --short origin/master)
+git push origin +rebasing:rebasing
 ```
