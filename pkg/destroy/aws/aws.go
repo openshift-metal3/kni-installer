@@ -3,6 +3,7 @@ package aws
 import (
 	"fmt"
 	"strings"
+	"time"
 
 	"github.com/aws/aws-sdk-go/aws"
 	"github.com/aws/aws-sdk-go/aws/arn"
@@ -19,6 +20,7 @@ import (
 	"github.com/aws/aws-sdk-go/service/s3/s3manager"
 	"github.com/pkg/errors"
 	"github.com/sirupsen/logrus"
+	"k8s.io/apimachinery/pkg/util/wait"
 
 	"github.com/metalkube/kni-installer/pkg/version"
 )
@@ -108,90 +110,92 @@ func (o *ClusterUninstaller) Run() error {
 		logger:  o.Logger,
 	}
 
-	var loopError error
-	for len(tagClients) > 0 || loopError != nil {
-		loopError = nil
-		nextTagClients := tagClients[:0]
-		for _, tagClient := range tagClients {
-			matched := false
-			for _, filter := range o.Filters {
-				o.Logger.Debugf("search for and delete matching resources by tag in %s matching %#+v", tagClientNames[tagClient], filter)
-				tagFilters := make([]*resourcegroupstaggingapi.TagFilter, 0, len(filter))
-				for key, value := range filter {
-					tagFilters = append(tagFilters, &resourcegroupstaggingapi.TagFilter{
-						Key:    aws.String(key),
-						Values: []*string{aws.String(value)},
-					})
-				}
-				err = tagClient.GetResourcesPages(
-					&resourcegroupstaggingapi.GetResourcesInput{TagFilters: tagFilters},
-					func(results *resourcegroupstaggingapi.GetResourcesOutput, lastPage bool) bool {
-						for _, resource := range results.ResourceTagMappingList {
-							arn := *resource.ResourceARN
-							if _, ok := deleted[arn]; !ok {
-								matched = true
-								err := deleteARN(awsSession, arn, o.Logger)
-								if err != nil {
-									err = errors.Wrapf(err, "deleting %s", arn)
-									o.Logger.Debug(err)
-									continue
+	return wait.PollImmediateInfinite(
+		time.Second*10,
+		func() (done bool, err error) {
+			var loopError error
+			nextTagClients := tagClients[:0]
+			for _, tagClient := range tagClients {
+				matched := false
+				for _, filter := range o.Filters {
+					o.Logger.Debugf("search for and delete matching resources by tag in %s matching %#+v", tagClientNames[tagClient], filter)
+					tagFilters := make([]*resourcegroupstaggingapi.TagFilter, 0, len(filter))
+					for key, value := range filter {
+						tagFilters = append(tagFilters, &resourcegroupstaggingapi.TagFilter{
+							Key:    aws.String(key),
+							Values: []*string{aws.String(value)},
+						})
+					}
+					err = tagClient.GetResourcesPages(
+						&resourcegroupstaggingapi.GetResourcesInput{TagFilters: tagFilters},
+						func(results *resourcegroupstaggingapi.GetResourcesOutput, lastPage bool) bool {
+							for _, resource := range results.ResourceTagMappingList {
+								arn := *resource.ResourceARN
+								if _, ok := deleted[arn]; !ok {
+									matched = true
+									err := deleteARN(awsSession, arn, filter, o.Logger)
+									if err != nil {
+										err = errors.Wrapf(err, "deleting %s", arn)
+										o.Logger.Debug(err)
+										continue
+									}
+									deleted[arn] = exists
 								}
-								deleted[arn] = exists
 							}
-						}
 
-						return !lastPage
-					},
-				)
-				if err != nil {
-					err = errors.Wrapf(err, "get tagged resources")
-					o.Logger.Info(err)
-					matched = true
-					loopError = err
+							return !lastPage
+						},
+					)
+					if err != nil {
+						err = errors.Wrap(err, "get tagged resources")
+						o.Logger.Info(err)
+						matched = true
+						loopError = err
+					}
+				}
+
+				if matched {
+					nextTagClients = append(nextTagClients, tagClient)
+				} else {
+					o.Logger.Debugf("no deletions from %s, removing client", tagClientNames[tagClient])
+				}
+			}
+			tagClients = nextTagClients
+
+			o.Logger.Debug("search for IAM roles")
+			arns, err := iamRoleSearch.arns()
+			if err != nil {
+				o.Logger.Info(err)
+				loopError = err
+			}
+
+			o.Logger.Debug("search for IAM users")
+			userARNs, err := iamUserSearch.arns()
+			if err != nil {
+				o.Logger.Info(err)
+				loopError = err
+			}
+			arns = append(arns, userARNs...)
+
+			if len(arns) > 0 {
+				o.Logger.Debug("delete IAM roles and users")
+			}
+			for _, arn := range arns {
+				if _, ok := deleted[arn]; !ok {
+					err = deleteARN(awsSession, arn, nil, o.Logger)
+					if err != nil {
+						err = errors.Wrapf(err, "deleting %s", arn)
+						o.Logger.Debug(err)
+						loopError = err
+						continue
+					}
+					deleted[arn] = exists
 				}
 			}
 
-			if matched {
-				nextTagClients = append(nextTagClients, tagClient)
-			} else {
-				o.Logger.Debugf("no deletions from %s, removing client", tagClientNames[tagClient])
-			}
-		}
-		tagClients = nextTagClients
-
-		o.Logger.Debug("search for IAM roles")
-		arns, err := iamRoleSearch.arns()
-		if err != nil {
-			o.Logger.Info(err)
-			loopError = err
-		}
-
-		o.Logger.Debug("search for IAM users")
-		userARNs, err := iamUserSearch.arns()
-		if err != nil {
-			o.Logger.Info(err)
-			loopError = err
-		}
-		arns = append(arns, userARNs...)
-
-		if len(arns) > 0 {
-			o.Logger.Debug("delete IAM roles and users")
-		}
-		for _, arn := range arns {
-			if _, ok := deleted[arn]; !ok {
-				err = deleteARN(awsSession, arn, o.Logger)
-				if err != nil {
-					err = errors.Wrapf(err, "deleting %s", arn)
-					o.Logger.Debug(err)
-					loopError = err
-					continue
-				}
-				deleted[arn] = exists
-			}
-		}
-	}
-
-	return nil
+			return len(tagClients) == 0 && loopError == nil, nil
+		},
+	)
 }
 
 func splitSlash(name string, input string) (base string, suffix string, err error) {
@@ -221,6 +225,17 @@ func tagMatch(filters []Filter, tags map[string]string) bool {
 		}
 	}
 	return len(filters) == 0
+}
+
+func tagsForFilter(filter Filter) []*ec2.Tag {
+	tags := make([]*ec2.Tag, 0, len(filter))
+	for key, value := range filter {
+		tags = append(tags, &ec2.Tag{
+			Key:   aws.String(key),
+			Value: aws.String(value),
+		})
+	}
+	return tags
 }
 
 type iamRoleSearch struct {
@@ -417,7 +432,7 @@ func findPublicRoute53(client *route53.Route53, dnsName string, logger logrus.Fi
 	return "", nil
 }
 
-func deleteARN(session *session.Session, arnString string, logger logrus.FieldLogger) error {
+func deleteARN(session *session.Session, arnString string, filter Filter, logger logrus.FieldLogger) error {
 	logger = logger.WithField("arn", arnString)
 
 	parsed, err := arn.Parse(arnString)
@@ -427,7 +442,7 @@ func deleteARN(session *session.Session, arnString string, logger logrus.FieldLo
 
 	switch parsed.Service {
 	case "ec2":
-		return deleteEC2(session, parsed, logger)
+		return deleteEC2(session, parsed, filter, logger)
 	case "elasticloadbalancing":
 		return deleteElasticLoadBalancing(session, parsed, logger)
 	case "iam":
@@ -441,7 +456,7 @@ func deleteARN(session *session.Session, arnString string, logger logrus.FieldLo
 	}
 }
 
-func deleteEC2(session *session.Session, arn arn.ARN, logger logrus.FieldLogger) error {
+func deleteEC2(session *session.Session, arn arn.ARN, filter Filter, logger logrus.FieldLogger) error {
 	client := ec2.New(session)
 
 	resourceType, id, err := splitSlash("resource", arn.Resource)
@@ -456,7 +471,7 @@ func deleteEC2(session *session.Session, arn arn.ARN, logger logrus.FieldLogger)
 	case "elastic-ip":
 		return deleteEC2ElasticIP(client, id, logger)
 	case "image":
-		return deleteEC2Image(client, id, logger)
+		return deleteEC2Image(client, id, filter, logger)
 	case "instance":
 		return deleteEC2Instance(client, iam.New(session), id, logger)
 	case "internet-gateway":
@@ -467,6 +482,10 @@ func deleteEC2(session *session.Session, arn arn.ARN, logger logrus.FieldLogger)
 		return deleteEC2RouteTable(client, id, logger)
 	case "security-group":
 		return deleteEC2SecurityGroup(client, id, logger)
+	case "snapshot":
+		return deleteEC2Snapshot(client, id, logger)
+	case "network-interface":
+		return deleteEC2NetworkInterface(client, id, logger)
 	case "subnet":
 		return deleteEC2Subnet(client, id, logger)
 	case "volume":
@@ -493,8 +512,35 @@ func deleteEC2DHCPOptions(client *ec2.EC2, id string, logger logrus.FieldLogger)
 	return nil
 }
 
-func deleteEC2Image(client *ec2.EC2, id string, logger logrus.FieldLogger) error {
-	_, err := client.DeregisterImage(&ec2.DeregisterImageInput{
+func deleteEC2Image(client *ec2.EC2, id string, filter Filter, logger logrus.FieldLogger) error {
+	// tag the snapshots used by the AMI so that the snapshots are matched
+	// by the filter and deleted
+	response, err := client.DescribeImages(&ec2.DescribeImagesInput{
+		ImageIds: []*string{&id},
+	})
+	if err != nil {
+		if err.(awserr.Error).Code() == "InvalidAMIID.NotFound" {
+			return nil
+		}
+		return err
+	}
+	snapshots := []*string{}
+	for _, image := range response.Images {
+		for _, bdm := range image.BlockDeviceMappings {
+			if bdm.Ebs != nil && bdm.Ebs.SnapshotId != nil {
+				snapshots = append(snapshots, bdm.Ebs.SnapshotId)
+			}
+		}
+	}
+	_, err = client.CreateTags(&ec2.CreateTagsInput{
+		Resources: snapshots,
+		Tags:      tagsForFilter(filter),
+	})
+	if err != nil {
+		err = errors.Wrapf(err, "tagging snapshots for %s", id)
+	}
+
+	_, err = client.DeregisterImage(&ec2.DeregisterImageInput{
 		ImageId: &id,
 	})
 	if err != nil {
@@ -741,6 +787,36 @@ func deleteEC2SecurityGroup(client *ec2.EC2, id string, logger logrus.FieldLogge
 	})
 	if err != nil {
 		if err.(awserr.Error).Code() == "InvalidGroup.NotFound" {
+			return nil
+		}
+		return err
+	}
+
+	logger.Info("Deleted")
+	return nil
+}
+
+func deleteEC2Snapshot(client *ec2.EC2, id string, logger logrus.FieldLogger) error {
+	_, err := client.DeleteSnapshot(&ec2.DeleteSnapshotInput{
+		SnapshotId: &id,
+	})
+	if err != nil {
+		if err.(awserr.Error).Code() == "InvalidSnapshotID.NotFound" {
+			return nil
+		}
+		return err
+	}
+
+	logger.Info("Deleted")
+	return nil
+}
+
+func deleteEC2NetworkInterface(client *ec2.EC2, id string, logger logrus.FieldLogger) error {
+	_, err := client.DeleteNetworkInterface(&ec2.DeleteNetworkInterfaceInput{
+		NetworkInterfaceId: aws.String(id),
+	})
+	if err != nil {
+		if err.(awserr.Error).Code() == "InvalidNetworkInterfaceID.NotFound" {
 			return nil
 		}
 		return err

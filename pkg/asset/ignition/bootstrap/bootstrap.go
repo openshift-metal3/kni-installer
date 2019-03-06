@@ -76,6 +76,9 @@ func (a *Bootstrap) Dependencies() []asset.Asset {
 		&tls.EtcdCA{},
 		&tls.EtcdCABundle{},
 		&tls.EtcdClientCertKey{},
+		&tls.EtcdMetricsCABundle{},
+		&tls.EtcdMetricsSignerClientCertKey{},
+		&tls.EtcdMetricsSignerServerCertKey{},
 		&tls.EtcdSignerCertKey{},
 		&tls.EtcdSignerClientCertKey{},
 		&tls.JournalCertKey{},
@@ -385,6 +388,9 @@ func (a *Bootstrap) addParentFiles(dependencies asset.Parents) {
 		&tls.EtcdCA{},
 		&tls.EtcdCABundle{},
 		&tls.EtcdClientCertKey{},
+		&tls.EtcdMetricsCABundle{},
+		&tls.EtcdMetricsSignerClientCertKey{},
+		&tls.EtcdMetricsSignerServerCertKey{},
 		&tls.EtcdSignerCertKey{},
 		&tls.EtcdSignerClientCertKey{},
 		&tls.KubeAPIServerLBCABundle{},
@@ -448,7 +454,7 @@ func (a *Bootstrap) Load(f asset.FileFetcher) (found bool, err error) {
 
 	config := &igntypes.Config{}
 	if err := json.Unmarshal(file.Data, config); err != nil {
-		return false, errors.Wrapf(err, "failed to unmarshal")
+		return false, errors.Wrap(err, "failed to unmarshal")
 	}
 
 	a.File, a.Config = file, config

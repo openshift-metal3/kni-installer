@@ -98,7 +98,7 @@ func provider(clusterID string, platform *openstack.Platform, mpool *openstack.M
 				Subnets: []openstackprovider.SubnetParam{
 					{
 						Filter: openstackprovider.SubnetFilter{
-							Name: "nodes",
+							Name: fmt.Sprintf("%s-nodes", clusterID),
 							Tags: fmt.Sprintf("%s=%s", "openshiftClusterID", clusterID),
 						},
 					},
@@ -106,7 +106,11 @@ func provider(clusterID string, platform *openstack.Platform, mpool *openstack.M
 			},
 		},
 		AvailabilityZone: az,
-		SecurityGroups:   []string{role},
+		SecurityGroups: []openstackprovider.SecurityGroupParam{
+			{
+				Name: role,
+			},
+		},
 		// TODO(flaper87): Trunk support missing. Need to add it back
 	}, nil
 }

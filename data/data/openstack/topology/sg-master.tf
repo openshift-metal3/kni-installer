@@ -1,5 +1,5 @@
 resource "openstack_networking_secgroup_v2" "master" {
-  name = "master"
+  name = "${var.cluster_id}-master"
   tags = ["openshiftClusterID=${var.cluster_id}"]
 }
 
@@ -104,6 +104,25 @@ resource "openstack_networking_secgroup_rule_v2" "master_ingress_internal_from_w
   direction         = "ingress"
   ethertype         = "IPv4"
   protocol          = "tcp"
+  port_range_min    = 9000
+  port_range_max    = 9999
+  remote_group_id   = "${openstack_networking_secgroup_v2.worker.id}"
+  security_group_id = "${openstack_networking_secgroup_v2.master.id}"
+}
+
+resource "openstack_networking_secgroup_rule_v2" "master_ingress_internal_udp" {
+  direction         = "ingress"
+  ethertype         = "IPv4"
+  protocol          = "udp"
+  port_range_min    = 9000
+  port_range_max    = 9999
+  security_group_id = "${openstack_networking_secgroup_v2.master.id}"
+}
+
+resource "openstack_networking_secgroup_rule_v2" "master_ingress_internal_from_worker_udp" {
+  direction         = "ingress"
+  ethertype         = "IPv4"
+  protocol          = "udp"
   port_range_min    = 9000
   port_range_max    = 9999
   remote_group_id   = "${openstack_networking_secgroup_v2.worker.id}"
