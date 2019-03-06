@@ -9,6 +9,7 @@ import (
 
 	"github.com/metalkube/kni-installer/pkg/asset"
 	"github.com/metalkube/kni-installer/pkg/types"
+	"github.com/metalkube/kni-installer/pkg/types/conversion"
 	"github.com/metalkube/kni-installer/pkg/types/defaults"
 	openstackvalidation "github.com/metalkube/kni-installer/pkg/types/openstack/validation"
 	"github.com/metalkube/kni-installer/pkg/types/validation"
@@ -72,7 +73,7 @@ func (a *InstallConfig) Generate(parents asset.Parents) error {
 	a.Config.BareMetal = platform.BareMetal
 
 	if err := a.setDefaults(); err != nil {
-		return errors.Wrapf(err, "failed to set defaults for install config")
+		return errors.Wrap(err, "failed to set defaults for install config")
 	}
 
 	if err := validation.ValidateInstallConfig(a.Config, openstackvalidation.NewValidValuesFetcher()).ToAggregate(); err != nil {
@@ -115,12 +116,17 @@ func (a *InstallConfig) Load(f asset.FileFetcher) (found bool, err error) {
 
 	config := &types.InstallConfig{}
 	if err := yaml.Unmarshal(file.Data, config); err != nil {
-		return false, errors.Wrapf(err, "failed to unmarshal")
+		return false, errors.Wrap(err, "failed to unmarshal")
 	}
 	a.Config = config
 
+	// Upconvert any deprecated fields
+	if err := a.convert(); err != nil {
+		return false, errors.Wrap(err, "failed to upconvert install config")
+	}
+
 	if err := a.setDefaults(); err != nil {
-		return false, errors.Wrapf(err, "failed to set defaults for install config")
+		return false, errors.Wrap(err, "failed to set defaults for install config")
 	}
 
 	if err := validation.ValidateInstallConfig(a.Config, openstackvalidation.NewValidValuesFetcher()).ToAggregate(); err != nil {
@@ -142,4 +148,10 @@ func (a *InstallConfig) Load(f asset.FileFetcher) (found bool, err error) {
 func (a *InstallConfig) setDefaults() error {
 	defaults.SetInstallConfigDefaults(a.Config)
 	return nil
+}
+
+// convert converts possibly older versions of the install config to
+// the current version, relocating deprecated fields.
+func (a *InstallConfig) convert() error {
+	return conversion.ConvertInstallConfig(a.Config)
 }
