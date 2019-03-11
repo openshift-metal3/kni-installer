@@ -2,21 +2,7 @@
 
 ## What is kni-install?
 
-kni-install is a forked version of openshift-install that servers as a
-staging area for a new 'baremetal' platform that is intended to
-eventually be merged into openshift-install itself.
-
-The 'baremetal' platform support will ultimately be implemented using
-libvirt for the bootstrap VM and the [MetalKube
-baremetal-operator](https://github.com/metalkube/bare-metal-operator)
-for the masters and workers. However, many hacky short-cuts may used
-as the support it prototyped!
-
-The [facet project](https://github.com/metalkube/facet) is a closely
-related project that provides a "day 1" UI (served by a REST API)
-which gathers information from the user about the cluster
-configuration and bare metal hosts, before using kni-install to
-provision the cluster.
+See the top-level [README file](../../README.md).
 
 ## Why a fork?
 
