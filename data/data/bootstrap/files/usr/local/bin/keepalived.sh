@@ -13,7 +13,7 @@ API_DNS="$(sudo awk -F[/:] '/apiServerURL/ {print $5}' /opt/openshift/manifests/
 API_VIP="$(dig +noall +answer "$API_DNS" | awk '{print $NF}')"
 IFACE_CIDRS="$(ip addr show | grep -v "scope host" | grep -Po 'inet \K[\d.]+/[\d.]+' | xargs)"
 SUBNET_CIDR="$(/usr/local/bin/get_vip_subnet_cidr "$API_VIP" "$IFACE_CIDRS")"
-INTERFACE="$(ip -o addr show to "$SUBNET_CIDR" | awk '{print $2}')"
+INTERFACE="$(ip -o addr show to "$SUBNET_CIDR" | head -n 1 | awk '{print $2}')"
 DNS_VIP="$(/usr/local/bin/nthhost "$SUBNET_CIDR" 2)"
 
 export API_VIP
