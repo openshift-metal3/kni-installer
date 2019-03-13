@@ -4,7 +4,7 @@ package baremetal
 import (
 	"encoding/json"
 
-	libvirttfvars "github.com/metalkube/kni-installer/pkg/tfvars/libvirt"
+	libvirttfvars "github.com/openshift-metalkube/kni-installer/pkg/tfvars/libvirt"
 	"github.com/pkg/errors"
 )
 

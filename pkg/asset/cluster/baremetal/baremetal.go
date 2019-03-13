@@ -3,8 +3,8 @@
 package baremetal
 
 import (
-	"github.com/metalkube/kni-installer/pkg/types"
-	"github.com/metalkube/kni-installer/pkg/types/baremetal"
+	"github.com/openshift-metalkube/kni-installer/pkg/types"
+	"github.com/openshift-metalkube/kni-installer/pkg/types/baremetal"
 )
 
 // Metadata converts an install configuration to bare metal metadata.

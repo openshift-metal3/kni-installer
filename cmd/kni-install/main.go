@@ -12,7 +12,7 @@ import (
 	"github.com/spf13/cobra"
 	"golang.org/x/crypto/ssh/terminal"
 
-	"github.com/metalkube/kni-installer/pkg/terraform/exec/plugins"
+	"github.com/openshift-metalkube/kni-installer/pkg/terraform/exec/plugins"
 )
 
 var (

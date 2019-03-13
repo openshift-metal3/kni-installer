@@ -4,7 +4,7 @@ import (
 	"crypto/x509"
 	"crypto/x509/pkix"
 
-	"github.com/metalkube/kni-installer/pkg/asset"
+	"github.com/openshift-metalkube/kni-installer/pkg/asset"
 )
 
 // EtcdCA is the asset that generates the etcd-ca key/cert pair.
