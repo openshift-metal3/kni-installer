@@ -58,7 +58,7 @@ Checkout this repo and add `github.com/openshift/installer` as a
 remote that we'll call `upstream`:
 
 ```sh
-git clone git@github.com:metalkube/kni-installer.git
+git clone git@github.com:openshift-metalkube/kni-installer.git
 cd kni-installer
 git remote add -f upstream git@github.com:openshift/installer.git
 ```
@@ -121,10 +121,10 @@ rename commit:
 
 ```sh
 git checkout -b tmp-rebase upstream/master
-sed -i 's|openshift/installer|metalkube/kni-installer|' $(git grep -l openshift/installer | grep '\(cmd\|build.sh\|pkg\|assets_generate.go\)')
+sed -i 's|openshift/installer|openshift-metalkube/kni-installer|' $(git grep -l openshift/installer | grep '\(cmd\|build.sh\|pkg\|assets_generate.go\)')
 sed -i 's|openshift-install|kni-install|' $(git grep -l openshift-install | grep '\(cmd\|build.sh\|pkg\)')
 git mv cmd/openshift-install cmd/kni-install
-gofmt -w $(git grep -l github.com/metalkube/kni-installer)
+gofmt -w $(git grep -l github.com/openshift-metalkube/kni-installer)
 TAGS=libvirt ./hack/build.sh
 git commit -a -c $RENAME_COMMIT
 ```

@@ -7,17 +7,17 @@ import (
 	"github.com/pkg/errors"
 	survey "gopkg.in/AlecAivazis/survey.v1"
 
-	"github.com/metalkube/kni-installer/pkg/asset"
-	awsconfig "github.com/metalkube/kni-installer/pkg/asset/installconfig/aws"
-	baremetalconfig "github.com/metalkube/kni-installer/pkg/asset/installconfig/baremetal"
-	libvirtconfig "github.com/metalkube/kni-installer/pkg/asset/installconfig/libvirt"
-	openstackconfig "github.com/metalkube/kni-installer/pkg/asset/installconfig/openstack"
-	"github.com/metalkube/kni-installer/pkg/types"
-	"github.com/metalkube/kni-installer/pkg/types/aws"
-	"github.com/metalkube/kni-installer/pkg/types/baremetal"
-	"github.com/metalkube/kni-installer/pkg/types/libvirt"
-	"github.com/metalkube/kni-installer/pkg/types/none"
-	"github.com/metalkube/kni-installer/pkg/types/openstack"
+	"github.com/openshift-metalkube/kni-installer/pkg/asset"
+	awsconfig "github.com/openshift-metalkube/kni-installer/pkg/asset/installconfig/aws"
+	baremetalconfig "github.com/openshift-metalkube/kni-installer/pkg/asset/installconfig/baremetal"
+	libvirtconfig "github.com/openshift-metalkube/kni-installer/pkg/asset/installconfig/libvirt"
+	openstackconfig "github.com/openshift-metalkube/kni-installer/pkg/asset/installconfig/openstack"
+	"github.com/openshift-metalkube/kni-installer/pkg/types"
+	"github.com/openshift-metalkube/kni-installer/pkg/types/aws"
+	"github.com/openshift-metalkube/kni-installer/pkg/types/baremetal"
+	"github.com/openshift-metalkube/kni-installer/pkg/types/libvirt"
+	"github.com/openshift-metalkube/kni-installer/pkg/types/none"
+	"github.com/openshift-metalkube/kni-installer/pkg/types/openstack"
 )
 
 // Platform is an asset that queries the user for the platform on which to install

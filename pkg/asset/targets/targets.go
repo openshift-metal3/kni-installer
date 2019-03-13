@@ -1,17 +1,17 @@
 package targets
 
 import (
-	"github.com/metalkube/kni-installer/pkg/asset"
-	"github.com/metalkube/kni-installer/pkg/asset/cluster"
-	"github.com/metalkube/kni-installer/pkg/asset/ignition/bootstrap"
-	"github.com/metalkube/kni-installer/pkg/asset/ignition/machine"
-	"github.com/metalkube/kni-installer/pkg/asset/installconfig"
-	"github.com/metalkube/kni-installer/pkg/asset/kubeconfig"
-	"github.com/metalkube/kni-installer/pkg/asset/machines"
-	"github.com/metalkube/kni-installer/pkg/asset/manifests"
-	"github.com/metalkube/kni-installer/pkg/asset/templates/content/bootkube"
-	"github.com/metalkube/kni-installer/pkg/asset/templates/content/openshift"
-	"github.com/metalkube/kni-installer/pkg/asset/tls"
+	"github.com/openshift-metalkube/kni-installer/pkg/asset"
+	"github.com/openshift-metalkube/kni-installer/pkg/asset/cluster"
+	"github.com/openshift-metalkube/kni-installer/pkg/asset/ignition/bootstrap"
+	"github.com/openshift-metalkube/kni-installer/pkg/asset/ignition/machine"
+	"github.com/openshift-metalkube/kni-installer/pkg/asset/installconfig"
+	"github.com/openshift-metalkube/kni-installer/pkg/asset/kubeconfig"
+	"github.com/openshift-metalkube/kni-installer/pkg/asset/machines"
+	"github.com/openshift-metalkube/kni-installer/pkg/asset/manifests"
+	"github.com/openshift-metalkube/kni-installer/pkg/asset/templates/content/bootkube"
+	"github.com/openshift-metalkube/kni-installer/pkg/asset/templates/content/openshift"
+	"github.com/openshift-metalkube/kni-installer/pkg/asset/tls"
 )
 
 var (

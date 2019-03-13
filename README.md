@@ -11,9 +11,9 @@ baremetal-operator](https://github.com/metalkube/bare-metal-operator)
 for the masters and workers. However, many hacky short-cuts may used
 in the interim as the support it prototyped!
 
-The [facet project](https://github.com/metalkube/facet) is a closely
-related project that provides a "day 1" UI (served by a REST API)
-which gathers information from the user about the cluster
+The [facet project](https://github.com/openshift-metalkube/facet) is a
+closely related project that provides a "day 1" UI (served by a REST
+API) which gathers information from the user about the cluster
 configuration and bare metal hosts, before using kni-install to
 provision the cluster.
 
@@ -25,7 +25,7 @@ provision the cluster.
 
 First, install all [build dependencies](docs/dev/dependencies.md).
 
-Clone this repository to `src/github.com/metalkube/kni-installer` in your [GOPATH](https://golang.org/cmd/go/#hdr-GOPATH_environment_variable). Then build the `kni-install` binary with:
+Clone this repository to `src/github.com/openshift-metalkube/kni-installer` in your [GOPATH](https://golang.org/cmd/go/#hdr-GOPATH_environment_variable). Then build the `kni-install` binary with:
 
 ```sh
 hack/build.sh

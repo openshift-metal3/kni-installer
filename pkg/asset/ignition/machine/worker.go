@@ -7,9 +7,9 @@ import (
 	igntypes "github.com/coreos/ignition/config/v2_2/types"
 	"github.com/pkg/errors"
 
-	"github.com/metalkube/kni-installer/pkg/asset"
-	"github.com/metalkube/kni-installer/pkg/asset/installconfig"
-	"github.com/metalkube/kni-installer/pkg/asset/tls"
+	"github.com/openshift-metalkube/kni-installer/pkg/asset"
+	"github.com/openshift-metalkube/kni-installer/pkg/asset/installconfig"
+	"github.com/openshift-metalkube/kni-installer/pkg/asset/tls"
 )
 
 const (

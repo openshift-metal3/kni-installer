@@ -9,14 +9,14 @@ import (
 	"github.com/pkg/errors"
 	"github.com/sirupsen/logrus"
 
-	"github.com/metalkube/kni-installer/pkg/asset"
-	"github.com/metalkube/kni-installer/pkg/asset/installconfig"
-	"github.com/metalkube/kni-installer/pkg/rhcos"
-	"github.com/metalkube/kni-installer/pkg/types/aws"
-	"github.com/metalkube/kni-installer/pkg/types/baremetal"
-	"github.com/metalkube/kni-installer/pkg/types/libvirt"
-	"github.com/metalkube/kni-installer/pkg/types/none"
-	"github.com/metalkube/kni-installer/pkg/types/openstack"
+	"github.com/openshift-metalkube/kni-installer/pkg/asset"
+	"github.com/openshift-metalkube/kni-installer/pkg/asset/installconfig"
+	"github.com/openshift-metalkube/kni-installer/pkg/rhcos"
+	"github.com/openshift-metalkube/kni-installer/pkg/types/aws"
+	"github.com/openshift-metalkube/kni-installer/pkg/types/baremetal"
+	"github.com/openshift-metalkube/kni-installer/pkg/types/libvirt"
+	"github.com/openshift-metalkube/kni-installer/pkg/types/none"
+	"github.com/openshift-metalkube/kni-installer/pkg/types/openstack"
 )
 
 // Image is location of RHCOS image.

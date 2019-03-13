@@ -3,9 +3,9 @@ package installconfig
 import (
 	survey "gopkg.in/AlecAivazis/survey.v1"
 
-	"github.com/metalkube/kni-installer/pkg/asset"
-	"github.com/metalkube/kni-installer/pkg/types/validation"
-	"github.com/metalkube/kni-installer/pkg/validate"
+	"github.com/openshift-metalkube/kni-installer/pkg/asset"
+	"github.com/openshift-metalkube/kni-installer/pkg/types/validation"
+	"github.com/openshift-metalkube/kni-installer/pkg/validate"
 )
 
 type clusterName struct {
