@@ -165,17 +165,30 @@ resolve those by using the source tree from the `rebasing` branch.
 ```sh
 git checkout rebasing .
 git commit -a -m 'Merge latest openshift/installer'
+git diff rebasing
 ```
+
+There should be no differences between the `master` and `rebasing`
+branches at this point, but watch out for weirdness caused by things
+like merge conflicts on files that were deleted.
 
 ### Push your changes
 
-Now we submit a PR for the merged `master` branch, and when it has
-mered, push the rebased `rebasing` branch, and the corresponding
-`rebasing` tag:
+Now create a new `rebasing` tag, push both branches to your personal
+remote, and creating a PR:
 
-```sh
-git fetch origin
-git tag rebasing-$(date -I)-$(git rev-parse --short origin/master) rebasing
-git push origin tag rebasing-$(date -I)-$(git rev-parse --short origin/master)
+```
+REBASING_TAG=rebasing-$(date -I)-$(git rev-parse --short master)
+git tag $REBASING_TAG rebasing
+git push $MYREMOTE tag $REBASING_TAG
+git push $MYREMOTE +master:latest-upstream
+git push $MYREMOTE +rebasing:latest-upstream-rebasing
+```
+
+When the PR has merged, you'll need to push the `rebasing` branch and
+tag to the main repo:
+
+```
 git push origin +rebasing:rebasing
+git push origin tag $REBASING_TAG
 ```
