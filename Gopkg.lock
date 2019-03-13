@@ -374,18 +374,18 @@
 
 [[projects]]
   branch = "master"
-  digest = "1:d7711fea8a09123909cd82d50158f891d369086cf92ce99830fe0203f357b015"
+  digest = "1:6e6aad4c378d1fd14b3b686d59c06c9d82b0f8c2c4a284ee39ed075f41e97397"
   name = "github.com/openshift/api"
   packages = [
     "config/v1",
     "route/v1",
   ]
   pruneopts = "NUT"
-  revision = "abd194123b1ba2dcf9fd383f995c0082c81a8e6a"
+  revision = "600a5519d1ec56e02c20f42b43888db560bdcb7e"
 
 [[projects]]
   branch = "master"
-  digest = "1:25ef9f9b8f53d2408e9fc561da877afe66016115a36e56ac4d5402bbbb2bef28"
+  digest = "1:add2f77f1d84edeaa1ca8c7d7d5b7ecf87e48ad979aa478e71c3277e142d6484"
   name = "github.com/openshift/client-go"
   packages = [
     "config/clientset/versioned",
@@ -396,20 +396,20 @@
     "route/clientset/versioned/typed/route/v1",
   ]
   pruneopts = "NUT"
-  revision = "9ecec62d3c9792a6b712bc1aefdb8ae10826fa14"
+  revision = "2d89985ca24a8307e4b5db2574a62d3e6c2444b4"
 
 [[projects]]
   branch = "master"
-  digest = "1:af1e2473c2f486475a443cb284779c8dfd7fe0df8f7b597577b2d42d47713749"
+  digest = "1:feb52434ddfdf3589906278bc611ecf89b3bf799133a1eea0ed7abc4dcd46f71"
   name = "github.com/openshift/cloud-credential-operator"
   packages = [
-    "pkg/apis/cloudcredential/v1beta1",
+    "pkg/apis/cloudcredential/v1",
     "pkg/aws",
-    "pkg/controller/assets",
     "pkg/controller/utils",
+    "version",
   ]
   pruneopts = "NUT"
-  revision = "0798caf39368f3cfb506eb126dbbeee5e738846c"
+  revision = "4ea04acadeb3e5d069ac10a39a2398c4a1beb495"
 
 [[projects]]
   digest = "1:5543d01772b4474e08f1554ea53cf3eb12660deed37470888cfc1cd66748cab0"
@@ -994,6 +994,7 @@
     "k8s.io/apimachinery/pkg/util/wait",
     "k8s.io/apimachinery/pkg/watch",
     "k8s.io/client-go/kubernetes",
+    "k8s.io/client-go/kubernetes/typed/core/v1",
     "k8s.io/client-go/rest",
     "k8s.io/client-go/tools/cache",
     "k8s.io/client-go/tools/clientcmd",

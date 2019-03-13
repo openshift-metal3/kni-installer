@@ -289,57 +289,45 @@ func destroyBootstrap(ctx context.Context, config *rest.Config, directory string
 		return errors.Wrap(err, "waiting for Kubernetes API")
 	}
 
-	events := client.CoreV1().Events("kube-system")
-
 	eventTimeout := 30 * time.Minute
 	logrus.Infof("Waiting up to %v for the bootstrap-complete event...", eventTimeout)
-	eventContext, cancel := context.WithTimeout(ctx, eventTimeout)
-	defer cancel()
-	_, err = Until(
-		eventContext,
-		"",
-		func(sinceResourceVersion string) (watch.Interface, error) {
-			for {
-				watcher, err := events.Watch(metav1.ListOptions{
-					ResourceVersion: sinceResourceVersion,
-				})
-				if err == nil {
-					return watcher, nil
-				}
-				select {
-				case <-eventContext.Done():
-					return watcher, err
-				default:
-					logrus.Warningf("Failed to connect events watcher: %s", err)
-					time.Sleep(2 * time.Second)
-				}
-			}
-		},
-		func(watchEvent watch.Event) (bool, error) {
-			event, ok := watchEvent.Object.(*corev1.Event)
-			if !ok {
-				return false, nil
-			}
-
-			if watchEvent.Type == watch.Error {
-				logrus.Debugf("error %s: %s", event.Name, event.Message)
-				return false, nil
-			}
-
-			if watchEvent.Type != watch.Added {
-				return false, nil
-			}
-
-			logrus.Debugf("added %s: %s", event.Name, event.Message)
-			return event.Name == "bootstrap-complete", nil
-		},
-	)
-	if err != nil {
-		return errors.Wrap(err, "waiting for bootstrap-complete")
+	if err := waitForEvent(ctx, client.CoreV1().RESTClient(), "bootstrap-complete", eventTimeout); err != nil {
+		return err
 	}
 
 	logrus.Info("Destroying the bootstrap resources...")
 	return destroybootstrap.Destroy(rootOpts.dir)
+}
+
+// waitForEvent watches the events in the kube-system namespace, waits
+// for the event of the given name, and prints out all other events on
+// the way.
+func waitForEvent(ctx context.Context, client cache.Getter, name string, timeout time.Duration) error {
+	waitCtx, cancel := context.WithTimeout(ctx, timeout)
+	defer cancel()
+
+	resource := "events"
+	namespace := "kube-system"
+
+	_, err := clientwatch.UntilWithSync(
+		waitCtx,
+		cache.NewListWatchFromClient(client, resource, namespace, fields.Everything()),
+		&corev1.Event{},
+		nil,
+		func(event watch.Event) (bool, error) {
+			ev, ok := event.Object.(*corev1.Event)
+			if !ok {
+				logrus.Warnf("Expected a core/v1.Event object but got a %q object instead", event.Object.GetObjectKind().GroupVersionKind())
+				return false, nil
+			}
+
+			logrus.Debugf("%s %s: %s", strings.ToLower(string(event.Type)), ev.Name, ev.Message)
+			found := ev.Name == name && (event.Type == watch.Added || event.Type == watch.Modified)
+			return found, nil
+		},
+	)
+
+	return errors.Wrapf(err, "failed to wait for %s event", name)
 }
 
 // waitForInitializedCluster watches the ClusterVersion waiting for confirmation
