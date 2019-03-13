@@ -2,7 +2,7 @@
 package baremetal
 
 import (
-	"github.com/metalkube/kni-installer/pkg/destroy"
+	"github.com/openshift-metalkube/kni-installer/pkg/destroy"
 )
 
 func init() {

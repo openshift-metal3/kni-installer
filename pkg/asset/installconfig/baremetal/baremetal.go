@@ -4,9 +4,9 @@ package baremetal
 import (
 	survey "gopkg.in/AlecAivazis/survey.v1"
 
-	"github.com/metalkube/kni-installer/pkg/types/baremetal"
-	baremetaldefaults "github.com/metalkube/kni-installer/pkg/types/baremetal/defaults"
-	"github.com/metalkube/kni-installer/pkg/validate"
+	"github.com/openshift-metalkube/kni-installer/pkg/types/baremetal"
+	baremetaldefaults "github.com/openshift-metalkube/kni-installer/pkg/types/baremetal/defaults"
+	"github.com/openshift-metalkube/kni-installer/pkg/validate"
 )
 
 // Platform collects bare metal specific configuration.

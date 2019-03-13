@@ -4,13 +4,13 @@ import (
 	"fmt"
 
 	"github.com/gophercloud/utils/openstack/clientconfig"
-	"github.com/metalkube/kni-installer/pkg/asset"
-	awsconfig "github.com/metalkube/kni-installer/pkg/asset/installconfig/aws"
-	"github.com/metalkube/kni-installer/pkg/types/aws"
-	"github.com/metalkube/kni-installer/pkg/types/baremetal"
-	"github.com/metalkube/kni-installer/pkg/types/libvirt"
-	"github.com/metalkube/kni-installer/pkg/types/none"
-	"github.com/metalkube/kni-installer/pkg/types/openstack"
+	"github.com/openshift-metalkube/kni-installer/pkg/asset"
+	awsconfig "github.com/openshift-metalkube/kni-installer/pkg/asset/installconfig/aws"
+	"github.com/openshift-metalkube/kni-installer/pkg/types/aws"
+	"github.com/openshift-metalkube/kni-installer/pkg/types/baremetal"
+	"github.com/openshift-metalkube/kni-installer/pkg/types/libvirt"
+	"github.com/openshift-metalkube/kni-installer/pkg/types/none"
+	"github.com/openshift-metalkube/kni-installer/pkg/types/openstack"
 	"github.com/pkg/errors"
 )
 

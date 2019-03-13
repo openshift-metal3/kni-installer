@@ -11,14 +11,14 @@ import (
 	configv1 "github.com/openshift/api/config/v1"
 	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
 
-	"github.com/metalkube/kni-installer/pkg/asset"
-	"github.com/metalkube/kni-installer/pkg/asset/installconfig"
-	icaws "github.com/metalkube/kni-installer/pkg/asset/installconfig/aws"
-	awstypes "github.com/metalkube/kni-installer/pkg/types/aws"
-	baremetaltypes "github.com/metalkube/kni-installer/pkg/types/baremetal"
-	libvirttypes "github.com/metalkube/kni-installer/pkg/types/libvirt"
-	nonetypes "github.com/metalkube/kni-installer/pkg/types/none"
-	openstacktypes "github.com/metalkube/kni-installer/pkg/types/openstack"
+	"github.com/openshift-metalkube/kni-installer/pkg/asset"
+	"github.com/openshift-metalkube/kni-installer/pkg/asset/installconfig"
+	icaws "github.com/openshift-metalkube/kni-installer/pkg/asset/installconfig/aws"
+	awstypes "github.com/openshift-metalkube/kni-installer/pkg/types/aws"
+	baremetaltypes "github.com/openshift-metalkube/kni-installer/pkg/types/baremetal"
+	libvirttypes "github.com/openshift-metalkube/kni-installer/pkg/types/libvirt"
+	nonetypes "github.com/openshift-metalkube/kni-installer/pkg/types/none"
+	openstacktypes "github.com/openshift-metalkube/kni-installer/pkg/types/openstack"
 )
 
 var (

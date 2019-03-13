@@ -8,9 +8,9 @@ import (
 	"path/filepath"
 	"strings"
 
-	"github.com/metalkube/kni-installer/pkg/asset/cluster"
-	"github.com/metalkube/kni-installer/pkg/terraform"
-	"github.com/metalkube/kni-installer/pkg/types/libvirt"
+	"github.com/openshift-metalkube/kni-installer/pkg/asset/cluster"
+	"github.com/openshift-metalkube/kni-installer/pkg/terraform"
+	"github.com/openshift-metalkube/kni-installer/pkg/types/libvirt"
 	"github.com/pkg/errors"
 )
 

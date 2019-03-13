@@ -16,7 +16,7 @@ fi
 LAUNCH_PATH="${PWD}"
 cd "$(dirname "$0")/.."
 
-PACKAGE_PATH="$(go list -e -f '{{.Dir}}' github.com/metalkube/kni-installer)"
+PACKAGE_PATH="$(go list -e -f '{{.Dir}}' github.com/openshift-metalkube/kni-installer)"
 if test -z "${PACKAGE_PATH}"
 then
 	echo "build from your \${GOPATH} (${LAUNCH_PATH} is not in $(go env GOPATH))" 2>&1
@@ -31,7 +31,7 @@ then
 fi
 
 MODE="${MODE:-release}"
-LDFLAGS="${LDFLAGS} -X github.com/metalkube/kni-installer/pkg/version.Raw=$(git describe --always --abbrev=40 --dirty)"
+LDFLAGS="${LDFLAGS} -X github.com/openshift-metalkube/kni-installer/pkg/version.Raw=$(git describe --always --abbrev=40 --dirty)"
 TAGS="${TAGS:-}"
 OUTPUT="${OUTPUT:-bin/kni-install}"
 export CGO_ENABLED=0
@@ -42,11 +42,11 @@ release)
 	TAGS="${TAGS} release"
 	if test -n "${RELEASE_IMAGE}"
 	then
-		LDFLAGS="${LDFLAGS} -X github.com/metalkube/kni-installer/pkg/asset/ignition/bootstrap.defaultReleaseImage=${RELEASE_IMAGE}"
+		LDFLAGS="${LDFLAGS} -X github.com/openshift-metalkube/kni-installer/pkg/asset/ignition/bootstrap.defaultReleaseImage=${RELEASE_IMAGE}"
 	fi
 	if test -n "${RHCOS_BUILD_NAME}"
 	then
-		LDFLAGS="${LDFLAGS} -X github.com/metalkube/kni-installer/pkg/rhcos.buildName=${RHCOS_BUILD_NAME}"
+		LDFLAGS="${LDFLAGS} -X github.com/openshift-metalkube/kni-installer/pkg/rhcos.buildName=${RHCOS_BUILD_NAME}"
 	fi
 	if test "${SKIP_GENERATION}" != y
 	then
