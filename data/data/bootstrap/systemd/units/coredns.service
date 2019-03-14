@@ -1,0 +1,16 @@
+[Unit]
+Description=Serve cluster DNS gathered from mDNS
+Wants=network-online.target
+After=network-online.target
+
+[Service]
+WorkingDirectory=/etc/coredns
+ExecStartPre=/usr/local/bin/coredns.sh
+ExecStart=/usr/bin/podman start -a coredns
+ExecStop=/usr/bin/podman stop -t 10 coredns
+
+Restart=on-failure
+RestartSec=5
+
+[Install]
+WantedBy=multi-user.target
