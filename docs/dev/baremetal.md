@@ -121,8 +121,8 @@ rename commit:
 
 ```sh
 git checkout -b tmp-rebase upstream/master
-sed -i 's|openshift/installer|openshift-metalkube/kni-installer|' $(git grep -l openshift/installer | grep '\(cmd\|build.sh\|pkg\|assets_generate.go\)')
-sed -i 's|openshift-install|kni-install|' $(git grep -l openshift-install | grep '\(cmd\|build.sh\|pkg\)')
+sed -i 's|openshift/installer|openshift-metalkube/kni-installer|g' $(git grep -l openshift/installer | grep '\(cmd\|build.sh\|pkg\|assets_generate.go\)')
+sed -i 's|openshift-install|kni-install|g' $(git grep -l openshift-install | grep '\(cmd\|build.sh\|pkg\)')
 git mv cmd/openshift-install cmd/kni-install
 gofmt -w $(git grep -l github.com/openshift-metalkube/kni-installer)
 TAGS=libvirt ./hack/build.sh

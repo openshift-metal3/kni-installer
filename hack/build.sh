@@ -2,6 +2,8 @@
 
 set -ex
 
+RHCOS_BUILD_NAME="${RHCOS_BUILD_NAME:-400.7.20190306.0}"
+
 # shellcheck disable=SC2068
 version() { IFS="."; printf "%03d%03d%03d\\n" $@; unset IFS;}
 
@@ -31,7 +33,7 @@ then
 fi
 
 MODE="${MODE:-release}"
-LDFLAGS="${LDFLAGS} -X github.com/openshift-metalkube/kni-installer/pkg/version.Raw=$(git describe --always --abbrev=40 --dirty)"
+LDFLAGS="${LDFLAGS} -X github.com/openshift-metalkube/kni-installer/pkg/version.Raw=$(git describe --always --abbrev=40 --dirty) -X github.com/openshift-metalkube/kni-installer/pkg/version.Commit=$(git rev-parse --verify 'HEAD^{commit}')"
 TAGS="${TAGS:-}"
 OUTPUT="${OUTPUT:-bin/kni-install}"
 export CGO_ENABLED=0
