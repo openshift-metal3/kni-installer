@@ -107,25 +107,18 @@ var (
 				logrus.Warn("FIXME! Exiting after bootstrap cluster create for baremetal testing")
 				return
 
-				err = destroyBootstrap(ctx, config, rootOpts.dir)
+				err = waitForBootstrapComplete(ctx, config, rootOpts.dir)
 				if err != nil {
 					logrus.Fatal(err)
 				}
 
-				if err := waitForInitializedCluster(ctx, config); err != nil {
-					logrus.Fatal(err)
-				}
-
-				consoleURL, err := waitForConsole(ctx, config, rootOpts.dir)
+				logrus.Info("Destroying the bootstrap resources...")
+				err = destroybootstrap.Destroy(rootOpts.dir)
 				if err != nil {
 					logrus.Fatal(err)
 				}
 
-				if err = addRouterCAToClusterCA(config, rootOpts.dir); err != nil {
-					logrus.Fatal(err)
-				}
-
-				err = logComplete(rootOpts.dir, consoleURL)
+				err = finish(ctx, config, rootOpts.dir)
 				if err != nil {
 					logrus.Fatal(err)
 				}
@@ -247,7 +240,7 @@ func addRouterCAToClusterCA(config *rest.Config, directory string) (err error) {
 
 // FIXME: pulling the kubeconfig and metadata out of the root
 // directory is a bit cludgy when we already have them in memory.
-func destroyBootstrap(ctx context.Context, config *rest.Config, directory string) (err error) {
+func waitForBootstrapComplete(ctx context.Context, config *rest.Config, directory string) (err error) {
 	client, err := kubernetes.NewForConfig(config)
 	if err != nil {
 		return errors.Wrap(err, "creating a Kubernetes client")
@@ -256,7 +249,7 @@ func destroyBootstrap(ctx context.Context, config *rest.Config, directory string
 	discovery := client.Discovery()
 
 	apiTimeout := 30 * time.Minute
-	logrus.Infof("Waiting up to %v for the Kubernetes API...", apiTimeout)
+	logrus.Infof("Waiting up to %v for the Kubernetes API at %s...", apiTimeout, config.Host)
 	apiContext, cancel := context.WithTimeout(ctx, apiTimeout)
 	defer cancel()
 	// Poll quickly so we notice changes, but only log when the response
@@ -291,12 +284,7 @@ func destroyBootstrap(ctx context.Context, config *rest.Config, directory string
 
 	eventTimeout := 30 * time.Minute
 	logrus.Infof("Waiting up to %v for the bootstrap-complete event...", eventTimeout)
-	if err := waitForEvent(ctx, client.CoreV1().RESTClient(), "bootstrap-complete", eventTimeout); err != nil {
-		return err
-	}
-
-	logrus.Info("Destroying the bootstrap resources...")
-	return destroybootstrap.Destroy(rootOpts.dir)
+	return waitForEvent(ctx, client.CoreV1().RESTClient(), "bootstrap-complete", eventTimeout)
 }
 
 // waitForEvent watches the events in the kube-system namespace, waits
@@ -334,7 +322,7 @@ func waitForEvent(ctx context.Context, client cache.Getter, name string, timeout
 // that the cluster has been initialized.
 func waitForInitializedCluster(ctx context.Context, config *rest.Config) error {
 	timeout := 30 * time.Minute
-	logrus.Infof("Waiting up to %v for the cluster to initialize...", timeout)
+	logrus.Infof("Waiting up to %v for the cluster at %s to initialize...", timeout, config.Host)
 	cc, err := configclient.NewForConfig(config)
 	if err != nil {
 		return errors.Wrap(err, "failed to create a config client")
@@ -456,4 +444,21 @@ func logComplete(directory, consoleURL string) error {
 	logrus.Infof("Access the OpenShift web-console here: %s", consoleURL)
 	logrus.Infof("Login to the console with user: kubeadmin, password: %s", pw)
 	return nil
+}
+
+func finish(ctx context.Context, config *rest.Config, directory string) error {
+	if err := waitForInitializedCluster(ctx, config); err != nil {
+		return err
+	}
+
+	consoleURL, err := waitForConsole(ctx, config, rootOpts.dir)
+	if err != nil {
+		return err
+	}
+
+	if err = addRouterCAToClusterCA(config, rootOpts.dir); err != nil {
+		return err
+	}
+
+	return logComplete(rootOpts.dir, consoleURL)
 }
