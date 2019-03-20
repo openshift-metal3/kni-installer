@@ -20,13 +20,13 @@ For examples of loading/evaluating the completions see:
   ## or, if running Bash 4.1+
       brew install bash-completion@2
   ## If you've installed via other means, you may need add the completion to your completion directory
-      kni-install completion bash > $(brew --prefix)/etc/bash_completion.d/openshift-install
+      kni-install completion bash > $(brew --prefix)/etc/bash_completion.d/kni-install
 
   # Installing bash completion on Linux
   ## Load the kni-install completion code for bash into the current shell
       source <(kni-install completion bash)
   ## Write bash completion code to a file and source it from .bash_profile
-      kni-install completion bash > ~/.openshift-install/completion.bash.inc
+      kni-install completion bash > ~/.kni-install/completion.bash.inc
       printf "
         # Kubectl shell completion
         source '$HOME/.kni-install/completion.bash.inc'
@@ -36,7 +36,7 @@ For examples of loading/evaluating the completions see:
 	completionExampleZsh = `# Load the kni-install completion code for zsh[1] into the current shell
       source <(kni-install completion zsh)
   # Set the kni-install completion code for zsh[1] to autoload on startup
-      kni-install completion zsh > "${fpath[1]}/_openshift-install"`
+      kni-install completion zsh > "${fpath[1]}/_kni-install"`
 )
 
 func newCompletionCmd() *cobra.Command {
