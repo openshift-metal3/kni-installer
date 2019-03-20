@@ -37,7 +37,7 @@ type DomainCaps struct {
 	Arch      string               `xml:"arch"`
 	VCPU      *DomainCapsVCPU      `xml:"vcpu"`
 	IOThreads *DomainCapsIOThreads `xml:"iothreads"`
-	OS        DomainCapsOS         `xml:"os"`
+	OS        *DomainCapsOS        `xml:"os"`
 	CPU       *DomainCapsCPU       `xml:"cpu"`
 	Devices   *DomainCapsDevices   `xml:"devices"`
 	Features  *DomainCapsFeatures  `xml:"features"`
@@ -50,6 +50,7 @@ type DomainCapsVCPU struct {
 type DomainCapsOS struct {
 	Supported string              `xml:"supported,attr"`
 	Loader    *DomainCapsOSLoader `xml:"loader"`
+	Enums     []DomainCapsEnum    `xml:"enum"`
 }
 
 type DomainCapsOSLoader struct {
