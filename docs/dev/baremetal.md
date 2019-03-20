@@ -71,6 +71,12 @@ Identify the last upstream commit that we merged:
 BASE_COMMIT=$(git merge-base upstream/master origin/master)
 ```
 
+Create a rebasing branch if you have not already done so.
+
+```sh
+git checkout -b rebasing origin/rebasing
+```
+
 Identify the changes that have been recently merged into `master`
 which need to be incorporated into the `rebasing` branch. The
 `rebasing` branch should always be tagged with a name that identifies
@@ -145,7 +151,10 @@ builds:
 
 ```sh
 git rebase -i $BASE_COMMIT
-TAGS=libvirt ./hack/build.sh
+# “edit” each commit
+
+while TAGS=libvirt ./hack/build.sh ; do git rebase --continue || break ; done
+# If all goes well, this will end on a clean build and no rebase left to continue.
 ```
 
 ### Merge latest upstream
@@ -175,7 +184,8 @@ like merge conflicts on files that were deleted.
 ### Push your changes
 
 Now create a new `rebasing` tag, push both branches to your personal
-remote, and creating a PR:
+remote, and create a PR for the `latest-upstream` branch against
+`master` of `openshift-metalkube/kni-installer`:
 
 ```
 REBASING_TAG=rebasing-$(date -I)-$(git rev-parse --short master)
