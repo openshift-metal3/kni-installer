@@ -2,15 +2,12 @@
 
 
 [[projects]]
-  digest = "1:074551979ff3363545bf927dd9cbe2ddca50ef2efecac993f667e917929ddc5a"
   name = "github.com/Unknwon/com"
   packages = ["."]
-  pruneopts = "NUT"
   revision = "41959bdd855fb7db467f78865d5f9044507df1cd"
   version = "v2"
 
 [[projects]]
-  digest = "1:9442c4e2cb4563e33c8813929b1bc66b562629c981beeda38eaaa2d4a1d1bcb9"
   name = "github.com/aws/aws-sdk-go"
   packages = [
     "aws",
@@ -140,81 +137,70 @@
     "service/transfer",
     "service/waf",
     "service/wafregional",
-    "service/workspaces",
+    "service/workspaces"
   ]
-  pruneopts = "NUT"
   revision = "5f1ca23f3ded773a9ba214e6fac36acd9a965a53"
   version = "v1.16.6"
 
 [[projects]]
-  digest = "1:f4298c81d8a94ab68d9e387eaf6e653387df5da17702f06c6d8718a7a8e549d0"
   name = "github.com/beevik/etree"
   packages = ["."]
-  pruneopts = "NUT"
   revision = "9d7e8feddccb4ed1b8afb54e368bd323d2ff652c"
   version = "v1.0.1"
 
 [[projects]]
   branch = "master"
-  digest = "1:04873dc5e06932b750eac24a1d90eabae58249df63bed6823e77b62a0160a297"
   name = "github.com/c4milo/gotoolkit"
   packages = ["."]
-  pruneopts = "NUT"
   revision = "e37eeabad07ed8fbe83a0b222c963c480394f033"
 
 [[projects]]
-  digest = "1:0ef770954bca104ee99b3b6b7f9b240605ac03517d9f98cbc1893daa03f3c038"
   name = "github.com/coreos/go-semver"
   packages = ["semver"]
-  pruneopts = "NUT"
   revision = "8ab6407b697782a06568d4b7f1db25550ec2e4c6"
   version = "v0.2.0"
 
 [[projects]]
-  digest = "1:027c348e13b5f924c925aebf0d2932545644c78da3f43cc82327220286084539"
   name = "github.com/coreos/go-systemd"
   packages = ["unit"]
-  pruneopts = "NUT"
   revision = "9002847aa1425fb6ac49077c0a630b3b67e0fbfd"
   version = "v18"
 
 [[projects]]
-  digest = "1:2b500565ed2c456d1b9349de3932052e603ef87da81f318fa57812ecf88ad29f"
   name = "github.com/coreos/ignition"
   packages = [
     "config/errors",
     "config/v2_1/types",
-    "config/validate/report",
+    "config/validate/report"
   ]
-  pruneopts = "NUT"
   revision = "bd3876b8f1d627625fe266a0e35256ba05e664e3"
   version = "v0.23.0"
 
 [[projects]]
-  digest = "1:ffe9824d294da03b391f44e1ae8281281b4afc1bdaa9588c9097785e3af10cec"
   name = "github.com/davecgh/go-spew"
   packages = ["spew"]
-  pruneopts = "NUT"
   revision = "8991bc29aa16c548c550c7ff78260e27b9ab7c73"
   version = "v1.1.1"
 
 [[projects]]
-  digest = "1:e101085bd88d5999c0cc346c222d4afb3aebc169c23f3126fa8987fb92badaec"
   name = "github.com/dmacvicar/terraform-provider-libvirt"
   packages = ["libvirt"]
-  pruneopts = "NUT"
   revision = "2ad0228349b2d3b487a2ada25d1a0eb40d73b7d1"
 
 [[projects]]
-  digest = "1:54d36727a1d852a38be8b8dbcfbae6aa99130d793d63dabc865f150b690144af"
   name = "github.com/gophercloud/gophercloud"
   packages = [
     ".",
     "internal",
     "openstack",
+    "openstack/baremetal/noauth",
+    "openstack/baremetal/v1/nodes",
+    "openstack/baremetal/v1/ports",
     "openstack/blockstorage/extensions/volumeactions",
     "openstack/blockstorage/v1/volumes",
+    "openstack/blockstorage/v2/snapshots",
     "openstack/blockstorage/v2/volumes",
+    "openstack/blockstorage/v3/snapshots",
     "openstack/blockstorage/v3/volumes",
     "openstack/compute/v2/extensions/attachinterfaces",
     "openstack/compute/v2/extensions/availabilityzones",
@@ -257,12 +243,14 @@
     "openstack/networking/v2/extensions/fwaas/policies",
     "openstack/networking/v2/extensions/fwaas/routerinsertion",
     "openstack/networking/v2/extensions/fwaas/rules",
+    "openstack/networking/v2/extensions/layer3/addressscopes",
     "openstack/networking/v2/extensions/layer3/floatingips",
     "openstack/networking/v2/extensions/layer3/routers",
     "openstack/networking/v2/extensions/lbaas/members",
     "openstack/networking/v2/extensions/lbaas/monitors",
     "openstack/networking/v2/extensions/lbaas/pools",
     "openstack/networking/v2/extensions/lbaas/vips",
+    "openstack/networking/v2/extensions/lbaas_v2/l7policies",
     "openstack/networking/v2/extensions/lbaas_v2/listeners",
     "openstack/networking/v2/extensions/lbaas_v2/loadbalancers",
     "openstack/networking/v2/extensions/lbaas_v2/monitors",
@@ -272,6 +260,7 @@
     "openstack/networking/v2/extensions/security/rules",
     "openstack/networking/v2/extensions/subnetpools",
     "openstack/networking/v2/extensions/trunks",
+    "openstack/networking/v2/extensions/vlantransparent",
     "openstack/networking/v2/extensions/vpnaas/endpointgroups",
     "openstack/networking/v2/extensions/vpnaas/ikepolicies",
     "openstack/networking/v2/extensions/vpnaas/ipsecpolicies",
@@ -284,171 +273,141 @@
     "openstack/objectstorage/v1/containers",
     "openstack/objectstorage/v1/objects",
     "openstack/objectstorage/v1/swauth",
+    "openstack/sharedfilesystems/v2/errors",
+    "openstack/sharedfilesystems/v2/messages",
+    "openstack/sharedfilesystems/v2/securityservices",
+    "openstack/sharedfilesystems/v2/sharenetworks",
+    "openstack/sharedfilesystems/v2/shares",
+    "openstack/sharedfilesystems/v2/snapshots",
     "openstack/utils",
-    "pagination",
+    "pagination"
   ]
-  pruneopts = "NUT"
-  revision = "0719c6b22f30132b0ae6c90b038e0d50992107b0"
+  revision = "ff9851476e985a4f27ed846d6babd7b24b763da5"
 
 [[projects]]
   branch = "master"
-  digest = "1:df12b635fdefd90b1d139a70c45716896552051589b004021c745dcbaf0dad96"
   name = "github.com/gophercloud/utils"
-  packages = ["openstack/clientconfig"]
-  pruneopts = "NUT"
-  revision = "34f5991525d116b3832e0d9409492274f1c06bda"
+  packages = [
+    "openstack/baremetal/v1/nodes",
+    "openstack/clientconfig"
+  ]
+  revision = "0bcc8e728cb54c9dce9ed46924688b817ab14f31"
 
 [[projects]]
-  digest = "1:f0d9d74edbd40fdeada436d5ac9cb5197407899af3fef85ff0137077ffe8ae19"
   name = "github.com/hashicorp/errwrap"
   packages = ["."]
-  pruneopts = "NUT"
   revision = "8a6fb523712970c966eefc6b39ed2c5e74880354"
   version = "v1.0.0"
 
 [[projects]]
-  digest = "1:a5d940c38bf56f121721bfa747c66356df387cb9d5318c570c6d4170aab62862"
   name = "github.com/hashicorp/go-cleanhttp"
   packages = ["."]
-  pruneopts = "NUT"
   revision = "e8ab9daed8d1ddd2d3c4efba338fe2eeae2e4f18"
   version = "v0.5.0"
 
 [[projects]]
-  digest = "1:2ed138049ab373f696db2081ca48f15c5abdf20893803612a284f2bdce2bf443"
   name = "github.com/hashicorp/go-multierror"
   packages = ["."]
-  pruneopts = "NUT"
   revision = "886a7fbe3eb1c874d46f623bfa70af45f425b3d1"
   version = "v1.0.0"
 
 [[projects]]
-  digest = "1:0b06ffe0c0764e413a6738e3f045d6bb14117359aef80a09f8c60fbff2ecad6b"
   name = "github.com/hashicorp/go-version"
   packages = ["."]
-  pruneopts = "NUT"
   revision = "b5a281d3160aa11950a6182bd9a9dc2cb1e02d50"
   version = "v1.0.0"
 
 [[projects]]
-  digest = "1:2f3840740b71b2798a9c85f191367530771debdd812900c4a088ac1f3e31b20e"
   name = "github.com/hooklift/iso9660"
   packages = ["."]
-  pruneopts = "NUT"
   revision = "d6245ab24065917ac16be2ff10ddd3934f41fe54"
   version = "v1.0.0"
 
 [[projects]]
-  digest = "1:bf3bdfa60dc4ecc20eaaac1dc6f86a18da3a5f62c870aa42fdf21f16e3ffbc05"
   name = "github.com/jen20/awspolicyequivalence"
   packages = ["."]
-  pruneopts = "NUT"
   revision = "9ebbf3c225b2b9da629263e13c3015a5de7965d1"
   version = "v1.0.0"
 
 [[projects]]
-  digest = "1:1f2aebae7e7c856562355ec0198d8ca2fa222fb05e5b1b66632a1fce39631885"
   name = "github.com/jmespath/go-jmespath"
   packages = ["."]
-  pruneopts = "NUT"
   revision = "c2b33e84"
 
 [[projects]]
-  digest = "1:e8beb54864e4f61dfbb6c74f16a9aef14205c4849f2f3f9abce1710f314fa3db"
   name = "github.com/libvirt/libvirt-go-xml"
   packages = ["."]
-  pruneopts = "NUT"
   revision = "e0ae6c18e37fe4d1ca4cb65eb3bfb2971838fd95"
   version = "v4.10.0"
 
 [[projects]]
-  digest = "1:1e5a8bf6fb005f1808852ad1a4bedb7b4b3291af90dec12c4c9e4a955a42c9b2"
   name = "github.com/mitchellh/copystructure"
   packages = ["."]
-  pruneopts = "NUT"
   revision = "9a1b6f44e8da0e0e374624fb0a825a231b00c537"
   version = "v1.0.0"
 
 [[projects]]
-  digest = "1:a4df73029d2c42fabcb6b41e327d2f87e685284ec03edf76921c267d9cfc9c23"
   name = "github.com/mitchellh/go-homedir"
   packages = ["."]
-  pruneopts = "NUT"
   revision = "ae18d6b8b3205b561c79e8e5f69bff09736185f4"
   version = "v1.0.0"
 
 [[projects]]
-  digest = "1:a45ae66dea4c899d79fceb116accfa1892105c251f0dcd9a217ddc276b42ec68"
   name = "github.com/mitchellh/mapstructure"
   packages = ["."]
-  pruneopts = "NUT"
   revision = "3536a929edddb9a5b34bd6861dc4a9647cb459fe"
   version = "v1.1.2"
 
 [[projects]]
-  digest = "1:de5aa10ee325755709ed1ac09c2d56cd6753e8bbca8fceac64a9aec99b1fab19"
   name = "github.com/mitchellh/packer"
   packages = ["common/uuid"]
-  pruneopts = "NUT"
   revision = "508b6efb4ababd3efa3614033f9529a30970899d"
   version = "v1.3.3"
 
 [[projects]]
-  digest = "1:44e35ced240c6d8316dc8d604a73774ab052d40ebe636fd8f2ba5934f6329034"
   name = "github.com/mitchellh/reflectwalk"
   packages = ["."]
-  pruneopts = "NUT"
   revision = "eecee6c969c02c8cc2ae48e1e269843ae8590796"
   version = "v1.0.0"
 
 [[projects]]
-  digest = "1:7f2317445e38a3e350ad8e0d6558c27534519eeaa561b536bd5bd5202e916ecd"
+  name = "github.com/openshift-metalkube/terraform-provider-ironic"
+  packages = ["ironic"]
+  revision = "c2a635c1f783f437d980dfbdd6c729d1c1037986"
+
+[[projects]]
   name = "github.com/terraform-providers/terraform-provider-aws"
   packages = ["aws"]
-  pruneopts = "NUT"
   revision = "ec37d790e2a6eb5a845a2420a6706f1bf0c266ab"
   version = "v1.52.0"
 
 [[projects]]
-  digest = "1:600308f54a5a80fc98ee41e14ac6795b144562a6bfc3ef3e4c440cdda5e9c632"
   name = "github.com/terraform-providers/terraform-provider-ignition"
   packages = ["ignition"]
-  pruneopts = "NUT"
   revision = "3168afa8c74263515839d645ec9b819d21fc20f0"
   version = "v1.0.1"
 
 [[projects]]
-  digest = "1:08d640f9d1ab3f57c30971280a3d02f868447a152e99c477d520d0e0c90e66f2"
   name = "github.com/terraform-providers/terraform-provider-openstack"
   packages = ["openstack"]
-  pruneopts = "NUT"
-  revision = "508765e66992e6c813f4ca7762d6e94c32379754"
-  version = "v1.12.0"
+  revision = "c3ed4eb64be2b0e31f560a3118e72deafd750e1b"
+  version = "v1.16.0"
 
 [[projects]]
   branch = "master"
-  digest = "1:c9b456727ce4101594aabddaa816c80464cd21a1e5fcd145297a902303be0085"
   name = "github.com/vincent-petithory/dataurl"
   packages = ["."]
-  pruneopts = "NUT"
   revision = "9a301d65acbb728fcc3ace14f45f511a4cfeea9c"
 
 [[projects]]
-  digest = "1:18108594151654e9e696b27b181b953f9a90b16bf14d253dd1b397b025a1487f"
   name = "gopkg.in/yaml.v2"
   packages = ["."]
-  pruneopts = "NUT"
   revision = "51d6538a90f86fe93ac480b35f37b2be17fef232"
   version = "v2.2.2"
 
 [solve-meta]
   analyzer-name = "dep"
   analyzer-version = 1
-  input-imports = [
-    "github.com/dmacvicar/terraform-provider-libvirt/libvirt",
-    "github.com/terraform-providers/terraform-provider-aws/aws",
-    "github.com/terraform-providers/terraform-provider-ignition/ignition",
-    "github.com/terraform-providers/terraform-provider-openstack/openstack",
-  ]
+  inputs-digest = "9493b151c9ea84e68eabc1e8bdb777eb05bf44975b377df4a22941be14936817"
   solver-name = "gps-cdcl"
   solver-version = 1
