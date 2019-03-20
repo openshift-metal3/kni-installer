@@ -109,6 +109,24 @@ func List(c *gophercloud.ServiceClient, opts ListOptsBuilder) pagination.Pager {
 	})
 }
 
+// ListDetail returns a Pager which allows you to iterate over a collection of
+// clusters with detailed information.
+// It accepts a ListOptsBuilder, which allows you to sort the returned
+// collection for greater efficiency.
+func ListDetail(c *gophercloud.ServiceClient, opts ListOptsBuilder) pagination.Pager {
+	url := listDetailURL(c)
+	if opts != nil {
+		query, err := opts.ToClustersListQuery()
+		if err != nil {
+			return pagination.Pager{Err: err}
+		}
+		url += query
+	}
+	return pagination.NewPager(c, url, func(r pagination.PageResult) pagination.Page {
+		return ClusterPage{pagination.LinkedPageBase{PageResult: r}}
+	})
+}
+
 type UpdateOp string
 
 const (
@@ -118,9 +136,9 @@ const (
 )
 
 type UpdateOpts struct {
-	Op    UpdateOp `json:"op" required:"true"`
-	Path  string   `json:"path" required:"true"`
-	Value string   `json:"value,omitempty"`
+	Op    UpdateOp    `json:"op" required:"true"`
+	Path  string      `json:"path" required:"true"`
+	Value interface{} `json:"value,omitempty"`
 }
 
 // UpdateOptsBuilder allows extensions to add additional parameters to the
