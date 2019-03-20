@@ -10,13 +10,6 @@ import (
 	"net/http"
 	"strings"
 
-	"github.com/gophercloud/gophercloud/openstack/compute/v2/extensions/servergroups"
-	"github.com/gophercloud/gophercloud/openstack/dns/v2/recordsets"
-	"github.com/gophercloud/gophercloud/openstack/dns/v2/zones"
-	"github.com/gophercloud/gophercloud/openstack/networking/v2/extensions/fwaas/firewalls"
-	"github.com/gophercloud/gophercloud/openstack/networking/v2/extensions/fwaas/policies"
-	"github.com/gophercloud/gophercloud/openstack/networking/v2/extensions/fwaas/routerinsertion"
-	"github.com/gophercloud/gophercloud/openstack/networking/v2/extensions/fwaas/rules"
 	"github.com/gophercloud/gophercloud/openstack/networking/v2/extensions/layer3/floatingips"
 	"github.com/gophercloud/gophercloud/openstack/networking/v2/extensions/layer3/routers"
 	"github.com/gophercloud/gophercloud/openstack/networking/v2/extensions/subnetpools"
@@ -33,8 +26,9 @@ import (
 // LogRoundTripper satisfies the http.RoundTripper interface and is used to
 // customize the default http client RoundTripper to allow for logging.
 type LogRoundTripper struct {
-	Rt      http.RoundTripper
-	OsDebug bool
+	Rt         http.RoundTripper
+	OsDebug    bool
+	MaxRetries int
 }
 
 // RoundTrip performs a round-trip HTTP request and logs relevant information about it.
@@ -52,7 +46,7 @@ func (lrt *LogRoundTripper) RoundTrip(request *http.Request) (*http.Response, er
 
 	if lrt.OsDebug {
 		log.Printf("[DEBUG] OpenStack Request URL: %s %s", request.Method, request.URL)
-		log.Printf("[DEBUG] Openstack Request Headers:\n%s", FormatHeaders(request.Header, "\n"))
+		log.Printf("[DEBUG] OpenStack Request Headers:\n%s", FormatHeaders(request.Header, "\n"))
 
 		if request.Body != nil {
 			request.Body, err = lrt.logRequest(request.Body, request.Header.Get("Content-Type"))
@@ -63,13 +57,28 @@ func (lrt *LogRoundTripper) RoundTrip(request *http.Request) (*http.Response, er
 	}
 
 	response, err := lrt.Rt.RoundTrip(request)
-	if response == nil {
-		return nil, err
+
+	// If the first request didn't return a response, retry up to `max_retries`.
+	retry := 1
+	for response == nil {
+		if retry > lrt.MaxRetries {
+			if lrt.OsDebug {
+				log.Printf("[DEBUG] OpenStack connection error, retries exhausted. Aborting")
+			}
+			err = fmt.Errorf("OpenStack connection error, retries exhausted. Aborting. Last error was: %s", err)
+			return nil, err
+		}
+
+		if lrt.OsDebug {
+			log.Printf("[DEBUG] OpenStack connection error, retry number %d: %s", retry, err)
+		}
+		response, err = lrt.Rt.RoundTrip(request)
+		retry += 1
 	}
 
 	if lrt.OsDebug {
-		log.Printf("[DEBUG] Openstack Response Code: %d", response.StatusCode)
-		log.Printf("[DEBUG] Openstack Response Headers:\n%s", FormatHeaders(response.Header, "\n"))
+		log.Printf("[DEBUG] OpenStack Response Code: %d", response.StatusCode)
+		log.Printf("[DEBUG] OpenStack Response Headers:\n%s", FormatHeaders(response.Header, "\n"))
 
 		response.Body, err = lrt.logResponse(response.Body, response.Header.Get("Content-Type"))
 	}
@@ -137,6 +146,12 @@ func (lrt *LogRoundTripper) formatJSON(raw []byte) string {
 					v["password"] = "***"
 				}
 			}
+			if v, ok := v["application_credential"].(map[string]interface{}); ok {
+				v["secret"] = "***"
+			}
+			if v, ok := v["token"].(map[string]interface{}); ok {
+				v["id"] = "***"
+			}
 		}
 	}
 
@@ -154,33 +169,6 @@ func (lrt *LogRoundTripper) formatJSON(raw []byte) string {
 	}
 
 	return string(pretty)
-}
-
-// Firewall is an OpenStack firewall.
-type Firewall struct {
-	firewalls.Firewall
-	routerinsertion.FirewallExt
-}
-
-// FirewallCreateOpts represents the attributes used when creating a new firewall.
-type FirewallCreateOpts struct {
-	firewalls.CreateOpts
-	ValueSpecs map[string]string `json:"value_specs,omitempty"`
-}
-
-// ToFirewallCreateMap casts a CreateOptsExt struct to a map.
-// It overrides firewalls.ToFirewallCreateMap to add the ValueSpecs field.
-func (opts FirewallCreateOpts) ToFirewallCreateMap() (map[string]interface{}, error) {
-	return BuildRequest(opts, "firewall")
-}
-
-//FirewallUpdateOpts
-type FirewallUpdateOpts struct {
-	firewalls.UpdateOptsBuilder
-}
-
-func (opts FirewallUpdateOpts) ToFirewallUpdateMap() (map[string]interface{}, error) {
-	return BuildRequest(opts, "firewall")
 }
 
 // FloatingIPCreateOpts represents the attributes used when creating a new floating ip.
@@ -207,12 +195,6 @@ func (opts NetworkCreateOpts) ToNetworkCreateMap() (map[string]interface{}, erro
 	return BuildRequest(opts, "network")
 }
 
-// PolicyCreateOpts represents the attributes used when creating a new firewall policy.
-type PolicyCreateOpts struct {
-	policies.CreateOpts
-	ValueSpecs map[string]string `json:"value_specs,omitempty"`
-}
-
 // IKEPolicyCreateOpts represents the attributes used when creating a new IKE policy.
 type IKEPolicyCreateOpts struct {
 	ikepolicies.CreateOpts
@@ -223,12 +205,6 @@ type IKEPolicyCreateOpts struct {
 type IKEPolicyLifetimeCreateOpts struct {
 	ikepolicies.LifetimeCreateOpts
 	ValueSpecs map[string]string `json:"value_specs,omitempty"`
-}
-
-// ToPolicyCreateMap casts a CreateOpts struct to a map.
-// It overrides policies.ToFirewallPolicyCreateMap to add the ValueSpecs field.
-func (opts PolicyCreateOpts) ToFirewallPolicyCreateMap() (map[string]interface{}, error) {
-	return BuildRequest(opts, "firewall_policy")
 }
 
 // PortCreateOpts represents the attributes used when creating a new port.
@@ -243,27 +219,6 @@ func (opts PortCreateOpts) ToPortCreateMap() (map[string]interface{}, error) {
 	return BuildRequest(opts, "port")
 }
 
-// RecordSetCreateOpts represents the attributes used when creating a new DNS record set.
-type RecordSetCreateOpts struct {
-	recordsets.CreateOpts
-	ValueSpecs map[string]string `json:"value_specs,omitempty"`
-}
-
-// ToRecordSetCreateMap casts a CreateOpts struct to a map.
-// It overrides recordsets.ToRecordSetCreateMap to add the ValueSpecs field.
-func (opts RecordSetCreateOpts) ToRecordSetCreateMap() (map[string]interface{}, error) {
-	b, err := BuildRequest(opts, "")
-	if err != nil {
-		return nil, err
-	}
-
-	if m, ok := b[""].(map[string]interface{}); ok {
-		return m, nil
-	}
-
-	return nil, fmt.Errorf("Expected map but got %T", b[""])
-}
-
 // RouterCreateOpts represents the attributes used when creating a new router.
 type RouterCreateOpts struct {
 	routers.CreateOpts
@@ -274,39 +229,6 @@ type RouterCreateOpts struct {
 // It overrides routers.ToRouterCreateMap to add the ValueSpecs field.
 func (opts RouterCreateOpts) ToRouterCreateMap() (map[string]interface{}, error) {
 	return BuildRequest(opts, "router")
-}
-
-// RuleCreateOpts represents the attributes used when creating a new firewall rule.
-type RuleCreateOpts struct {
-	rules.CreateOpts
-	ValueSpecs map[string]string `json:"value_specs,omitempty"`
-}
-
-// ToRuleCreateMap casts a CreateOpts struct to a map.
-// It overrides rules.ToRuleCreateMap to add the ValueSpecs field.
-func (opts RuleCreateOpts) ToRuleCreateMap() (map[string]interface{}, error) {
-	b, err := BuildRequest(opts, "firewall_rule")
-	if err != nil {
-		return nil, err
-	}
-
-	if m := b["firewall_rule"].(map[string]interface{}); m["protocol"] == "any" {
-		m["protocol"] = nil
-	}
-
-	return b, nil
-}
-
-// ServerGroupCreateOpts represents the attributes used when creating a new router.
-type ServerGroupCreateOpts struct {
-	servergroups.CreateOpts
-	ValueSpecs map[string]string `json:"value_specs,omitempty"`
-}
-
-// ToServerGroupCreateMap casts a CreateOpts struct to a map.
-// It overrides routers.ToServerGroupCreateMap to add the ValueSpecs field.
-func (opts ServerGroupCreateOpts) ToServerGroupCreateMap() (map[string]interface{}, error) {
-	return BuildRequest(opts, "server_group")
 }
 
 // SubnetCreateOpts represents the attributes used when creating a new subnet.
@@ -328,31 +250,6 @@ func (opts SubnetCreateOpts) ToSubnetCreateMap() (map[string]interface{}, error)
 	}
 
 	return b, nil
-}
-
-// ZoneCreateOpts represents the attributes used when creating a new DNS zone.
-type ZoneCreateOpts struct {
-	zones.CreateOpts
-	ValueSpecs map[string]string `json:"value_specs,omitempty"`
-}
-
-// ToZoneCreateMap casts a CreateOpts struct to a map.
-// It overrides zones.ToZoneCreateMap to add the ValueSpecs field.
-func (opts ZoneCreateOpts) ToZoneCreateMap() (map[string]interface{}, error) {
-	b, err := BuildRequest(opts, "")
-	if err != nil {
-		return nil, err
-	}
-
-	if m, ok := b[""].(map[string]interface{}); ok {
-		if opts.TTL > 0 {
-			m["ttl"] = opts.TTL
-		}
-
-		return m, nil
-	}
-
-	return nil, fmt.Errorf("Expected map but got %T", b[""])
 }
 
 // SubnetPoolCreateOpts represents the attributes used when creating a new subnet pool.
