@@ -38,7 +38,7 @@ func CheckDeleted(d *schema.ResourceData, err error, msg string) error {
 		return nil
 	}
 
-	return fmt.Errorf("%s: %s", msg, err)
+	return fmt.Errorf("%s %s: %s", msg, d.Id(), err)
 }
 
 // GetRegion returns the region that was specified in the resource. If a
@@ -163,33 +163,25 @@ func expandVendorOptions(vendOptsRaw []interface{}) map[string]interface{} {
 	return vendorOptions
 }
 
-func containerInfraLabelsMapV1(d *schema.ResourceData) (map[string]string, error) {
-	m := make(map[string]string)
-	for key, val := range d.Get("labels").(map[string]interface{}) {
-		labelValue, ok := val.(string)
-		if !ok {
-			return nil, fmt.Errorf("label %s value should be string", key)
-		}
-		m[key] = labelValue
+func networkV2ReadAttributesTags(d *schema.ResourceData, tags []string) {
+	d.Set("all_tags", tags)
+
+	allTags := d.Get("all_tags").(*schema.Set)
+	desiredTags := d.Get("tags").(*schema.Set)
+	actualTags := allTags.Intersection(desiredTags)
+	if !actualTags.Equal(desiredTags) {
+		d.Set("tags", expandToStringSlice(actualTags.List()))
 	}
-	return m, nil
 }
 
-func containerInfraLabelsStringV1(d *schema.ResourceData) (string, error) {
-	var formattedLabels string
-	for key, val := range d.Get("labels").(map[string]interface{}) {
-		labelValue, ok := val.(string)
-		if !ok {
-			return "", fmt.Errorf("label %s value should be string", key)
-		}
-		formattedLabels = strings.Join([]string{
-			formattedLabels,
-			fmt.Sprintf("%s=%s", key, labelValue),
-		}, ",")
-	}
-	formattedLabels = strings.Trim(formattedLabels, ",")
+func networkV2UpdateAttributesTags(d *schema.ResourceData) (tags []string) {
+	allTags := d.Get("all_tags").(*schema.Set)
+	oldTagsRaw, newTagsRaw := d.GetChange("tags")
+	oldTags, newTags := oldTagsRaw.(*schema.Set), newTagsRaw.(*schema.Set)
 
-	return formattedLabels, nil
+	allWithoutOld := allTags.Difference(oldTags)
+
+	return expandToStringSlice(allWithoutOld.Union(newTags).List())
 }
 
 func networkV2AttributesTags(d *schema.ResourceData) (tags []string) {
@@ -234,4 +226,52 @@ func testAccCheckNetworkingV2Tags(name string, tags []string) resource.TestCheck
 		}
 		return nil
 	}
+}
+
+func expandToMapStringString(v map[string]interface{}) map[string]string {
+	m := make(map[string]string)
+	for key, val := range v {
+		if strVal, ok := val.(string); ok {
+			m[key] = strVal
+		}
+	}
+
+	return m
+}
+
+func expandToStringSlice(v []interface{}) []string {
+	s := make([]string, len(v))
+	for i, val := range v {
+		if strVal, ok := val.(string); ok {
+			s[i] = strVal
+		}
+	}
+
+	return s
+}
+
+// strSliceContains checks if a given string is contained in a slice
+// When anybody asks why Go needs generics, here you go.
+func strSliceContains(haystack []string, needle string) bool {
+	for _, s := range haystack {
+		if s == needle {
+			return true
+		}
+	}
+	return false
+}
+
+func sliceUnion(a, b []string) []string {
+	var res []string
+	for _, i := range a {
+		if !strSliceContains(res, i) {
+			res = append(res, i)
+		}
+	}
+	for _, k := range b {
+		if !strSliceContains(res, k) {
+			res = append(res, k)
+		}
+	}
+	return res
 }
