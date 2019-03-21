@@ -373,7 +373,7 @@
 [[projects]]
   name = "github.com/openshift-metalkube/terraform-provider-ironic"
   packages = ["ironic"]
-  revision = "c2a635c1f783f437d980dfbdd6c729d1c1037986"
+  revision = "7cf70fc4ddaffb3e3351905e7892e40463cecae2"
 
 [[projects]]
   name = "github.com/terraform-providers/terraform-provider-aws"
@@ -408,6 +408,6 @@
 [solve-meta]
   analyzer-name = "dep"
   analyzer-version = 1
-  inputs-digest = "9493b151c9ea84e68eabc1e8bdb777eb05bf44975b377df4a22941be14936817"
+  inputs-digest = "0b2ed273dd65856e3345f85aa277c85b4f4e0c7d74a69f911f149d36e09ac3b2"
   solver-name = "gps-cdcl"
   solver-version = 1
