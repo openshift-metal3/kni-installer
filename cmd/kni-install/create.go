@@ -94,9 +94,6 @@ var (
 					logrus.Fatal(errors.Wrap(err, "loading kubeconfig"))
 				}
 
-				logrus.Warn("FIXME! Exiting after bootstrap cluster create for baremetal testing")
-				return
-
 				err = waitForBootstrapComplete(ctx, config, rootOpts.dir)
 				if err != nil {
 					if err2 := runGatherBootstrapCmd(rootOpts.dir); err2 != nil {
@@ -110,6 +107,9 @@ var (
 				if err != nil {
 					logrus.Fatal(err)
 				}
+
+				logrus.Warn("FIXME! Exiting after bootstrap, remove when all operators will come up successfully.")
+				return
 
 				err = waitForInstallComplete(ctx, config, rootOpts.dir)
 				if err != nil {
