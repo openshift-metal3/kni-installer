@@ -1,31 +1,26 @@
-variable "ironic_uri" {
-  type = "string"
-  description = "ironic connection URI"
-}
-
-variable "libvirt_uri" {
-  type = "string"
-  description = "libvirt connection URI"
-}
-
-variable "os_image" {
-  type = "string"
+variable "image_source" {
   description = "The URL of the OS disk image"
-}
-
-variable "baremetal_bridge" {
   type = "string"
-  description = "The name of the baremetal bridge"
 }
 
-variable "overcloud_bridge" {
+variable "image_checksum" {
   type = "string"
-  description = "The name of the overcloud bridge"
+  description = "The URL or checksum value of the image"
 }
 
-variable "master_configuration" {
-  type = "map"
-  description = "Configuration information for masters such as image location"
+variable "root_gb" {
+  type = "string"
+  description = "Size of the root disk"
+}
+
+variable "root_disk" {
+  type = "string"
+  description = "Location of the root disk"
+}
+
+variable "ignition" {
+  type = "string"
+  description = "The content of the master ignition file"
 }
 
 variable "master_0" {
