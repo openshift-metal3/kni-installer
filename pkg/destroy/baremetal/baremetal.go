@@ -3,7 +3,7 @@
 package baremetal
 
 import (
-	libvirt "github.com/libvirt/libvirt-go"
+	"github.com/libvirt/libvirt-go"
 	"github.com/pkg/errors"
 	"github.com/sirupsen/logrus"
 
@@ -14,6 +14,7 @@ import (
 // ClusterUninstaller holds the various options for the cluster we want to delete.
 type ClusterUninstaller struct {
 	LibvirtURI string
+	IronicURI  string
 	Logger     logrus.FieldLogger
 }
 
@@ -35,7 +36,8 @@ func (o *ClusterUninstaller) Run() error {
 // New returns bare metal Uninstaller from ClusterMetadata.
 func New(logger logrus.FieldLogger, metadata *types.ClusterMetadata) (providers.Destroyer, error) {
 	return &ClusterUninstaller{
-		LibvirtURI: metadata.ClusterPlatformMetadata.BareMetal.URI,
+		LibvirtURI: metadata.ClusterPlatformMetadata.BareMetal.LibvirtURI,
+		IronicURI:  metadata.ClusterPlatformMetadata.BareMetal.IronicURI,
 		Logger:     logger,
 	}, nil
 }
