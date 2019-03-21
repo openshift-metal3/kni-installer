@@ -2,5 +2,6 @@ package baremetal
 
 // Metadata contains baremetal metadata (e.g. for uninstalling the cluster).
 type Metadata struct {
-	URI string `json:"uri"`
+	LibvirtURI string `json:"libvirt_uri"`
+	IronicURI  string `json:"ironic_uri"`
 }
