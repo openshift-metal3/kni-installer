@@ -5,13 +5,17 @@ import (
 )
 
 const (
-	// DefaultURI is the default URI of the libvirtd connection.
-	DefaultURI = "qemu:///system"
+	LibvirtURI = "qemu:///system"
+	IronicURI = "http://localhost:6385/v1"
 )
 
 // SetPlatformDefaults sets the defaults for the platform.
 func SetPlatformDefaults(p *baremetal.Platform) {
-	if p.URI == "" {
-		p.URI = DefaultURI
+	if p.LibvirtURI == "" {
+		p.LibvirtURI = LibvirtURI
+	}
+
+	if p.IronicURI == "" {
+		p.IronicURI = IronicURI
 	}
 }
