@@ -31,7 +31,6 @@ import (
 const (
 	rootDir              = "/opt/openshift"
 	bootstrapIgnFilename = "bootstrap.ign"
-	etcdCertSignerImage  = "quay.io/coreos/kube-etcd-signer-server:678cc8e6841e2121ebfdb6e2db568fce290b67d6"
 	ignitionUser         = "core"
 )
 
@@ -42,10 +41,9 @@ var (
 // bootstrapTemplateData is the data to use to replace values in bootstrap
 // template files.
 type bootstrapTemplateData struct {
-	EtcdCertSignerImage string
-	EtcdCluster         string
-	PullSecret          string
-	ReleaseImage        string
+	EtcdCluster  string
+	PullSecret   string
+	ReleaseImage string
 }
 
 // Bootstrap is an asset that generates the ignition config for bootstrap nodes.
@@ -75,9 +73,9 @@ func (a *Bootstrap) Dependencies() []asset.Asset {
 		&tls.EtcdCA{},
 		&tls.EtcdCABundle{},
 		&tls.EtcdClientCertKey{},
-		&tls.EtcdMetricsCABundle{},
-		&tls.EtcdMetricsSignerClientCertKey{},
-		&tls.EtcdMetricsSignerServerCertKey{},
+		&tls.EtcdMetricCABundle{},
+		&tls.EtcdMetricSignerCertKey{},
+		&tls.EtcdMetricSignerClientCertKey{},
 		&tls.EtcdSignerCertKey{},
 		&tls.EtcdSignerClientCertKey{},
 		&tls.JournalCertKey{},
@@ -181,10 +179,9 @@ func (a *Bootstrap) getTemplateData(installConfig *types.InstallConfig) (*bootst
 	}
 
 	return &bootstrapTemplateData{
-		EtcdCertSignerImage: etcdCertSignerImage,
-		PullSecret:          installConfig.PullSecret,
-		ReleaseImage:        releaseImage,
-		EtcdCluster:         strings.Join(etcdEndpoints, ","),
+		PullSecret:   installConfig.PullSecret,
+		ReleaseImage: releaseImage,
+		EtcdCluster:  strings.Join(etcdEndpoints, ","),
 	}, nil
 }
 
@@ -385,9 +382,9 @@ func (a *Bootstrap) addParentFiles(dependencies asset.Parents) {
 		&tls.EtcdCA{},
 		&tls.EtcdCABundle{},
 		&tls.EtcdClientCertKey{},
-		&tls.EtcdMetricsCABundle{},
-		&tls.EtcdMetricsSignerClientCertKey{},
-		&tls.EtcdMetricsSignerServerCertKey{},
+		&tls.EtcdMetricCABundle{},
+		&tls.EtcdMetricSignerCertKey{},
+		&tls.EtcdMetricSignerClientCertKey{},
 		&tls.EtcdSignerCertKey{},
 		&tls.EtcdSignerClientCertKey{},
 		&tls.KubeAPIServerLBCABundle{},
