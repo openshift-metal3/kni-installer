@@ -82,6 +82,82 @@ then
 	touch config-bootstrap.done
 fi
 
+# Rendering MCO first so machines can be boot before we wait for their
+# mDNS information
+if [ ! -f mco-bootstrap.done ]
+then
+	echo "Rendering MCO manifests..."
+
+	rm -rf mco-bootstrap
+
+	# shellcheck disable=SC2154
+	podman run \
+		--quiet \
+		--user 0 \
+		--volume "$PWD:/assets:z" \
+		"${MACHINE_CONFIG_OPERATOR_IMAGE}" \
+		bootstrap \
+			--etcd-ca=/assets/tls/etcd-client-ca.crt \
+			--root-ca=/assets/tls/root-ca.crt \
+			--kube-ca=/assets/tls/kube-ca.crt \
+			--config-file=/assets/manifests/cluster-config.yaml \
+			--dest-dir=/assets/mco-bootstrap \
+			--pull-secret=/assets/manifests/pull.json \
+			--etcd-image=${MACHINE_CONFIG_ETCD_IMAGE} \
+			--setup-etcd-env-image=${MACHINE_CONFIG_SETUP_ETCD_ENV_IMAGE} \
+			--kube-client-agent-image=${MACHINE_CONFIG_KUBE_CLIENT_AGENT_IMAGE} \
+			--machine-config-controller-image=${MACHINE_CONFIG_CONTROLLER_IMAGE} \
+			--machine-config-server-image=${MACHINE_CONFIG_SERVER_IMAGE} \
+			--machine-config-daemon-image=${MACHINE_CONFIG_DAEMON_IMAGE} \
+			--machine-config-oscontent-image=${MACHINE_CONFIG_OSCONTENT} \
+			--infra-image=${MACHINE_CONFIG_INFRA_IMAGE}
+
+	# Bootstrap MachineConfigController uses /etc/mcc/bootstrap/manifests/ dir to
+	# 1. read the controller config rendered by MachineConfigOperator
+	# 2. read the default MachineConfigPools rendered by MachineConfigOperator
+	# 3. read any additional MachineConfigs that are needed for the default MachineConfigPools.
+	mkdir --parents /etc/mcc/bootstrap /etc/mcs/bootstrap /etc/kubernetes/manifests
+	cp mco-bootstrap/bootstrap/manifests/* /etc/mcc/bootstrap/
+	cp openshift/* /etc/mcc/bootstrap/
+	cp auth/kubeconfig-kubelet /etc/mcs/kubeconfig
+	cp mco-bootstrap/bootstrap/machineconfigoperator-bootstrap-pod.yaml /etc/kubernetes/manifests/
+	cp mco-bootstrap/manifests/* manifests/
+
+	# /etc/ssl/mcs/tls.{crt, key} are locations for MachineConfigServer's tls assets.
+	mkdir --parents /etc/ssl/mcs/
+	cp tls/machine-config-server.crt /etc/ssl/mcs/tls.crt
+	cp tls/machine-config-server.key /etc/ssl/mcs/tls.key
+
+	touch mco-bootstrap.done
+fi
+
+echo -n "Waiting for etcd member names to be available from SRV"
+CLUSTER_DOMAIN="$(awk '/search/ {print $2}' /etc/resolv.conf)"
+while ! DNS_DISC_ANSWERS=$(host -t SRV "_etcd-server-ssl._tcp.$CLUSTER_DOMAIN"); do
+    echo -n "."
+    sleep 1
+done
+
+ETCD_MEMBERS=$(awk '{print $NF}' <<< "$DNS_DISC_ANSWERS")
+echo " Found etcd members!"
+
+function etcd-server-urls {
+    local out
+    local members
+    local delimiter
+
+    members="$*"
+    delimiter=','
+    for member in $members; do
+        if [[ -z "$out" ]]; then
+            out+="https://${member::-1}:2379"
+        else
+            out+="${delimiter}https://${member::-1}:2379"
+        fi
+    done
+    echo $out
+}
+
 if [ ! -f kube-apiserver-bootstrap.done ]
 then
 	echo "Rendering Kubernetes API server core manifests..."
@@ -95,7 +171,7 @@ then
 		"${KUBE_APISERVER_OPERATOR_IMAGE}" \
 		/usr/bin/cluster-kube-apiserver-operator render \
 		--manifest-etcd-serving-ca=etcd-client-ca.crt \
-		--manifest-etcd-server-urls={{.EtcdCluster}} \
+		--manifest-etcd-server-urls=$(etcd-server-urls $ETCD_MEMBERS) \
 		--manifest-image=${OPENSHIFT_HYPERSHIFT_IMAGE} \
 		--asset-input-dir=/assets/tls \
 		--asset-output-dir=/assets/kube-apiserver-bootstrap \
@@ -158,53 +234,6 @@ then
 	touch kube-scheduler-bootstrap.done
 fi
 
-if [ ! -f mco-bootstrap.done ]
-then
-	echo "Rendering MCO manifests..."
-
-	rm -rf mco-bootstrap
-
-	# shellcheck disable=SC2154
-	podman run \
-		--quiet \
-		--user 0 \
-		--volume "$PWD:/assets:z" \
-		"${MACHINE_CONFIG_OPERATOR_IMAGE}" \
-		bootstrap \
-			--etcd-ca=/assets/tls/etcd-client-ca.crt \
-			--root-ca=/assets/tls/root-ca.crt \
-			--kube-ca=/assets/tls/kube-ca.crt \
-			--config-file=/assets/manifests/cluster-config.yaml \
-			--dest-dir=/assets/mco-bootstrap \
-			--pull-secret=/assets/manifests/pull.json \
-			--etcd-image=${MACHINE_CONFIG_ETCD_IMAGE} \
-			--setup-etcd-env-image=${MACHINE_CONFIG_SETUP_ETCD_ENV_IMAGE} \
-			--kube-client-agent-image=${MACHINE_CONFIG_KUBE_CLIENT_AGENT_IMAGE} \
-			--machine-config-controller-image=${MACHINE_CONFIG_CONTROLLER_IMAGE} \
-			--machine-config-server-image=${MACHINE_CONFIG_SERVER_IMAGE} \
-			--machine-config-daemon-image=${MACHINE_CONFIG_DAEMON_IMAGE} \
-			--machine-config-oscontent-image=${MACHINE_CONFIG_OSCONTENT} \
-			--infra-image=${MACHINE_CONFIG_INFRA_IMAGE}
-
-	# Bootstrap MachineConfigController uses /etc/mcc/bootstrap/manifests/ dir to
-	# 1. read the controller config rendered by MachineConfigOperator
-	# 2. read the default MachineConfigPools rendered by MachineConfigOperator
-	# 3. read any additional MachineConfigs that are needed for the default MachineConfigPools.
-	mkdir --parents /etc/mcc/bootstrap /etc/mcs/bootstrap /etc/kubernetes/manifests
-	cp mco-bootstrap/bootstrap/manifests/* /etc/mcc/bootstrap/
-	cp openshift/* /etc/mcc/bootstrap/
-	cp auth/kubeconfig-kubelet /etc/mcs/kubeconfig
-	cp mco-bootstrap/bootstrap/machineconfigoperator-bootstrap-pod.yaml /etc/kubernetes/manifests/
-	cp mco-bootstrap/manifests/* manifests/
-
-	# /etc/ssl/mcs/tls.{crt, key} are locations for MachineConfigServer's tls assets.
-	mkdir --parents /etc/ssl/mcs/
-	cp tls/machine-config-server.crt /etc/ssl/mcs/tls.crt
-	cp tls/machine-config-server.key /etc/ssl/mcs/tls.key
-
-	touch mco-bootstrap.done
-fi
-
 # We originally wanted to run the etcd cert signer as
 # a static pod, but kubelet could't remove static pod
 # when API server is not up, so we have to run this as
@@ -250,7 +279,7 @@ until podman run \
 		--cacert=/opt/openshift/tls/etcd-client-ca.crt \
 		--cert=/opt/openshift/tls/etcd-client.crt \
 		--key=/opt/openshift/tls/etcd-client.key \
-		--endpoints={{.EtcdCluster}} \
+		--endpoints=$(etcd-server-urls $ETCD_MEMBERS) \
 		endpoint health
 do
 	echo "etcdctl failed. Retrying in 5 seconds..."
