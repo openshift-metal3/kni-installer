@@ -9,6 +9,7 @@ import (
 	"github.com/openshift-metalkube/kni-installer/pkg/types/libvirt"
 	"github.com/openshift-metalkube/kni-installer/pkg/types/none"
 	"github.com/openshift-metalkube/kni-installer/pkg/types/openstack"
+	"github.com/openshift-metalkube/kni-installer/pkg/types/vsphere"
 	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
 )
 
@@ -33,6 +34,7 @@ var (
 		aws.Name,
 		none.Name,
 		openstack.Name,
+		vsphere.Name,
 	}
 )
 
@@ -94,6 +96,10 @@ type Platform struct {
 	// +optional
 	OpenStack *openstack.Platform `json:"openstack,omitempty"`
 
+	// VSphere is the configuration used when installing on vSphere.
+	// +optional
+	VSphere *vsphere.Platform `json:"vsphere,omitempty"`
+
 	// BareMetal is the configuration used when installing on bare metal.
 	// +optional
 	BareMetal *baremetal.Platform `json:"baremetal,omitempty"`
@@ -103,25 +109,24 @@ type Platform struct {
 // AWS is non-nil).  It returns an empty string if no platform is
 // configured.
 func (p *Platform) Name() string {
-	if p == nil {
+	switch {
+	case p == nil:
+		return ""
+	case p.AWS != nil:
+		return aws.Name
+	case p.Libvirt != nil:
+		return libvirt.Name
+	case p.None != nil:
+		return none.Name
+	case p.OpenStack != nil:
+		return openstack.Name
+	case p.VSphere != nil:
+		return vsphere.Name
+	case p.BareMetal != nil:
+		return baremetal.Name
+	default:
 		return ""
 	}
-	if p.AWS != nil {
-		return aws.Name
-	}
-	if p.Libvirt != nil {
-		return libvirt.Name
-	}
-	if p.None != nil {
-		return none.Name
-	}
-	if p.OpenStack != nil {
-		return openstack.Name
-	}
-	if p.BareMetal != nil {
-		return baremetal.Name
-	}
-	return ""
 }
 
 // Networking defines the pod network provider in the cluster.

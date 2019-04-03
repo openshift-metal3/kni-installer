@@ -70,6 +70,7 @@ func (a *InstallConfig) Generate(parents asset.Parents) error {
 	a.Config.Libvirt = platform.Libvirt
 	a.Config.None = platform.None
 	a.Config.OpenStack = platform.OpenStack
+	a.Config.VSphere = platform.VSphere
 	a.Config.BareMetal = platform.BareMetal
 
 	if err := a.setDefaults(); err != nil {

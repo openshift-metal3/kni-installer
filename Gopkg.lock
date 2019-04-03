@@ -106,14 +106,24 @@
   version = "v18"
 
 [[projects]]
-  digest = "1:1a216755b1570c329bada24deac0032f487c1a5b7c690963c96ad2da9b8c3ec9"
+  digest = "1:fb5b2aed0d774e210c1f2c0893e620cb3fa98957d3b925d0378f93b9613eb605"
   name = "github.com/coreos/ignition"
   packages = [
     "config/shared/errors",
     "config/shared/validations",
     "config/util",
+    "config/v1",
+    "config/v1/types",
+    "config/v2_0",
+    "config/v2_0/types",
+    "config/v2_1",
+    "config/v2_1/types",
+    "config/v2_2",
     "config/v2_2/types",
     "config/v2_3_experimental/types",
+    "config/validate",
+    "config/validate/astjson",
+    "config/validate/astnode",
     "config/validate/report",
   ]
   pruneopts = "NUT"
@@ -164,7 +174,7 @@
   version = "v1.2.0"
 
 [[projects]]
-  digest = "1:63ccdfbd20f7ccd2399d0647a7d100b122f79c13bb83da9660b1598396fd9f62"
+  digest = "1:2d0636a8c490d2272dd725db26f74a537111b99b9dbdda0d8b98febe63702aa4"
   name = "github.com/golang/protobuf"
   packages = [
     "proto",
@@ -174,8 +184,8 @@
     "ptypes/timestamp",
   ]
   pruneopts = "NUT"
-  revision = "aa810b61a9c79d51363740d207bb46cf8e620ed5"
-  version = "v1.2.0"
+  revision = "b5d812f8a3706043e23a9cd5babf2e5423744d30"
+  version = "v1.3.1"
 
 [[projects]]
   branch = "master"
@@ -374,18 +384,18 @@
 
 [[projects]]
   branch = "master"
-  digest = "1:6e6aad4c378d1fd14b3b686d59c06c9d82b0f8c2c4a284ee39ed075f41e97397"
+  digest = "1:0d5ffec3950c58e6f4de20d77780e7d02d1cd6fbd425affb29722c4ec5c295ce"
   name = "github.com/openshift/api"
   packages = [
     "config/v1",
     "route/v1",
   ]
   pruneopts = "NUT"
-  revision = "600a5519d1ec56e02c20f42b43888db560bdcb7e"
+  revision = "e8532c51d46fdc99060e3357da9282a3c588ee94"
 
 [[projects]]
   branch = "master"
-  digest = "1:add2f77f1d84edeaa1ca8c7d7d5b7ecf87e48ad979aa478e71c3277e142d6484"
+  digest = "1:20b3ab7f151b642ff806ffe312834d14017b838663580312d1ccb3e10b4dffcc"
   name = "github.com/openshift/client-go"
   packages = [
     "config/clientset/versioned",
@@ -396,11 +406,11 @@
     "route/clientset/versioned/typed/route/v1",
   ]
   pruneopts = "NUT"
-  revision = "2d89985ca24a8307e4b5db2574a62d3e6c2444b4"
+  revision = "8ae2a9c33ba2a3d2ed5dc13d536ca935fc9625b9"
 
 [[projects]]
   branch = "master"
-  digest = "1:feb52434ddfdf3589906278bc611ecf89b3bf799133a1eea0ed7abc4dcd46f71"
+  digest = "1:476ab9e1d63eb879d1869f6876704646de0136a428ba7bba8f3804c1e6fb071b"
   name = "github.com/openshift/cloud-credential-operator"
   packages = [
     "pkg/apis/cloudcredential/v1",
@@ -409,7 +419,7 @@
     "version",
   ]
   pruneopts = "NUT"
-  revision = "4ea04acadeb3e5d069ac10a39a2398c4a1beb495"
+  revision = "4b6d10a82cd4949ade8056e5fbbf29e0765a0f47"
 
 [[projects]]
   digest = "1:5543d01772b4474e08f1554ea53cf3eb12660deed37470888cfc1cd66748cab0"
@@ -440,6 +450,17 @@
   packages = ["pkg/config/clusteroperator/v1helpers"]
   pruneopts = "NUT"
   revision = "4b9f6ceb6598ebd4dd6c9385ef024abf7a18159b"
+
+[[projects]]
+  digest = "1:5bfff65eba275066cdf304a0faf91c7709e0f612ebb9760046adf6035d63ef5c"
+  name = "github.com/openshift/machine-config-operator"
+  packages = [
+    "pkg/apis",
+    "pkg/apis/machineconfiguration.openshift.io/v1",
+  ]
+  pruneopts = "NUT"
+  revision = "7efcbbbcada2af39a505c7a0305c7b32acec0af3"
+  version = "v3.11.0"
 
 [[projects]]
   digest = "1:93b1d84c5fa6d1ea52f4114c37714cddd84d5b78f151b62bb101128dd51399bf"
@@ -883,14 +904,14 @@
 
 [[projects]]
   branch = "master"
-  digest = "1:55b6b7044d6e27db021b0e645e6c135958815a27bde5e5167e52e85888f8569e"
+  digest = "1:6c6e0025ef7af7e27646d2ebd5107b50044d8a1caf80735847fbe43d4d3d8381"
   name = "sigs.k8s.io/cluster-api-provider-openstack"
   packages = [
     "pkg/apis",
     "pkg/apis/openstackproviderconfig/v1alpha1",
   ]
   pruneopts = "NUT"
-  revision = "9e913e83ca639e7f6e10fdffa8445f504b101f3c"
+  revision = "137fd3c3610e5fc616337f952b9b717a7f32f5e4"
   source = "https://github.com/openshift/cluster-api-provider-openstack.git"
 
 [[projects]]
@@ -966,6 +987,7 @@
     "github.com/openshift/cluster-api-provider-libvirt/pkg/apis/libvirtproviderconfig/v1alpha1",
     "github.com/openshift/cluster-api/pkg/apis/machine/v1beta1",
     "github.com/openshift/library-go/pkg/config/clusteroperator/v1helpers",
+    "github.com/openshift/machine-config-operator/pkg/apis/machineconfiguration.openshift.io/v1",
     "github.com/pborman/uuid",
     "github.com/peterbourgon/diskv",
     "github.com/pkg/errors",
@@ -994,7 +1016,6 @@
     "k8s.io/apimachinery/pkg/util/wait",
     "k8s.io/apimachinery/pkg/watch",
     "k8s.io/client-go/kubernetes",
-    "k8s.io/client-go/kubernetes/typed/core/v1",
     "k8s.io/client-go/rest",
     "k8s.io/client-go/tools/cache",
     "k8s.io/client-go/tools/clientcmd",

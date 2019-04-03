@@ -19,6 +19,7 @@ import (
 	libvirttypes "github.com/openshift-metalkube/kni-installer/pkg/types/libvirt"
 	nonetypes "github.com/openshift-metalkube/kni-installer/pkg/types/none"
 	openstacktypes "github.com/openshift-metalkube/kni-installer/pkg/types/openstack"
+	vspheretypes "github.com/openshift-metalkube/kni-installer/pkg/types/vsphere"
 )
 
 var (
@@ -81,7 +82,7 @@ func (d *DNS) Generate(dependencies asset.Parents) error {
 			fmt.Sprintf("kubernetes.io/cluster/%s", clusterID.InfraID): "owned",
 			"Name": fmt.Sprintf("%s-int", clusterID.InfraID),
 		}}
-	case libvirttypes.Name, openstacktypes.Name, baremetaltypes.Name, nonetypes.Name:
+	case libvirttypes.Name, openstacktypes.Name, baremetaltypes.Name, nonetypes.Name, vspheretypes.Name:
 	default:
 		return errors.New("invalid Platform")
 	}

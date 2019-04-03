@@ -12,12 +12,14 @@ import (
 	baremetalconfig "github.com/openshift-metalkube/kni-installer/pkg/asset/installconfig/baremetal"
 	libvirtconfig "github.com/openshift-metalkube/kni-installer/pkg/asset/installconfig/libvirt"
 	openstackconfig "github.com/openshift-metalkube/kni-installer/pkg/asset/installconfig/openstack"
+	vsphereconfig "github.com/openshift-metalkube/kni-installer/pkg/asset/installconfig/vsphere"
 	"github.com/openshift-metalkube/kni-installer/pkg/types"
 	"github.com/openshift-metalkube/kni-installer/pkg/types/aws"
 	"github.com/openshift-metalkube/kni-installer/pkg/types/baremetal"
 	"github.com/openshift-metalkube/kni-installer/pkg/types/libvirt"
 	"github.com/openshift-metalkube/kni-installer/pkg/types/none"
 	"github.com/openshift-metalkube/kni-installer/pkg/types/openstack"
+	"github.com/openshift-metalkube/kni-installer/pkg/types/vsphere"
 )
 
 // Platform is an asset that queries the user for the platform on which to install
@@ -53,6 +55,11 @@ func (a *platform) Generate(asset.Parents) error {
 		a.None = &none.Platform{}
 	case openstack.Name:
 		a.OpenStack, err = openstackconfig.Platform()
+		if err != nil {
+			return err
+		}
+	case vsphere.Name:
+		a.VSphere, err = vsphereconfig.Platform()
 		if err != nil {
 			return err
 		}

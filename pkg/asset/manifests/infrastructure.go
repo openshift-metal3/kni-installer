@@ -16,6 +16,7 @@ import (
 	"github.com/openshift-metalkube/kni-installer/pkg/types/libvirt"
 	"github.com/openshift-metalkube/kni-installer/pkg/types/none"
 	"github.com/openshift-metalkube/kni-installer/pkg/types/openstack"
+	"github.com/openshift-metalkube/kni-installer/pkg/types/vsphere"
 )
 
 var (
@@ -39,29 +40,33 @@ func (*Infrastructure) Name() string {
 // the asset.
 func (*Infrastructure) Dependencies() []asset.Asset {
 	return []asset.Asset{
+		&installconfig.ClusterID{},
 		&installconfig.InstallConfig{},
 	}
 }
 
 // Generate generates the Infrastructure config and its CRD.
 func (i *Infrastructure) Generate(dependencies asset.Parents) error {
+	clusterID := &installconfig.ClusterID{}
 	installConfig := &installconfig.InstallConfig{}
-	dependencies.Get(installConfig)
+	dependencies.Get(clusterID, installConfig)
 
 	var platform configv1.PlatformType
 	switch installConfig.Config.Platform.Name() {
 	case aws.Name:
-		platform = configv1.AWSPlatform
+		platform = configv1.AWSPlatformType
 	case none.Name:
-		platform = configv1.NonePlatform
+		platform = configv1.NonePlatformType
 	case libvirt.Name:
-		platform = configv1.LibvirtPlatform
+		platform = configv1.LibvirtPlatformType
 	case openstack.Name:
-		platform = configv1.OpenStackPlatform
+		platform = configv1.OpenStackPlatformType
+	case vsphere.Name:
+		platform = configv1.VSpherePlatformType
 	case baremetal.Name:
 		platform = configv1.BareMetalPlatform
 	default:
-		platform = configv1.NonePlatform
+		platform = configv1.NonePlatformType
 	}
 
 	config := &configv1.Infrastructure{
@@ -74,6 +79,7 @@ func (i *Infrastructure) Generate(dependencies asset.Parents) error {
 			// not namespaced
 		},
 		Status: configv1.InfrastructureStatus{
+			InfrastructureName:  clusterID.InfraID,
 			Platform:            platform,
 			APIServerURL:        getAPIServerURL(installConfig.Config),
 			EtcdDiscoveryDomain: getEtcdDiscoveryDomain(installConfig.Config),

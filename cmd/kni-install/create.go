@@ -65,16 +65,6 @@ var (
 		assets: targetassets.Manifests,
 	}
 
-	manifestTemplatesTarget = target{
-		name: "Manifest templates",
-		command: &cobra.Command{
-			Use:   "manifest-templates",
-			Short: "Generates the unrendered Kubernetes manifest templates",
-			Long:  "",
-		},
-		assets: targetassets.ManifestTemplates,
-	}
-
 	ignitionConfigsTarget = target{
 		name: "Ignition Configs",
 		command: &cobra.Command{
@@ -127,7 +117,7 @@ var (
 		assets: targetassets.Cluster,
 	}
 
-	targets = []target{installConfigTarget, manifestTemplatesTarget, manifestsTarget, ignitionConfigsTarget, clusterTarget}
+	targets = []target{installConfigTarget, manifestsTarget, ignitionConfigsTarget, clusterTarget}
 )
 
 func newCreateCmd() *cobra.Command {
@@ -330,8 +320,7 @@ func waitForInitializedCluster(ctx context.Context, config *rest.Config) error {
 	clusterVersionContext, cancel := context.WithTimeout(ctx, timeout)
 	defer cancel()
 
-	var clusterVersion *configv1.ClusterVersion
-
+	var lastError string
 	_, err = clientwatch.UntilWithSync(
 		clusterVersionContext,
 		cache.NewListWatchFromClient(cc.ConfigV1().RESTClient(), "clusterversions", "", fields.OneTermEqualSelector("metadata.name", "version")),
@@ -345,32 +334,29 @@ func waitForInitializedCluster(ctx context.Context, config *rest.Config) error {
 					logrus.Warnf("Expected a ClusterVersion object but got a %q object instead", event.Object.GetObjectKind().GroupVersionKind())
 					return false, nil
 				}
-				clusterVersion = cv
 				if cov1helpers.IsStatusConditionTrue(cv.Status.Conditions, configv1.OperatorAvailable) {
-					logrus.Debug("Cluster is initialized")
 					return true, nil
 				}
 				if cov1helpers.IsStatusConditionTrue(cv.Status.Conditions, configv1.OperatorFailing) {
-					logrus.Debugf("Still waiting for the cluster to initialize: %v",
-						cov1helpers.FindStatusCondition(cv.Status.Conditions, configv1.OperatorFailing).Message)
-					return false, nil
+					lastError = cov1helpers.FindStatusCondition(cv.Status.Conditions, configv1.OperatorFailing).Message
+				} else if cov1helpers.IsStatusConditionTrue(cv.Status.Conditions, configv1.OperatorProgressing) {
+					lastError = cov1helpers.FindStatusCondition(cv.Status.Conditions, configv1.OperatorProgressing).Message
 				}
-				if cov1helpers.IsStatusConditionTrue(cv.Status.Conditions, configv1.OperatorProgressing) {
-					logrus.Debugf("Still waiting for the cluster to initialize: %v",
-						cov1helpers.FindStatusCondition(cv.Status.Conditions, configv1.OperatorProgressing).Message)
-					return false, nil
-				}
+				logrus.Debugf("Still waiting for the cluster to initialize: %s", lastError)
+				return false, nil
 			}
 			logrus.Debug("Still waiting for the cluster to initialize...")
 			return false, nil
 		},
 	)
 
-	// If we timed out and the CVO failed, print out the failure message
-	if err != nil && clusterVersion != nil {
-		if cov1helpers.IsStatusConditionTrue(clusterVersion.Status.Conditions, configv1.OperatorFailing) {
-			err = errors.New(cov1helpers.FindStatusCondition(clusterVersion.Status.Conditions, configv1.OperatorFailing).Message)
-		}
+	if err == nil {
+		logrus.Debug("Cluster is initialized")
+		return nil
+	}
+
+	if lastError != "" {
+		return errors.Wrapf(err, "failed to initialize the cluster: %s", lastError)
 	}
 
 	return errors.Wrap(err, "failed to initialize the cluster")
@@ -444,8 +430,7 @@ func logComplete(directory, consoleURL string) error {
 		return err
 	}
 	logrus.Info("Install complete!")
-	logrus.Infof("Run 'export KUBECONFIG=%s' to manage the cluster with 'oc', the OpenShift CLI.", kubeconfig)
-	logrus.Infof("The cluster is ready when 'oc login -u kubeadmin -p %s' succeeds (wait a few minutes).", pw)
+	logrus.Infof("To access the cluster as the system:admin user when using 'oc', run 'export KUBECONFIG=%s'", kubeconfig)
 	logrus.Infof("Access the OpenShift web-console here: %s", consoleURL)
 	logrus.Infof("Login to the console with user: kubeadmin, password: %s", pw)
 	return nil

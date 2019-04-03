@@ -12,6 +12,12 @@ import (
 	"github.com/openshift-metalkube/kni-installer/pkg/asset/cluster/openstack"
 	"github.com/openshift-metalkube/kni-installer/pkg/asset/installconfig"
 	"github.com/openshift-metalkube/kni-installer/pkg/types"
+	awstypes "github.com/openshift-metalkube/kni-installer/pkg/types/aws"
+	baremetaltypes "github.com/openshift-metalkube/kni-installer/pkg/types/baremetal"
+	libvirttypes "github.com/openshift-metalkube/kni-installer/pkg/types/libvirt"
+	nonetypes "github.com/openshift-metalkube/kni-installer/pkg/types/none"
+	openstacktypes "github.com/openshift-metalkube/kni-installer/pkg/types/openstack"
+	vspheretypes "github.com/openshift-metalkube/kni-installer/pkg/types/vsphere"
 	"github.com/pkg/errors"
 )
 
@@ -46,25 +52,22 @@ func (m *Metadata) Generate(parents asset.Parents) (err error) {
 	installConfig := &installconfig.InstallConfig{}
 	parents.Get(clusterID, installConfig)
 
-	if installConfig.Config.Platform.None != nil {
-		return nil
-	}
-
 	metadata := &types.ClusterMetadata{
 		ClusterName: installConfig.Config.ObjectMeta.Name,
 		ClusterID:   clusterID.UUID,
 		InfraID:     clusterID.InfraID,
 	}
 
-	switch {
-	case installConfig.Config.Platform.AWS != nil:
+	switch installConfig.Config.Platform.Name() {
+	case awstypes.Name:
 		metadata.ClusterPlatformMetadata.AWS = aws.Metadata(clusterID.UUID, clusterID.InfraID, installConfig.Config)
-	case installConfig.Config.Platform.Libvirt != nil:
+	case libvirttypes.Name:
 		metadata.ClusterPlatformMetadata.Libvirt = libvirt.Metadata(installConfig.Config)
-	case installConfig.Config.Platform.OpenStack != nil:
+	case openstacktypes.Name:
 		metadata.ClusterPlatformMetadata.OpenStack = openstack.Metadata(clusterID.InfraID, installConfig.Config)
-	case installConfig.Config.Platform.BareMetal != nil:
+	case baremetaltypes.Name:
 		metadata.ClusterPlatformMetadata.BareMetal = baremetal.Metadata(clusterID.InfraID, installConfig.Config)
+	case nonetypes.Name, vspheretypes.Name:
 	default:
 		return errors.Errorf("no known platform")
 	}
