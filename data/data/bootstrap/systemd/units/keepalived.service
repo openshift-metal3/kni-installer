@@ -8,6 +8,7 @@ WorkingDirectory=/etc/keepalived
 ExecStartPre=/usr/local/bin/keepalived.sh
 ExecStart=/usr/bin/podman start -a keepalived
 ExecStop=/usr/bin/podman stop -t 10 keepalived
+ConditionPathExists=!/etc/pivot/image-pullspec
 
 Restart=on-failure
 RestartSec=5
