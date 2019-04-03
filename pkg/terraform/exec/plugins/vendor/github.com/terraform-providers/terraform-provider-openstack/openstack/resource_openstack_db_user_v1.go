@@ -2,9 +2,12 @@ package openstack
 
 import (
 	"fmt"
+	"log"
 	"strings"
 	"time"
 
+	"github.com/gophercloud/gophercloud"
+	"github.com/gophercloud/gophercloud/openstack/db/v1/databases"
 	"github.com/gophercloud/gophercloud/openstack/db/v1/users"
 	"github.com/hashicorp/terraform/helper/resource"
 	"github.com/hashicorp/terraform/helper/schema"
@@ -23,37 +26,32 @@ func resourceDatabaseUserV1() *schema.Resource {
 
 		Schema: map[string]*schema.Schema{
 			"region": {
-				Type:     schema.TypeString,
-				Optional: true,
-				Computed: true,
-				ForceNew: true,
+				Type:        schema.TypeString,
+				Required:    true,
+				ForceNew:    true,
+				DefaultFunc: schema.EnvDefaultFunc("OS_REGION_NAME", ""),
 			},
-
 			"name": {
 				Type:     schema.TypeString,
 				Required: true,
 				ForceNew: true,
 			},
-
 			"instance_id": {
 				Type:     schema.TypeString,
 				Required: true,
 				ForceNew: true,
 			},
-
 			"password": {
 				Type:      schema.TypeString,
 				Required:  true,
 				ForceNew:  true,
 				Sensitive: true,
 			},
-
 			"host": {
 				Type:     schema.TypeString,
 				Optional: true,
 				ForceNew: true,
 			},
-
 			"databases": {
 				Type:     schema.TypeSet,
 				Optional: true,
@@ -69,30 +67,34 @@ func resourceDatabaseUserV1Create(d *schema.ResourceData, meta interface{}) erro
 	config := meta.(*Config)
 	databaseV1Client, err := config.databaseV1Client(GetRegion(d, config))
 	if err != nil {
-		return fmt.Errorf("Error creating OpenStack database client: %s", err)
+		return fmt.Errorf("Error creating cloud database client: %s", err)
 	}
 
 	userName := d.Get("name").(string)
 	rawDatabases := d.Get("databases").(*schema.Set).List()
 	instanceID := d.Get("instance_id").(string)
 
+	var dbs databases.BatchCreateOpts
+	for _, db := range rawDatabases {
+		dbs = append(dbs, databases.CreateOpts{
+			Name: db.(string),
+		})
+	}
+
 	var usersList users.BatchCreateOpts
 	usersList = append(usersList, users.CreateOpts{
 		Name:      userName,
 		Password:  d.Get("password").(string),
 		Host:      d.Get("host").(string),
-		Databases: expandDatabaseUserV1Databases(rawDatabases),
+		Databases: dbs,
 	})
 
-	err = users.Create(databaseV1Client, instanceID, usersList).ExtractErr()
-	if err != nil {
-		return fmt.Errorf("Error creating openstack_db_user_v1: %s", err)
-	}
+	users.Create(databaseV1Client, instanceID, usersList)
 
 	stateConf := &resource.StateChangeConf{
 		Pending:    []string{"BUILD"},
 		Target:     []string{"ACTIVE"},
-		Refresh:    databaseUserV1StateRefreshFunc(databaseV1Client, instanceID, userName),
+		Refresh:    DatabaseUserV1StateRefreshFunc(databaseV1Client, instanceID, userName),
 		Timeout:    d.Timeout(schema.TimeoutCreate),
 		Delay:      10 * time.Second,
 		MinTimeout: 3 * time.Second,
@@ -100,7 +102,8 @@ func resourceDatabaseUserV1Create(d *schema.ResourceData, meta interface{}) erro
 
 	_, err = stateConf.WaitForState()
 	if err != nil {
-		return fmt.Errorf("Error waiting for openstack_db_user_v1 %s to be created: %s", userName, err)
+		return fmt.Errorf(
+			"Error waiting for user (%s) to be created", err)
 	}
 
 	// Store the ID now
@@ -113,30 +116,35 @@ func resourceDatabaseUserV1Read(d *schema.ResourceData, meta interface{}) error 
 	config := meta.(*Config)
 	databaseV1Client, err := config.databaseV1Client(GetRegion(d, config))
 	if err != nil {
-		return fmt.Errorf("Error creating OpenStack database client: %s", err)
+		return fmt.Errorf("Error creating cloud database client: %s", err)
 	}
 
 	userID := strings.SplitN(d.Id(), "/", 2)
 	if len(userID) != 2 {
-		return fmt.Errorf("Invalid openstack_db_user_v1 ID: %s", d.Id())
+		return fmt.Errorf("Invalid openstack_db_user_v1 ID format")
 	}
 
 	instanceID := userID[0]
 	userName := userID[1]
 
-	exists, userObj, err := databaseUserV1Exists(databaseV1Client, instanceID, userName)
+	exists, userObj, err := DatabaseUserV1State(databaseV1Client, instanceID, userName)
 	if err != nil {
-		return fmt.Errorf("Error checking if openstack_db_user_v1 %s exists: %s", d.Id(), err)
+		return fmt.Errorf("Error checking user status: %s", err)
 	}
 
 	if !exists {
-		d.SetId("")
-		return nil
+		return fmt.Errorf("User %s was not found: %s", userName, err)
 	}
+
+	log.Printf("[DEBUG] Retrieved user %s", userName)
 
 	d.Set("name", userName)
 
-	databases := flattenDatabaseUserV1Databases(userObj.Databases)
+	var databases []string
+	for _, dbName := range userObj.Databases {
+		databases = append(databases, dbName.Name)
+	}
+
 	if err := d.Set("databases", databases); err != nil {
 		return fmt.Errorf("Unable to set databases: %s", err)
 	}
@@ -148,30 +156,81 @@ func resourceDatabaseUserV1Delete(d *schema.ResourceData, meta interface{}) erro
 	config := meta.(*Config)
 	databaseV1Client, err := config.databaseV1Client(GetRegion(d, config))
 	if err != nil {
-		return fmt.Errorf("Error creating OpenStack database client: %s", err)
+		return fmt.Errorf("Error creating cloud database client: %s", err)
 	}
 
 	userID := strings.SplitN(d.Id(), "/", 2)
 	if len(userID) != 2 {
-		return fmt.Errorf("Invalid openstack_db_user_v1 ID: %s", d.Id())
+		return fmt.Errorf("Invalid openstack_db_user_v1 ID format")
 	}
 
 	instanceID := userID[0]
 	userName := userID[1]
 
-	exists, _, err := databaseUserV1Exists(databaseV1Client, instanceID, userName)
+	exists, _, err := DatabaseUserV1State(databaseV1Client, instanceID, userName)
 	if err != nil {
-		return fmt.Errorf("Error checking if openstack_db_user_v1 %s exists: %s", d.Id(), err)
+		return fmt.Errorf("Error checking user status: %s", err)
 	}
 
 	if !exists {
+		log.Printf("User %s was not found on instance %s", userName, instanceID)
 		return nil
 	}
 
-	err = users.Delete(databaseV1Client, instanceID, userName).ExtractErr()
+	log.Printf("[DEBUG] Retrieved user %s", userName)
+
+	users.Delete(databaseV1Client, instanceID, userName)
+
+	d.SetId("")
+	return nil
+}
+
+// DatabaseUserV1StateRefreshFunc returns a resource.StateRefreshFunc that is used to watch db user.
+func DatabaseUserV1StateRefreshFunc(client *gophercloud.ServiceClient, instanceID string, userName string) resource.StateRefreshFunc {
+	return func() (interface{}, string, error) {
+
+		pages, err := users.List(client, instanceID).AllPages()
+		if err != nil {
+			return nil, "", fmt.Errorf("Unable to retrieve users, pages: %s", err)
+		}
+
+		allUsers, err := users.ExtractUsers(pages)
+		if err != nil {
+			return nil, "", fmt.Errorf("Unable to retrieve users, extract: %s", err)
+		}
+
+		for _, v := range allUsers {
+			if v.Name == userName {
+				return v, "ACTIVE", nil
+			}
+		}
+
+		return nil, "BUILD", nil
+	}
+}
+
+// DatabaseUserV1State is used to check whether user exists on particular database instance
+func DatabaseUserV1State(client *gophercloud.ServiceClient, instanceID string, userName string) (exists bool, userObj users.User, err error) {
+	exists = false
+	err = nil
+
+	pages, err := users.List(client, instanceID).AllPages()
 	if err != nil {
-		return fmt.Errorf("Error deleting openstack_db_user_v1 %s: %s", d.Id(), err)
+		return
 	}
 
-	return nil
+	allUsers, err := users.ExtractUsers(pages)
+	if err != nil {
+		return
+	}
+
+	for _, v := range allUsers {
+		if v.Name == userName {
+			exists = true
+			userObj = v
+			return
+		}
+	}
+
+	return false, userObj, err
 }

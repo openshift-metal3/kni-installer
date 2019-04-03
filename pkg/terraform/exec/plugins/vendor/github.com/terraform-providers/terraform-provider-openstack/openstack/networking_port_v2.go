@@ -2,28 +2,15 @@ package openstack
 
 import (
 	"bytes"
-	"encoding/json"
 	"fmt"
-	"log"
 
 	"github.com/gophercloud/gophercloud"
-	"github.com/gophercloud/gophercloud/openstack/networking/v2/extensions/dns"
 	"github.com/gophercloud/gophercloud/openstack/networking/v2/extensions/extradhcpopts"
-	"github.com/gophercloud/gophercloud/openstack/networking/v2/extensions/portsbinding"
-	"github.com/gophercloud/gophercloud/openstack/networking/v2/extensions/portsecurity"
 	"github.com/gophercloud/gophercloud/openstack/networking/v2/ports"
 	"github.com/hashicorp/terraform/helper/hashcode"
 	"github.com/hashicorp/terraform/helper/resource"
 	"github.com/hashicorp/terraform/helper/schema"
 )
-
-type portExtended struct {
-	ports.Port
-	extradhcpopts.ExtraDHCPOptsExt
-	portsecurity.PortSecurityExt
-	portsbinding.PortsBindingExt
-	dns.PortDNSExt
-}
 
 func resourceNetworkingPortV2StateRefreshFunc(client *gophercloud.ServiceClient, portID string) resource.StateRefreshFunc {
 	return func() (interface{}, string, error) {
@@ -41,62 +28,60 @@ func resourceNetworkingPortV2StateRefreshFunc(client *gophercloud.ServiceClient,
 }
 
 func expandNetworkingPortDHCPOptsV2Create(dhcpOpts *schema.Set) []extradhcpopts.CreateExtraDHCPOpt {
-	var extraDHCPOpts []extradhcpopts.CreateExtraDHCPOpt
+	rawDHCPOpts := dhcpOpts.List()
 
-	if dhcpOpts != nil {
-		for _, raw := range dhcpOpts.List() {
-			rawMap := raw.(map[string]interface{})
+	extraDHCPOpts := make([]extradhcpopts.CreateExtraDHCPOpt, len(rawDHCPOpts))
+	for i, raw := range rawDHCPOpts {
+		rawMap := raw.(map[string]interface{})
 
-			ipVersion := rawMap["ip_version"].(int)
-			optName := rawMap["name"].(string)
-			optValue := rawMap["value"].(string)
+		ipVersion := rawMap["ip_version"].(int)
+		optName := rawMap["name"].(string)
+		optValue := rawMap["value"].(string)
 
-			extraDHCPOpts = append(extraDHCPOpts, extradhcpopts.CreateExtraDHCPOpt{
-				OptName:   optName,
-				OptValue:  optValue,
-				IPVersion: gophercloud.IPVersion(ipVersion),
-			})
+		extraDHCPOpts[i] = extradhcpopts.CreateExtraDHCPOpt{
+			OptName:   optName,
+			OptValue:  optValue,
+			IPVersion: gophercloud.IPVersion(ipVersion),
 		}
 	}
 
 	return extraDHCPOpts
 }
 
-func expandNetworkingPortDHCPOptsV2Update(oldDHCPopts, newDHCPopts *schema.Set) []extradhcpopts.UpdateExtraDHCPOpt {
-	var extraDHCPOpts []extradhcpopts.UpdateExtraDHCPOpt
-	var newOptNames []string
+func expandNetworkingPortDHCPOptsV2Update(dhcpOpts *schema.Set) []extradhcpopts.UpdateExtraDHCPOpt {
+	rawDHCPOpts := dhcpOpts.List()
 
-	if newDHCPopts != nil {
-		for _, raw := range newDHCPopts.List() {
-			rawMap := raw.(map[string]interface{})
+	extraDHCPOpts := make([]extradhcpopts.UpdateExtraDHCPOpt, len(rawDHCPOpts))
+	for i, raw := range rawDHCPOpts {
+		rawMap := raw.(map[string]interface{})
 
-			ipVersion := rawMap["ip_version"].(int)
-			optName := rawMap["name"].(string)
-			optValue := rawMap["value"].(string)
-			// DHCP option name is the primary key, we will check this key below
-			newOptNames = append(newOptNames, optName)
+		ipVersion := rawMap["ip_version"].(int)
+		optName := rawMap["name"].(string)
+		optValue := rawMap["value"].(string)
 
-			extraDHCPOpts = append(extraDHCPOpts, extradhcpopts.UpdateExtraDHCPOpt{
-				OptName:   optName,
-				OptValue:  &optValue,
-				IPVersion: gophercloud.IPVersion(ipVersion),
-			})
+		extraDHCPOpts[i] = extradhcpopts.UpdateExtraDHCPOpt{
+			OptName:   optName,
+			OptValue:  &optValue,
+			IPVersion: gophercloud.IPVersion(ipVersion),
 		}
 	}
 
-	if oldDHCPopts != nil {
-		for _, raw := range oldDHCPopts.List() {
-			rawMap := raw.(map[string]interface{})
+	return extraDHCPOpts
+}
 
-			optName := rawMap["name"].(string)
+func expandNetworkingPortDHCPOptsV2Delete(dhcpOpts *schema.Set) []extradhcpopts.UpdateExtraDHCPOpt {
+	if dhcpOpts == nil {
+		return []extradhcpopts.UpdateExtraDHCPOpt{}
+	}
 
-			// if we already add a new option with the same name, it means that we update it, no need to delete
-			if !strSliceContains(newOptNames, optName) {
-				extraDHCPOpts = append(extraDHCPOpts, extradhcpopts.UpdateExtraDHCPOpt{
-					OptName:  optName,
-					OptValue: nil,
-				})
-			}
+	rawDHCPOpts := dhcpOpts.List()
+
+	extraDHCPOpts := make([]extradhcpopts.UpdateExtraDHCPOpt, len(rawDHCPOpts))
+	for i, raw := range rawDHCPOpts {
+		rawMap := raw.(map[string]interface{})
+		extraDHCPOpts[i] = extradhcpopts.UpdateExtraDHCPOpt{
+			OptName:  rawMap["name"].(string),
+			OptValue: nil,
 		}
 	}
 
@@ -192,55 +177,4 @@ func expandNetworkingPortFixedIPToStringSlice(fixedIPs []ports.IP) []string {
 	}
 
 	return s
-}
-
-func flattenNetworkingPortBindingV2(port portExtended) interface{} {
-	var portBinding []map[string]interface{}
-	var profile interface{}
-
-	// "TypeMap" with "ValidateFunc", "DiffSuppressFunc" and "StateFunc" combination
-	// is not supported by Terraform. Therefore a regular JSON string is used for the
-	// port resource.
-	tmp, err := json.Marshal(port.Profile)
-	if err != nil {
-		log.Printf("[DEBUG] flattenNetworkingPortBindingV2: Cannot marshal port.Profile: %s", err)
-	}
-	profile = string(tmp)
-
-	vifDetails := make(map[string]string)
-	for k, v := range port.VIFDetails {
-		// don't marshal, if it is a regular string
-		if s, ok := v.(string); ok {
-			vifDetails[k] = s
-			continue
-		}
-
-		p, err := json.Marshal(v)
-		if err != nil {
-			log.Printf("[DEBUG] flattenNetworkingPortBindingV2: Cannot marshal %s key value: %s", k, err)
-		}
-		vifDetails[k] = string(p)
-	}
-
-	portBinding = append(portBinding, map[string]interface{}{
-		"profile":     profile,
-		"vif_type":    port.VIFType,
-		"vif_details": vifDetails,
-		"vnic_type":   port.VNICType,
-		"host_id":     port.HostID,
-	})
-
-	return portBinding
-}
-
-func suppressDiffPortBindingProfileV2(k, old, new string, d *schema.ResourceData) bool {
-	if old == "{}" && new == "" {
-		return true
-	}
-
-	if old == "" && new == "{}" {
-		return true
-	}
-
-	return false
 }
