@@ -1,6 +1,7 @@
 package ironic
 
 import (
+	"github.com/gophercloud/gophercloud"
 	"github.com/gophercloud/gophercloud/openstack/baremetal/v1/ports"
 	"github.com/hashicorp/terraform/helper/schema"
 )
@@ -50,7 +51,7 @@ func resourcePortV1() *schema.Resource {
 }
 
 func resourcePortV1Create(d *schema.ResourceData, meta interface{}) error {
-	client := meta.(Clients).Ironic
+	client := meta.(*gophercloud.ServiceClient)
 	opts := portSchemaToCreateOpts(d)
 	result, err := ports.Create(client, opts).Extract()
 	if err != nil {
@@ -62,7 +63,7 @@ func resourcePortV1Create(d *schema.ResourceData, meta interface{}) error {
 }
 
 func resourcePortV1Read(d *schema.ResourceData, meta interface{}) error {
-	client := meta.(Clients).Ironic
+	client := meta.(*gophercloud.ServiceClient)
 	port, err := ports.Get(client, d.Id()).Extract()
 	if err != nil {
 		return err

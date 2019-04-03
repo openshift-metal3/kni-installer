@@ -897,7 +897,7 @@ func resourceComputeInstanceV2Delete(d *schema.ResourceData, meta interface{}) e
 				Pending:    []string{"ACTIVE"},
 				Target:     []string{"SHUTOFF"},
 				Refresh:    ServerV2StateRefreshFunc(computeClient, d.Id()),
-				Timeout:    d.Timeout(schema.TimeoutDelete),
+				Timeout:    3 * time.Minute,
 				Delay:      10 * time.Second,
 				MinTimeout: 3 * time.Second,
 			}
