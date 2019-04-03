@@ -301,8 +301,10 @@ func waitForIPSecPolicyDeletion(networkingClient *gophercloud.ServiceClient, id 
 			return "", "DELETED", nil
 		}
 
-		if _, ok := err.(gophercloud.ErrDefault409); ok {
-			return nil, "ACTIVE", nil
+		if errCode, ok := err.(gophercloud.ErrUnexpectedResponseCode); ok {
+			if errCode.Actual == 409 {
+				return nil, "ACTIVE", nil
+			}
 		}
 
 		return nil, "ACTIVE", err

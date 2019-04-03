@@ -481,18 +481,15 @@
   version = "v2.0.5"
 
 [[projects]]
-  digest = "1:c1024fa089f6cf75ea25d2a6d10bb001643e8464d710fa4d8205f8edfa8454bb"
+  digest = "1:a6fb90e960f3c0be438a482c39bac621a18e32bd09742f6245e7faf6e3d467c7"
   name = "github.com/gophercloud/gophercloud"
   packages = [
     ".",
     "internal",
     "openstack",
     "openstack/baremetal/noauth",
-    "openstack/baremetal/v1/allocations",
     "openstack/baremetal/v1/nodes",
     "openstack/baremetal/v1/ports",
-    "openstack/baremetalintrospection/noauth",
-    "openstack/baremetalintrospection/v1/introspection",
     "openstack/blockstorage/extensions/volumeactions",
     "openstack/blockstorage/v1/volumes",
     "openstack/blockstorage/v2/snapshots",
@@ -524,7 +521,6 @@
     "openstack/dns/v2/zones",
     "openstack/identity/v2/tenants",
     "openstack/identity/v2/tokens",
-    "openstack/identity/v3/applicationcredentials",
     "openstack/identity/v3/endpoints",
     "openstack/identity/v3/groups",
     "openstack/identity/v3/projects",
@@ -535,7 +531,6 @@
     "openstack/imageservice/v2/imagedata",
     "openstack/imageservice/v2/images",
     "openstack/networking/v2/extensions/attributestags",
-    "openstack/networking/v2/extensions/dns",
     "openstack/networking/v2/extensions/external",
     "openstack/networking/v2/extensions/extradhcpopts",
     "openstack/networking/v2/extensions/fwaas/firewalls",
@@ -554,9 +549,6 @@
     "openstack/networking/v2/extensions/lbaas_v2/loadbalancers",
     "openstack/networking/v2/extensions/lbaas_v2/monitors",
     "openstack/networking/v2/extensions/lbaas_v2/pools",
-    "openstack/networking/v2/extensions/mtu",
-    "openstack/networking/v2/extensions/portsbinding",
-    "openstack/networking/v2/extensions/portsecurity",
     "openstack/networking/v2/extensions/provider",
     "openstack/networking/v2/extensions/security/groups",
     "openstack/networking/v2/extensions/security/rules",
@@ -575,8 +567,6 @@
     "openstack/objectstorage/v1/containers",
     "openstack/objectstorage/v1/objects",
     "openstack/objectstorage/v1/swauth",
-    "openstack/sharedfilesystems/apiversions",
-    "openstack/sharedfilesystems/v2/availabilityzones",
     "openstack/sharedfilesystems/v2/errors",
     "openstack/sharedfilesystems/v2/messages",
     "openstack/sharedfilesystems/v2/securityservices",
@@ -788,12 +778,11 @@
   version = "v1.0.1"
 
 [[projects]]
-  digest = "1:a0886267c60262a245d6eeb0be12bf8e165026ad088bce106b9c55c5d613144f"
+  digest = "1:a9d050c7ffb5ecdde67a03537b9e1e1fd8c1fd107454e309d9d41fc7c7c477f9"
   name = "github.com/openshift-metalkube/terraform-provider-ironic"
   packages = ["ironic"]
   pruneopts = "NUT"
-  revision = "9f5bba54dad78c10ed572eb2541f8178a5500656"
-  version = "v0.1.4"
+  revision = "7cf70fc4ddaffb3e3351905e7892e40463cecae2"
 
 [[projects]]
   branch = "master"
@@ -891,11 +880,12 @@
   version = "v1.3.0"
 
 [[projects]]
-  digest = "1:f3ae869d0de02432e1d3f96e898624db97a9f3fcb5adcb18bf84e2a3cfe45e5f"
+  digest = "1:e1c03b9be47df81a131b46c7c9879acecadf4590a5efe3f70c7e959183e94aec"
   name = "github.com/terraform-providers/terraform-provider-openstack"
   packages = ["openstack"]
   pruneopts = "NUT"
-  revision = "b1406b8e4894faad993aff786f0bb50bfec8e281"
+  revision = "c3ed4eb64be2b0e31f560a3118e72deafd750e1b"
+  version = "v1.16.0"
 
 [[projects]]
   digest = "1:31a7f8bae17ec284242aa6c319a5119619342ec8ecc7984214d04b4efb4860c4"
