@@ -1,7 +1,6 @@
 package ironic
 
 import (
-	"fmt"
 	"github.com/gophercloud/gophercloud/openstack/baremetal/noauth"
 	"github.com/hashicorp/terraform/helper/schema"
 	"github.com/hashicorp/terraform/terraform"
@@ -14,21 +13,19 @@ func Provider() terraform.ResourceProvider {
 			"url": {
 				Type:        schema.TypeString,
 				Required:    true,
-				DefaultFunc: schema.EnvDefaultFunc("IRONIC_ENDPOINT", ""),
+				DefaultFunc: schema.EnvDefaultFunc("OS_AUTH_URL", ""),
 				Description: descriptions["url"],
 			},
 			"microversion": {
 				Type:        schema.TypeString,
 				Required:    true,
-				DefaultFunc: schema.EnvDefaultFunc("IRONIC_MICROVERSION", "1.52"),
+				DefaultFunc: schema.EnvDefaultFunc("IRONIC_MICROVERSION", "1.50"),
 				Description: descriptions["microversion"],
 			},
 		},
 		ResourcesMap: map[string]*schema.Resource{
-			"ironic_node_v1":       resourceNodeV1(),
-			"ironic_port_v1":       resourcePortV1(),
-			"ironic_allocation_v1": resourceAllocationV1(),
-			"ironic_deployment":    resourceDeployment(),
+			"ironic_node_v1": resourceNodeV1(),
+			"ironic_port_v1": resourcePortV1(),
 		},
 		ConfigureFunc: configureProvider,
 	}
@@ -44,14 +41,10 @@ func init() {
 }
 
 // Creates a noauth Ironic client
+// FIXME: Support regular auth Ironic
 func configureProvider(schema *schema.ResourceData) (interface{}, error) {
-	url := schema.Get("url").(string)
-	if url == "" {
-		return nil, fmt.Errorf("url is required for ironic provider")
-	}
-
 	client, err := noauth.NewBareMetalNoAuth(noauth.EndpointOpts{
-		IronicEndpoint: url,
+		IronicEndpoint: schema.Get("url").(string),
 	})
 	if err != nil {
 		return nil, err
