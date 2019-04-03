@@ -275,8 +275,10 @@ func resourceBlockStorageVolumeV2Delete(d *schema.ResourceData, meta interface{}
 
 				// A 409 is also acceptable because there's another
 				// concurrent action happening.
-				if _, ok := err.(gophercloud.ErrDefault409); ok {
-					continue
+				if errCode, ok := err.(gophercloud.ErrUnexpectedResponseCode); ok {
+					if errCode.Actual == 409 {
+						continue
+					}
 				}
 
 				return fmt.Errorf(
