@@ -104,9 +104,6 @@ var (
 					logrus.Fatal(errors.Wrap(err, "loading kubeconfig"))
 				}
 
-				logrus.Warn("FIXME! Exiting after bootstrap cluster create for baremetal testing")
-				return
-
 				err = waitForBootstrapComplete(ctx, config, rootOpts.dir)
 				if err != nil {
 					logrus.Fatal(err)
@@ -117,6 +114,9 @@ var (
 				if err != nil {
 					logrus.Fatal(err)
 				}
+
+				logrus.Warn("FIXME! Exiting after bootstrap, remove when all operators will come up successfully.")
+				return
 
 				err = finish(ctx, config, rootOpts.dir)
 				if err != nil {
@@ -282,7 +282,7 @@ func waitForBootstrapComplete(ctx context.Context, config *rest.Config, director
 		return errors.Wrap(err, "waiting for Kubernetes API")
 	}
 
-	eventTimeout := 30 * time.Minute
+	eventTimeout := 60 * time.Minute
 	logrus.Infof("Waiting up to %v for the bootstrap-complete event...", eventTimeout)
 	return waitForEvent(ctx, client.CoreV1().RESTClient(), "bootstrap-complete", eventTimeout)
 }

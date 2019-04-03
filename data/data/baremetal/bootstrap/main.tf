@@ -31,7 +31,7 @@ resource "libvirt_domain" "bootstrap" {
   }
 
   network_interface {
-    bridge = "${var.baremetal_bridge}"
+    bridge         = "${var.baremetal_bridge}"
   }
 
   network_interface {
