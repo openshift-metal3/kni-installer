@@ -10,15 +10,13 @@ if ! podman inspect "$KEEPALIVED_IMAGE" &>/dev/null; then
 fi
 
 API_DNS="$(sudo awk -F[/:] '/apiServerURL/ {print $5}' /opt/openshift/manifests/cluster-infrastructure-02-config.yml)"
-API_VIP="$(dig +noall +answer "$API_DNS" | awk '{print $NF}')"
+export API_VIP="$(dig +noall +answer "$API_DNS" | awk '{print $NF}')"
 IFACE_CIDRS="$(ip addr show | grep -v "scope host" | grep -Po 'inet \K[\d.]+/[\d.]+' | xargs)"
 SUBNET_CIDR="$(/usr/local/bin/get_vip_subnet_cidr "$API_VIP" "$IFACE_CIDRS")"
-INTERFACE="$(ip -o addr show to "$SUBNET_CIDR" | head -n 1 | awk '{print $2}')"
-DNS_VIP="$(/usr/local/bin/nthhost "$SUBNET_CIDR" 2)"
+export INTERFACE="$(ip -o addr show to "$SUBNET_CIDR" | head -n 1 | awk '{print $2}')"
+CLUSTER_DOMAIN="${API_DNS#*.}"
+export DNS_VIP="$(dig +noall +answer "ns1.${CLUSTER_DOMAIN}" | awk '{print $NF}')"
 
-export API_VIP
-export INTERFACE
-export DNS_VIP
 envsubst < /etc/keepalived/keepalived.conf.tmpl | sudo tee /etc/keepalived/keepalived.conf
 
 MATCHES="$(sudo podman ps -a --format "{{.Names}}" | awk '/keepalived$/ {print $0}')"
