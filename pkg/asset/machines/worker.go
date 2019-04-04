@@ -1,14 +1,22 @@
 package machines
 
 import (
-	"bytes"
 	"fmt"
-	"text/template"
+	"os"
+	"path/filepath"
 
 	"github.com/ghodss/yaml"
+	libvirtapi "github.com/openshift/cluster-api-provider-libvirt/pkg/apis"
+	libvirtprovider "github.com/openshift/cluster-api-provider-libvirt/pkg/apis/libvirtproviderconfig/v1alpha1"
+	machineapi "github.com/openshift/cluster-api/pkg/apis/machine/v1beta1"
+	mcfgv1 "github.com/openshift/machine-config-operator/pkg/apis/machineconfiguration.openshift.io/v1"
 	"github.com/pkg/errors"
-	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
 	"k8s.io/apimachinery/pkg/runtime"
+	"k8s.io/apimachinery/pkg/runtime/serializer"
+	awsapi "sigs.k8s.io/cluster-api-provider-aws/pkg/apis"
+	awsprovider "sigs.k8s.io/cluster-api-provider-aws/pkg/apis/awsproviderconfig/v1beta1"
+	openstackapi "sigs.k8s.io/cluster-api-provider-openstack/pkg/apis"
+	openstackprovider "sigs.k8s.io/cluster-api-provider-openstack/pkg/apis/openstackproviderconfig/v1alpha1"
 
 	"github.com/openshift-metalkube/kni-installer/pkg/asset"
 	"github.com/openshift-metalkube/kni-installer/pkg/asset/ignition/machine"
@@ -16,6 +24,7 @@ import (
 	"github.com/openshift-metalkube/kni-installer/pkg/asset/machines/aws"
 	"github.com/openshift-metalkube/kni-installer/pkg/asset/machines/baremetal"
 	"github.com/openshift-metalkube/kni-installer/pkg/asset/machines/libvirt"
+	"github.com/openshift-metalkube/kni-installer/pkg/asset/machines/machineconfig"
 	"github.com/openshift-metalkube/kni-installer/pkg/asset/machines/openstack"
 	"github.com/openshift-metalkube/kni-installer/pkg/asset/rhcos"
 	awstypes "github.com/openshift-metalkube/kni-installer/pkg/types/aws"
@@ -24,6 +33,21 @@ import (
 	libvirttypes "github.com/openshift-metalkube/kni-installer/pkg/types/libvirt"
 	nonetypes "github.com/openshift-metalkube/kni-installer/pkg/types/none"
 	openstacktypes "github.com/openshift-metalkube/kni-installer/pkg/types/openstack"
+	vspheretypes "github.com/openshift-metalkube/kni-installer/pkg/types/vsphere"
+)
+
+const (
+	// workerMachineSetFileName is the format string for constructing the worker MachineSet filenames.
+	workerMachineSetFileName = "99_openshift-cluster-api_worker-machineset-%s.yaml"
+
+	// workerUserDataFileName is the filename used for the worker user-data secret.
+	workerUserDataFileName = "99_openshift-cluster-api_worker-user-data-secret.yaml"
+)
+
+var (
+	workerMachineSetFileNamePattern = fmt.Sprintf(workerMachineSetFileName, "*")
+
+	_ asset.WritableAsset = (*Worker)(nil)
 )
 
 func defaultAWSMachinePoolPlatform() awstypes.MachinePool {
@@ -51,11 +75,10 @@ func defaultBareMetalMachinePoolPlatform() baremetaltypes.MachinePool {
 
 // Worker generates the machinesets for `worker` machine pool.
 type Worker struct {
-	MachineSetRaw     []byte
-	UserDataSecretRaw []byte
+	UserDataFile       *asset.File
+	MachineConfigFiles []*asset.File
+	MachineSetFiles    []*asset.File
 }
-
-var _ asset.Asset = (*Worker)(nil)
 
 // Name returns a human friendly name for the Worker Asset.
 func (w *Worker) Name() string {
@@ -91,16 +114,13 @@ func (w *Worker) Generate(dependencies asset.Parents) error {
 	wign := &machine.Worker{}
 	dependencies.Get(clusterID, installconfig, rhcosImage, wign)
 
-	var err error
-	userDataMap := map[string][]byte{"worker-user-data": wign.File.Data}
-	w.UserDataSecretRaw, err = userDataList(userDataMap)
-	if err != nil {
-		return errors.Wrap(err, "failed to create user-data secret for worker machines")
-	}
-
+	machineConfigs := []*mcfgv1.MachineConfig{}
 	machineSets := []runtime.Object{}
 	ic := installconfig.Config
 	for _, pool := range ic.Compute {
+		if ic.SSHKey != "" {
+			machineConfigs = append(machineConfigs, machineconfig.ForAuthorizedKeys(ic.SSHKey, "worker"))
+		}
 		switch ic.Platform.Name() {
 		case awstypes.Name:
 			mpool := defaultAWSMachinePoolPlatform()
@@ -134,7 +154,6 @@ func (w *Worker) Generate(dependencies asset.Parents) error {
 			for _, set := range sets {
 				machineSets = append(machineSets, set)
 			}
-		case nonetypes.Name:
 		case openstacktypes.Name:
 			mpool := defaultOpenStackMachinePoolPlatform(ic.Platform.OpenStack.FlavorName)
 			mpool.Set(ic.Platform.OpenStack.DefaultMachinePlatform)
@@ -149,6 +168,7 @@ func (w *Worker) Generate(dependencies asset.Parents) error {
 				machineSets = append(machineSets, set)
 			}
 		case baremetaltypes.Name:
+			// FIXME: baremetal
 			mpool := defaultBareMetalMachinePoolPlatform()
 			mpool.Set(ic.Platform.BareMetal.DefaultMachinePlatform)
 			mpool.Set(pool.Platform.BareMetal)
@@ -160,36 +180,109 @@ func (w *Worker) Generate(dependencies asset.Parents) error {
 			for _, set := range sets {
 				machineSets = append(machineSets, set)
 			}
+		case nonetypes.Name, vspheretypes.Name:
 		default:
 			return fmt.Errorf("invalid Platform")
 		}
 	}
 
-	if len(machineSets) == 0 {
-		return nil
-	}
-	list := &metav1.List{
-		TypeMeta: metav1.TypeMeta{
-			APIVersion: "v1",
-			Kind:       "List",
-		},
-		Items: make([]runtime.RawExtension, len(machineSets)),
-	}
-	for i, set := range machineSets {
-		list.Items[i] = runtime.RawExtension{Object: set}
-	}
-	raw, err := yaml.Marshal(list)
+	userDataMap := map[string][]byte{"worker-user-data": wign.File.Data}
+	data, err := userDataList(userDataMap)
 	if err != nil {
-		return errors.Wrap(err, "failed to marshal")
+		return errors.Wrap(err, "failed to create user-data secret for worker machines")
 	}
-	w.MachineSetRaw = raw
+	w.UserDataFile = &asset.File{
+		Filename: filepath.Join(directory, workerUserDataFileName),
+		Data:     data,
+	}
+
+	w.MachineConfigFiles, err = machineconfig.Manifests(machineConfigs, "worker", directory)
+	if err != nil {
+		return errors.Wrap(err, "failed to create MachineConfig manifests for worker machines")
+	}
+
+	w.MachineSetFiles = make([]*asset.File, len(machineSets))
+	padFormat := fmt.Sprintf("%%0%dd", len(fmt.Sprintf("%d", len(machineSets))))
+	for i, machineSet := range machineSets {
+		data, err := yaml.Marshal(machineSet)
+		if err != nil {
+			return errors.Wrapf(err, "marshal worker %d", i)
+		}
+
+		padded := fmt.Sprintf(padFormat, i)
+		w.MachineSetFiles[i] = &asset.File{
+			Filename: filepath.Join(directory, fmt.Sprintf(workerMachineSetFileName, padded)),
+			Data:     data,
+		}
+	}
+
 	return nil
 }
 
-func applyTemplateData(template *template.Template, templateData interface{}) []byte {
-	buf := &bytes.Buffer{}
-	if err := template.Execute(buf, templateData); err != nil {
-		panic(err)
+// Files returns the files generated by the asset.
+func (w *Worker) Files() []*asset.File {
+	files := make([]*asset.File, 0, 1+len(w.MachineConfigFiles)+len(w.MachineSetFiles))
+	if w.UserDataFile != nil {
+		files = append(files, w.UserDataFile)
 	}
-	return buf.Bytes()
+	files = append(files, w.MachineConfigFiles...)
+	files = append(files, w.MachineSetFiles...)
+	return files
+}
+
+// Load reads the asset files from disk.
+func (w *Worker) Load(f asset.FileFetcher) (found bool, err error) {
+	file, err := f.FetchByName(filepath.Join(directory, workerUserDataFileName))
+	if err != nil {
+		if os.IsNotExist(err) {
+			return false, nil
+		}
+		return false, err
+	}
+	w.UserDataFile = file
+
+	w.MachineConfigFiles, err = machineconfig.Load(f, "worker", directory)
+	if err != nil {
+		return true, err
+	}
+
+	fileList, err := f.FetchByPattern(filepath.Join(directory, workerMachineSetFileNamePattern))
+	if err != nil {
+		return true, err
+	}
+
+	w.MachineSetFiles = fileList
+	return true, nil
+}
+
+// MachineSets returns MachineSet manifest structures.
+func (w *Worker) MachineSets() ([]machineapi.MachineSet, error) {
+	scheme := runtime.NewScheme()
+	awsapi.AddToScheme(scheme)
+	libvirtapi.AddToScheme(scheme)
+	openstackapi.AddToScheme(scheme)
+	decoder := serializer.NewCodecFactory(scheme).UniversalDecoder(
+		awsprovider.SchemeGroupVersion,
+		libvirtprovider.SchemeGroupVersion,
+		openstackprovider.SchemeGroupVersion,
+	)
+
+	machineSets := []machineapi.MachineSet{}
+	for i, file := range w.MachineSetFiles {
+		machineSet := &machineapi.MachineSet{}
+		err := yaml.Unmarshal(file.Data, &machineSet)
+		if err != nil {
+			return machineSets, errors.Wrapf(err, "unmarshal worker %d", i)
+		}
+
+		obj, _, err := decoder.Decode(machineSet.Spec.Template.Spec.ProviderSpec.Value.Raw, nil, nil)
+		if err != nil {
+			return machineSets, errors.Wrapf(err, "unmarshal worker %d", i)
+		}
+
+		machineSet.Spec.Template.Spec.ProviderSpec.Value = &runtime.RawExtension{Object: obj}
+		machineSets = append(machineSets, *machineSet)
+	}
+
+	return machineSets, nil
 }

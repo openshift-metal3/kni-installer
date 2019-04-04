@@ -23,6 +23,7 @@ var (
 	// Manifests are the manifests targeted assets.
 	Manifests = []asset.WritableAsset{
 		&machines.Master{},
+		&machines.Worker{},
 		&manifests.Manifests{},
 		&manifests.Openshift{},
 	}
@@ -40,8 +41,8 @@ var (
 		&bootkube.OpenshiftMachineConfigOperator{},
 		&bootkube.EtcdServiceKubeSystem{},
 		&bootkube.HostEtcdServiceKubeSystem{},
-		&bootkube.OpenshiftConfigSecretEtcdMetricsClient{},
-		&bootkube.OpenshiftConfigConfigmapEtcdMetricsServingCA{},
+		&bootkube.OpenshiftConfigSecretEtcdMetricClient{},
+		&bootkube.OpenshiftConfigConfigmapEtcdMetricServingCA{},
 		&openshift.BindingDiscovery{},
 		&openshift.CloudCredsSecret{},
 		&openshift.KubeadminPasswordSecret{},

@@ -17,6 +17,7 @@ import (
 	"github.com/openshift-metalkube/kni-installer/pkg/types/libvirt"
 	"github.com/openshift-metalkube/kni-installer/pkg/types/none"
 	"github.com/openshift-metalkube/kni-installer/pkg/types/openstack"
+	"github.com/openshift-metalkube/kni-installer/pkg/types/vsphere"
 )
 
 // Image is location of RHCOS image.
@@ -62,8 +63,9 @@ func (i *Image) Generate(p asset.Parents) error {
 	case openstack.Name:
 		osimage = "rhcos"
 	case baremetal.Name:
+		// FIXME: baremetal
 		osimage, err = rhcos.QEMU(ctx, rhcos.DefaultChannel)
-	case none.Name:
+	case none.Name, vsphere.Name:
 	default:
 		return errors.New("invalid Platform")
 	}

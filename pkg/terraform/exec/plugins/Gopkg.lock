@@ -52,17 +52,20 @@
     "service/acm",
     "service/acmpca",
     "service/apigateway",
+    "service/apigatewayv2",
     "service/applicationautoscaling",
     "service/appmesh",
     "service/appsync",
     "service/athena",
     "service/autoscaling",
+    "service/backup",
     "service/batch",
     "service/budgets",
     "service/cloud9",
     "service/cloudformation",
     "service/cloudfront",
     "service/cloudhsmv2",
+    "service/cloudsearch",
     "service/cloudtrail",
     "service/cloudwatch",
     "service/cloudwatchevents",
@@ -74,13 +77,16 @@
     "service/cognitoidentity",
     "service/cognitoidentityprovider",
     "service/configservice",
+    "service/costandusagereportservice",
     "service/databasemigrationservice",
+    "service/datapipeline",
     "service/datasync",
     "service/dax",
     "service/devicefarm",
     "service/directconnect",
     "service/directoryservice",
     "service/dlm",
+    "service/docdb",
     "service/dynamodb",
     "service/ec2",
     "service/ecr",
@@ -96,37 +102,54 @@
     "service/emr",
     "service/firehose",
     "service/fms",
+    "service/fsx",
     "service/gamelift",
     "service/glacier",
+    "service/globalaccelerator",
     "service/glue",
     "service/guardduty",
     "service/iam",
     "service/inspector",
     "service/iot",
+    "service/kafka",
     "service/kinesis",
     "service/kinesisanalytics",
+    "service/kinesisanalyticsv2",
     "service/kms",
     "service/lambda",
     "service/lexmodelbuildingservice",
+    "service/licensemanager",
     "service/lightsail",
     "service/macie",
+    "service/mediaconnect",
+    "service/mediaconvert",
+    "service/medialive",
+    "service/mediapackage",
     "service/mediastore",
+    "service/mediastoredata",
     "service/mq",
     "service/neptune",
     "service/opsworks",
     "service/organizations",
     "service/pinpoint",
     "service/pricing",
+    "service/ram",
     "service/rds",
     "service/redshift",
+    "service/resourcegroups",
     "service/route53",
+    "service/route53resolver",
     "service/s3",
+    "service/s3control",
+    "service/sagemaker",
     "service/secretsmanager",
     "service/securityhub",
+    "service/serverlessapplicationrepository",
     "service/servicecatalog",
     "service/servicediscovery",
     "service/ses",
     "service/sfn",
+    "service/shield",
     "service/simpledb",
     "service/sns",
     "service/sqs",
@@ -137,16 +160,17 @@
     "service/transfer",
     "service/waf",
     "service/wafregional",
+    "service/worklink",
     "service/workspaces"
   ]
-  revision = "5f1ca23f3ded773a9ba214e6fac36acd9a965a53"
-  version = "v1.16.6"
+  revision = "754d07f5dfb0a42be29df8da4a5428a321377cb3"
+  version = "v1.17.11"
 
 [[projects]]
   name = "github.com/beevik/etree"
   packages = ["."]
-  revision = "9d7e8feddccb4ed1b8afb54e368bd323d2ff652c"
-  version = "v1.0.1"
+  revision = "8aee6516be3b1163bb6450c35c50e4969e3a3aa8"
+  version = "v1.1.0"
 
 [[projects]]
   branch = "master"
@@ -163,8 +187,8 @@
 [[projects]]
   name = "github.com/coreos/go-systemd"
   packages = ["unit"]
-  revision = "9002847aa1425fb6ac49077c0a630b3b67e0fbfd"
-  version = "v18"
+  revision = "95778dfbb74eb7e4dbaf43bf7d71809650ef8076"
+  version = "v19"
 
 [[projects]]
   name = "github.com/coreos/ignition"
@@ -186,6 +210,21 @@
   name = "github.com/dmacvicar/terraform-provider-libvirt"
   packages = ["libvirt"]
   revision = "2ad0228349b2d3b487a2ada25d1a0eb40d73b7d1"
+
+[[projects]]
+  name = "github.com/gogo/protobuf"
+  packages = [
+    "proto",
+    "sortkeys"
+  ]
+  revision = "ba06b47c162d49f2af050fb4c75bcbc86a159d5c"
+  version = "v1.2.1"
+
+[[projects]]
+  branch = "master"
+  name = "github.com/google/gofuzz"
+  packages = ["."]
+  revision = "24818f796faf91cd76ec7bddd72458fbced7a6c1"
 
 [[projects]]
   name = "github.com/gophercloud/gophercloud"
@@ -294,6 +333,12 @@
   revision = "0bcc8e728cb54c9dce9ed46924688b817ab14f31"
 
 [[projects]]
+  name = "github.com/hashicorp/aws-sdk-go-base"
+  packages = ["."]
+  revision = "51281492b48141180c0d50b814d73b7d438872db"
+  version = "v0.3.0"
+
+[[projects]]
   name = "github.com/hashicorp/errwrap"
   packages = ["."]
   revision = "8a6fb523712970c966eefc6b39ed2c5e74880354"
@@ -302,8 +347,8 @@
 [[projects]]
   name = "github.com/hashicorp/go-cleanhttp"
   packages = ["."]
-  revision = "e8ab9daed8d1ddd2d3c4efba338fe2eeae2e4f18"
-  version = "v0.5.0"
+  revision = "eda1e5db218aad1db63ca4642c8906b26bcf2744"
+  version = "v0.5.1"
 
 [[projects]]
   name = "github.com/hashicorp/go-multierror"
@@ -314,8 +359,8 @@
 [[projects]]
   name = "github.com/hashicorp/go-version"
   packages = ["."]
-  revision = "b5a281d3160aa11950a6182bd9a9dc2cb1e02d50"
-  version = "v1.0.0"
+  revision = "d40cf49b3a77bba84a7afdbd7f1dc295d114efb1"
+  version = "v1.1.0"
 
 [[projects]]
   name = "github.com/hooklift/iso9660"
@@ -335,10 +380,19 @@
   revision = "c2b33e84"
 
 [[projects]]
+  name = "github.com/kubernetes-sigs/aws-iam-authenticator"
+  packages = [
+    "pkg/arn",
+    "pkg/token"
+  ]
+  revision = "b4db1968bf8e9de634dc3e31baffc6dc3b000ee6"
+  version = "0.4.0-alpha"
+
+[[projects]]
   name = "github.com/libvirt/libvirt-go-xml"
   packages = ["."]
-  revision = "e0ae6c18e37fe4d1ca4cb65eb3bfb2971838fd95"
-  version = "v4.10.0"
+  revision = "559807130d581fac8a790d43176ca2639da8c08d"
+  version = "v5.1.0"
 
 [[projects]]
   name = "github.com/mitchellh/copystructure"
@@ -349,8 +403,8 @@
 [[projects]]
   name = "github.com/mitchellh/go-homedir"
   packages = ["."]
-  revision = "ae18d6b8b3205b561c79e8e5f69bff09736185f4"
-  version = "v1.0.0"
+  revision = "af06845cf3004701891bf4fdb884bfe4920b3727"
+  version = "v1.1.0"
 
 [[projects]]
   name = "github.com/mitchellh/mapstructure"
@@ -361,8 +415,8 @@
 [[projects]]
   name = "github.com/mitchellh/packer"
   packages = ["common/uuid"]
-  revision = "508b6efb4ababd3efa3614033f9529a30970899d"
-  version = "v1.3.3"
+  revision = "542cb1d872b4fbba57f34ebb5913a266017a38df"
+  version = "v1.3.5"
 
 [[projects]]
   name = "github.com/mitchellh/reflectwalk"
@@ -378,8 +432,8 @@
 [[projects]]
   name = "github.com/terraform-providers/terraform-provider-aws"
   packages = ["aws"]
-  revision = "ec37d790e2a6eb5a845a2420a6706f1bf0c266ab"
-  version = "v1.52.0"
+  revision = "3cf16f8b1a1386f7f046ae40fa397e902efd4839"
+  version = "v2.2.0"
 
 [[projects]]
   name = "github.com/terraform-providers/terraform-provider-ignition"
@@ -400,14 +454,95 @@
   revision = "9a301d65acbb728fcc3ace14f45f511a4cfeea9c"
 
 [[projects]]
+  branch = "master"
+  name = "golang.org/x/net"
+  packages = [
+    "http/httpguts",
+    "http2",
+    "http2/hpack",
+    "idna"
+  ]
+  revision = "15845e8f865bdabdefb6e7da65b4d9e8de5e94ef"
+
+[[projects]]
+  name = "golang.org/x/text"
+  packages = [
+    "collate",
+    "collate/build",
+    "internal/colltab",
+    "internal/gen",
+    "internal/tag",
+    "internal/triegen",
+    "internal/ucd",
+    "language",
+    "secure/bidirule",
+    "transform",
+    "unicode/bidi",
+    "unicode/cldr",
+    "unicode/norm",
+    "unicode/rangetable"
+  ]
+  revision = "f21a4dfb5e38f5895301dc265a8def02365cc3d0"
+  version = "v0.3.0"
+
+[[projects]]
+  name = "gopkg.in/inf.v0"
+  packages = ["."]
+  revision = "d2d2541c53f18d2a059457998ce2876cc8e67cbf"
+  version = "v0.9.1"
+
+[[projects]]
   name = "gopkg.in/yaml.v2"
   packages = ["."]
   revision = "51d6538a90f86fe93ac480b35f37b2be17fef232"
   version = "v2.2.2"
 
+[[projects]]
+  branch = "master"
+  name = "k8s.io/apimachinery"
+  packages = [
+    "pkg/api/resource",
+    "pkg/apis/meta/v1",
+    "pkg/conversion",
+    "pkg/conversion/queryparams",
+    "pkg/fields",
+    "pkg/labels",
+    "pkg/runtime",
+    "pkg/runtime/schema",
+    "pkg/selection",
+    "pkg/types",
+    "pkg/util/errors",
+    "pkg/util/intstr",
+    "pkg/util/json",
+    "pkg/util/naming",
+    "pkg/util/net",
+    "pkg/util/runtime",
+    "pkg/util/sets",
+    "pkg/util/validation",
+    "pkg/util/validation/field",
+    "pkg/watch",
+    "third_party/forked/golang/reflect"
+  ]
+  revision = "7b3d41122501114701f8d013ea1d9533f60c5dd5"
+
+[[projects]]
+  name = "k8s.io/client-go"
+  packages = [
+    "pkg/apis/clientauthentication",
+    "pkg/apis/clientauthentication/v1alpha1"
+  ]
+  revision = "e64494209f554a6723674bd494d69445fb76a1d4"
+  version = "v10.0.0"
+
+[[projects]]
+  name = "k8s.io/klog"
+  packages = ["."]
+  revision = "71442cd4037d612096940ceb0f3fec3f7fff66e0"
+  version = "v0.2.0"
+
 [solve-meta]
   analyzer-name = "dep"
   analyzer-version = 1
-  inputs-digest = "0b2ed273dd65856e3345f85aa277c85b4f4e0c7d74a69f911f149d36e09ac3b2"
+  inputs-digest = "cfb9644ebe7861c2f9c239b6e4afeec8e375ccb8f765b15b6c01738c430b612b"
   solver-name = "gps-cdcl"
   solver-version = 1

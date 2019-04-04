@@ -4,6 +4,147 @@ All notable changes to this project will be documented in this file.
 
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
+## 0.16.0 - 2019-04-01
+
+### Added
+
+- Documentation for [user-provided infrastructure on bare
+  metal](docs/user/metal/install_upi.md).
+
+### Changed
+
+- Authorized SSH keys are now supplied via installer-generated
+  MachineConfig manifests instead of the stub Ignition configurations.
+  Additional MachineConfig manifests may be provided during a [staged
+  install](docs/user/overview.md#multiple-invocations).
+- [The certificate signer][kubecsr] used for etcd bootstrapping is now
+  sourced from the release image instead of from
+  `quay.io/coreos/kube-etcd-signer-server`.
+- The pinned RHCOS bootimage has been bumped from 400.7.20190306.0 to
+  410.8.20190325.0 to transition from a RHEL 7 base to RHEL 8.
+- The detailed networking configuration manifest has been moved from
+  `networkconfigs.networkoperator.openshift.io` to
+  `networks.operator.openshift.io`.
+- When installation fails after bootstrap removal, the installer will
+  now pass along the status reported by [the cluster-version
+  operator][cluster-version-operator], to make it easier to identify
+  underlying issues.
+- On AWS, when specific availability zones are requested for all
+  machine pools in `install-config.yaml`, the installer will now only
+  create per-zone resources for those zones.  This allows for clusters
+  in high-zone regions like us-east-1 without requiring limit bumps.
+- On OpenStack, we have restored the ability to create Machine(Set)s
+  with trunk support enabled.
+- On OpenStack, machines are now tagged with `Name` and
+  `openshiftClusterID`.
+- Several cleanups to docs, internal code, and user-provided
+  infrastructure support.
+
+### Fixed
+
+- On AWS, creating a new cluster using the same Kubernetes API URL as
+  an existing cluster will now error out instead of clobbering public
+  Route 53 records for the existing cluster.  This adds an additional
+  install-time permission requirement:
+  `s3:GetBucketObjectLockConfiguration`.
+- On AWS, install-config validation now requires any explicitly
+  configured machine-pool zones to be in the configured platform
+  region.  Installs never worked for zones from other regions, but the
+  improved validation gives a more obivous error message and avoids
+  partially provisioning a cluster before hitting the error.
+
+## 0.15.0 - 2019-03-25
+
+### Added
+
+- We now initialize TLS certificates for etcd metrics over TCP on port
+  9979.  We also store etcd certificates in various `kube-system`
+  Secrets and ConfigMaps.
+- The Kubernetes client is now extracted from the release image's
+  `kube-client-agent` reference, replacing
+  `quay.io/coreos/kube-client-agent`.
+- On the control-plane and compute nodes, CRI-O's pause image is now
+  extracted from the release image's `pod` reference.
+- Initial work for user-provided infrastructure on AWS and vSphere,
+  including a new `user-provided-infrastructure` subcommand.
+
+### Changed
+
+- The install-config version has been bumped to `v1beta4` for changes
+  to more closely align with `Network.config.openshift.io`:
+    - `serviceCIDR` is now `serviceNetwork`.
+    - `clusterNetworks` is now `clusterNetwork`.
+    - `type` is now `networkType`.
+    - `hostSubnetLength` is now `hostPrefix`.
+    `v1beta3` is deprecated and will be removed in a future release.
+- On AWS and OpenStack, ports 9000 through 9999 are now open for UDP.
+  They had been open for TCP since 0.4.0, with a bugfix for 9990 ->
+  9999 in 0.13.0.
+- On AWS, we now create network interfaces for the control-plane
+  nodes explicitly, which allows for faster resource-creation time by
+  allowing greater parallelization.
+- On AWS, we now ask the machine-API operator to use
+  `aws-cloud-credentials` (created by [the credential
+  operator][credential-operator]) to fulfill our Machine(Set)s.
+- On OpenStack, resources are prefixed with the cluster ID to avoid
+  conflicts when running multiple clusters under the same tenant.
+- On OpenStack, machines are now configured with hostnames to allow
+  inter-VM communication.
+- On OpenStack, machines are now configured with default DNS
+  nameservers (1.1.1.1 and 208.67.222.222).
+- Several doc and internal cleanups.
+
+### Fixed
+
+- On AWS, the credentials-checking logic now allows root credentials,
+  although it logs a warning because this approach is not recommended.
+- On AWS, we only consider available zones when calculating defaults.
+  This reduces the chance of errors from attempting resource creation
+  in impaired or unavailable zones, although there's still a
+  possibility for a zone going unavailable after our check but before
+  resource creation.
+- On AWS, the bootstrap machine is now created in the first public
+  subnet, restoring SSH and journald access, and fixing a bug from
+  0.14.0.
+- On AWS, the Kubernetes API load balancers now use `/readyz` instead
+  of `/healthz` for health checks, which allows for more graceful
+  control-plane rotation.
+- On AWS, `destroy cluster` has some fixes for:
+    - Removing snapshots associated with copied AMIs, fixing a bug
+      from 0.14.0.
+    - Deleting network interfaces, where we now remove all network
+      interfaces in an owned VPC regardless of whether those network
+      interfaces were themselves tagged as owned.
+    - Instance termination, where we now attempt to terminate
+      instances which are stopped, stopping, or shutting down in
+      addition to those which are pending or running.
+    - Instance profiles (which cannot be tagged directly) are now
+      removed by name in a final deletion step, covering cases where
+      they slipped through tag-based deletion because some external
+      actor removed both the referencing instances and roles but left
+      the instance profiles.
+    - `InvalidGroup.NotFound` is now caught and considered a succesful
+      deletion in more situations than with previous releases.
+    - Error handling where subsequent successes no longer mask earlier
+      errors.
+    - Rate-limiting delete cycles, to reduce excessive AWS API usage
+      (and associated throttling) while waiting for removed
+      dependencies to resolve.
+- On OpenStack, Machine(Set)s now use the correct security group name.
+- On OpenStack, we now set `api` and `*.apps` DNS entries for internal
+  IPs when a floating IP is not configured.
+- The `none` platform no longer creates Machine(Set)s, because there
+  is, by definition, no machine-API support for that platform.
+
+### Removed
+
+- The deprecated `cluster-config-v1` ConfigMap no longer contains the
+  pull secret, now that all pull-secret consumers have been migrated
+  to the `coreos-pull-secret` Secret.
+- On AWS, control-plane nodes no longer allow ingress on ports 12379
+  or 12380 (which had, in the distant past, been used for etcd
+  bootstrapping).
+
 ## 0.14.0 - 2019-03-05
 
 ### Changed
@@ -32,11 +173,9 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
   still broken, but we've landed a fix to get it working again in the
   next release.  In the meantime, you can set up a SSH bastion or
   debug pod if you need SSH access to cluster machines.
-
 - On OpenStack, the Machine(Set)s have been updated to track provider
   changes.  For example, the `SecurityGroups` schema has changed, as
   has the schema for selecting subnets.
-
 - Several doc and internal cleanups.
 
 ### Fixed
@@ -271,7 +410,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
   install-config version has been bumped from `v1beta1` to `v1beta2`.
   All users, regardless of platform, will need to update any saved
   `install-config.yaml` to use the new version.  IAM roles are being
-  replaced by [the credentials operator][credential-operator], and
+  replaced by [the credential operator][credential-operator], and
   while we still create IAM roles for our master, worker, and
   bootstrap machines, we're removing the user-facing property now to
   avoid making this breaking change later.
@@ -393,7 +532,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
   shell-completion code (currently only for Bash).
 - On AWS, `destroy cluster` now also removed IAM users with the usual
   tags.  We don't create these users yet, but the removal sets the
-  stage for the coming credentials operator.
+  stage for the coming [credential operator][credential-operator].
 
 ### Changed
 
@@ -1055,6 +1194,7 @@ the new `openshift-install` command instead.
 [kube-apiserver-operator]: https://github.com/openshift/cluster-kube-apiserver-operator
 [kube-controller-manager-operator]: https://github.com/openshift/cluster-kube-controller-manager-operator
 [kube-selector]: https://kubernetes.io/docs/concepts/overview/working-with-objects/labels/#label-selectors
+[kubecsr]: https://github.com/openshift/kubecsr/
 [machine-api-operator]: https://github.com/openshift/machine-api-operator
 [machine-config-operator]: https://github.com/openshift/machine-config-operator
 [machine-config-daemon-ssh-keys]: https://github.com/openshift/machine-config-operator/blob/master/docs/Update-SSHKeys.md

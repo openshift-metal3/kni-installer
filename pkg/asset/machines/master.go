@@ -12,6 +12,7 @@ import (
 	"github.com/openshift-metalkube/kni-installer/pkg/asset/machines/aws"
 	"github.com/openshift-metalkube/kni-installer/pkg/asset/machines/baremetal"
 	"github.com/openshift-metalkube/kni-installer/pkg/asset/machines/libvirt"
+	"github.com/openshift-metalkube/kni-installer/pkg/asset/machines/machineconfig"
 	"github.com/openshift-metalkube/kni-installer/pkg/asset/machines/openstack"
 	"github.com/openshift-metalkube/kni-installer/pkg/asset/rhcos"
 	awstypes "github.com/openshift-metalkube/kni-installer/pkg/types/aws"
@@ -20,9 +21,11 @@ import (
 	libvirttypes "github.com/openshift-metalkube/kni-installer/pkg/types/libvirt"
 	nonetypes "github.com/openshift-metalkube/kni-installer/pkg/types/none"
 	openstacktypes "github.com/openshift-metalkube/kni-installer/pkg/types/openstack"
+	vspheretypes "github.com/openshift-metalkube/kni-installer/pkg/types/vsphere"
 	libvirtapi "github.com/openshift/cluster-api-provider-libvirt/pkg/apis"
 	libvirtprovider "github.com/openshift/cluster-api-provider-libvirt/pkg/apis/libvirtproviderconfig/v1alpha1"
 	machineapi "github.com/openshift/cluster-api/pkg/apis/machine/v1beta1"
+	mcfgv1 "github.com/openshift/machine-config-operator/pkg/apis/machineconfiguration.openshift.io/v1"
 	"github.com/pkg/errors"
 	"k8s.io/apimachinery/pkg/runtime"
 	"k8s.io/apimachinery/pkg/runtime/serializer"
@@ -34,17 +37,23 @@ import (
 
 // Master generates the machines for the `master` machine pool.
 type Master struct {
-	FileList []*asset.File
+	UserDataFile       *asset.File
+	MachineConfigFiles []*asset.File
+	MachineFiles       []*asset.File
 }
 
-var (
+const (
 	directory = "openshift"
 
-	// MasterMachineFileName is the format string for constucting the master Machine filenames.
-	MasterMachineFileName = "99_openshift-cluster-api_master-machines-%s.yaml"
+	// masterMachineFileName is the format string for constucting the master Machine filenames.
+	masterMachineFileName = "99_openshift-cluster-api_master-machines-%s.yaml"
 
-	// MasterUserDataFileName is the filename used for the master user-data secret.
-	MasterUserDataFileName = "99_openshift-cluster-api_master-user-data-secret.yaml"
+	// masterUserDataFileName is the filename used for the master user-data secret.
+	masterUserDataFileName = "99_openshift-cluster-api_master-user-data-secret.yaml"
+)
+
+var (
+	masterMachineFileNamePattern = fmt.Sprintf(masterMachineFileName, "*")
 
 	_ asset.WritableAsset = (*Master)(nil)
 )
@@ -83,10 +92,10 @@ func (m *Master) Generate(dependencies asset.Parents) error {
 	mign := &machine.Master{}
 	dependencies.Get(clusterID, installconfig, rhcosImage, mign)
 
-	var err error
-	machines := []machineapi.Machine{}
 	ic := installconfig.Config
 	pool := ic.ControlPlane
+	var err error
+	machines := []machineapi.Machine{}
 	switch ic.Platform.Name() {
 	case awstypes.Name:
 		mpool := defaultAWSMachinePoolPlatform()
@@ -115,8 +124,6 @@ func (m *Master) Generate(dependencies asset.Parents) error {
 		if err != nil {
 			return errors.Wrap(err, "failed to create master machine objects")
 		}
-	case nonetypes.Name:
-		return nil
 	case openstacktypes.Name:
 		mpool := defaultOpenStackMachinePoolPlatform(ic.Platform.OpenStack.FlavorName)
 		mpool.Set(ic.Platform.OpenStack.DefaultMachinePlatform)
@@ -129,6 +136,7 @@ func (m *Master) Generate(dependencies asset.Parents) error {
 		}
 		openstack.ConfigMasters(machines, clusterID.InfraID)
 	case baremetaltypes.Name:
+		// FIXME: baremetal
 		mpool := defaultBareMetalMachinePoolPlatform()
 		mpool.Set(ic.Platform.BareMetal.DefaultMachinePlatform)
 		mpool.Set(pool.Platform.BareMetal)
@@ -137,6 +145,7 @@ func (m *Master) Generate(dependencies asset.Parents) error {
 		if err != nil {
 			return errors.Wrap(err, "failed to create master machine objects")
 		}
+	case nonetypes.Name, vspheretypes.Name:
 	default:
 		return fmt.Errorf("invalid Platform")
 	}
@@ -147,17 +156,22 @@ func (m *Master) Generate(dependencies asset.Parents) error {
 		return errors.Wrap(err, "failed to create user-data secret for master machines")
 	}
 
-	m.FileList = []*asset.File{{
-		Filename: filepath.Join(directory, MasterUserDataFileName),
+	m.UserDataFile = &asset.File{
+		Filename: filepath.Join(directory, masterUserDataFileName),
 		Data:     data,
-	}}
-
-	count := len(machines)
-	if count == 0 {
-		return errors.New("at least one master machine must be configured")
 	}
 
-	padFormat := fmt.Sprintf("%%0%dd", len(fmt.Sprintf("%d", count)))
+	machineConfigs := []*mcfgv1.MachineConfig{}
+	if ic.SSHKey != "" {
+		machineConfigs = append(machineConfigs, machineconfig.ForAuthorizedKeys(ic.SSHKey, "master"))
+	}
+	m.MachineConfigFiles, err = machineconfig.Manifests(machineConfigs, "master", directory)
+	if err != nil {
+		return errors.Wrap(err, "failed to create MachineConfig manifests for master machines")
+	}
+
+	m.MachineFiles = make([]*asset.File, len(machines))
+	padFormat := fmt.Sprintf("%%0%dd", len(fmt.Sprintf("%d", len(machines))))
 	for i, machine := range machines {
 		data, err := yaml.Marshal(machine)
 		if err != nil {
@@ -165,10 +179,10 @@ func (m *Master) Generate(dependencies asset.Parents) error {
 		}
 
 		padded := fmt.Sprintf(padFormat, i)
-		m.FileList = append(m.FileList, &asset.File{
-			Filename: filepath.Join(directory, fmt.Sprintf(MasterMachineFileName, padded)),
+		m.MachineFiles[i] = &asset.File{
+			Filename: filepath.Join(directory, fmt.Sprintf(masterMachineFileName, padded)),
 			Data:     data,
-		})
+		}
 	}
 
 	return nil
@@ -176,48 +190,42 @@ func (m *Master) Generate(dependencies asset.Parents) error {
 
 // Files returns the files generated by the asset.
 func (m *Master) Files() []*asset.File {
-	return m.FileList
+	files := make([]*asset.File, 0, 1+len(m.MachineConfigFiles)+len(m.MachineFiles))
+	if m.UserDataFile != nil {
+		files = append(files, m.UserDataFile)
+	}
+	files = append(files, m.MachineConfigFiles...)
+	files = append(files, m.MachineFiles...)
+	return files
 }
 
 // Load reads the asset files from disk.
 func (m *Master) Load(f asset.FileFetcher) (found bool, err error) {
-	file, err := f.FetchByName(filepath.Join(directory, MasterUserDataFileName))
+	file, err := f.FetchByName(filepath.Join(directory, masterUserDataFileName))
 	if err != nil {
 		if os.IsNotExist(err) {
 			return false, nil
 		}
 		return false, err
 	}
-	m.FileList = []*asset.File{file}
+	m.UserDataFile = file
 
-	fileList, err := f.FetchByPattern(filepath.Join(directory, fmt.Sprintf(MasterMachineFileName, "*")))
+	m.MachineConfigFiles, err = machineconfig.Load(f, "master", directory)
 	if err != nil {
 		return true, err
 	}
 
-	if len(fileList) == 0 {
-		return true, errors.Errorf("master machine manifests are required if you also provide %s", file.Filename)
+	fileList, err := f.FetchByPattern(filepath.Join(directory, masterMachineFileNamePattern))
+	if err != nil {
+		return true, err
 	}
 
-	m.FileList = append(m.FileList, fileList...)
+	m.MachineFiles = fileList
 	return true, nil
 }
 
-// Machines returns master Machine manifest YAML.
-func (m *Master) Machines() [][]byte {
-	machines := [][]byte{}
-	userData := filepath.Join(directory, MasterUserDataFileName)
-	for _, file := range m.FileList {
-		if file.Filename == userData {
-			continue
-		}
-		machines = append(machines, file.Data)
-	}
-	return machines
-}
-
-// StructuredMachines returns master Machine manifest structures.
-func (m *Master) StructuredMachines() ([]machineapi.Machine, error) {
+// Machines returns master Machine manifest structures.
+func (m *Master) Machines() ([]machineapi.Machine, error) {
 	scheme := runtime.NewScheme()
 	awsapi.AddToScheme(scheme)
 	libvirtapi.AddToScheme(scheme)
@@ -229,9 +237,9 @@ func (m *Master) StructuredMachines() ([]machineapi.Machine, error) {
 	)
 
 	machines := []machineapi.Machine{}
-	for i, data := range m.Machines() {
+	for i, file := range m.MachineFiles {
 		machine := &machineapi.Machine{}
-		err := yaml.Unmarshal(data, &machine)
+		err := yaml.Unmarshal(file.Data, &machine)
 		if err != nil {
 			return machines, errors.Wrapf(err, "unmarshal master %d", i)
 		}
@@ -246,4 +254,31 @@ func (m *Master) StructuredMachines() ([]machineapi.Machine, error) {
 	}
 
 	return machines, nil
+}
+
+// IsMachineManifest tests whether a file is a manifest that belongs to the
+// Master Machines or Worker Machines asset.
+func IsMachineManifest(file *asset.File) bool {
+	if filepath.Dir(file.Filename) != directory {
+		return false
+	}
+	filename := filepath.Base(file.Filename)
+	if filename == masterUserDataFileName || filename == workerUserDataFileName {
+		return true
+	}
+	if matched, err := machineconfig.IsManifest(filename); err != nil {
+		panic(err)
+	} else if matched {
+		return true
+	}
+	if matched, err := filepath.Match(masterMachineFileNamePattern, filename); err != nil {
+		panic("bad format for master machine file name pattern")
+	} else if matched {
+		return true
+	}
+	if matched, err := filepath.Match(workerMachineSetFileNamePattern, filename); err != nil {
+		panic("bad format for worker machine file name pattern")
+	} else {
+		return matched
+	}
 }
