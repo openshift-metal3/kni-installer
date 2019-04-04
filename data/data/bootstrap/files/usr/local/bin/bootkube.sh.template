@@ -136,7 +136,9 @@ fi
 
 echo -n "Waiting for etcd member names to be available from SRV"
 CLUSTER_DOMAIN="$(awk '/search/ {print $2}' /etc/resolv.conf)"
-while ! DNS_DISC_ANSWERS=$(host -t SRV "_etcd-server-ssl._tcp.$CLUSTER_DOMAIN"); do
+# TODO: We shouldn't need to pass in "127.0.0.1" but for some reason its
+# being ignored in /etc/resolv.conf
+while ! DNS_DISC_ANSWERS=$(host -t SRV "_etcd-server-ssl._tcp.$CLUSTER_DOMAIN" 127.0.0.1 | grep _etcd-server ); do
     echo -n "."
     sleep 1
 done
