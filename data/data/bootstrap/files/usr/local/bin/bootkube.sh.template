@@ -136,7 +136,7 @@ fi
 
 echo -n "Waiting for etcd member names to be available from SRV"
 CLUSTER_DOMAIN="$(awk '/search/ {print $2}' /etc/resolv.conf)"
-while ! DNS_DISC_ANSWERS=$(host -t SRV "_etcd-server-ssl._tcp.$CLUSTER_DOMAIN" | grep _etcd-server); do
+while ! DNS_DISC_ANSWERS=$(host -t SRV "_etcd-server-ssl._tcp.$CLUSTER_DOMAIN"); do
     echo -n "."
     sleep 1
 done
