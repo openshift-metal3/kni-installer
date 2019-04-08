@@ -8,6 +8,7 @@ import (
 	libvirtdefaults "github.com/openshift-metalkube/kni-installer/pkg/types/libvirt/defaults"
 	nonedefaults "github.com/openshift-metalkube/kni-installer/pkg/types/none/defaults"
 	openstackdefaults "github.com/openshift-metalkube/kni-installer/pkg/types/openstack/defaults"
+	vspheredefaults "github.com/openshift-metalkube/kni-installer/pkg/types/vsphere/defaults"
 )
 
 var (
@@ -73,6 +74,8 @@ func SetInstallConfigDefaults(c *types.InstallConfig) {
 		libvirtdefaults.SetPlatformDefaults(c.Platform.Libvirt)
 	case c.Platform.OpenStack != nil:
 		openstackdefaults.SetPlatformDefaults(c.Platform.OpenStack)
+	case c.Platform.VSphere != nil:
+		vspheredefaults.SetPlatformDefaults(c.Platform.VSphere, c)
 	case c.Platform.BareMetal != nil:
 		baremetaldefaults.SetPlatformDefaults(c.Platform.BareMetal)
 	case c.Platform.None != nil:
