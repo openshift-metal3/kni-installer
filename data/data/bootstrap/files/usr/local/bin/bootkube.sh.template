@@ -135,15 +135,14 @@ then
 	touch mco-bootstrap.done
 fi
 
-echo -n "Waiting for etcd member names to be available from SRV"
+echo "Waiting for etcd member names to be available from SRV ..."
 CLUSTER_DOMAIN="$(clusterinfo CLUSTER_DOMAIN)"
 while ! DNS_DISC_ANSWERS=$(host -t SRV "_etcd-server-ssl._tcp.$CLUSTER_DOMAIN"); do
-    echo -n "."
     sleep 1
 done
 
 ETCD_MEMBERS=$(awk '{print $NF}' <<< "$DNS_DISC_ANSWERS")
-echo " Found etcd members!"
+echo "Found etcd members!"
 
 function etcd-server-urls {
     local out
