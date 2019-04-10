@@ -9,6 +9,7 @@ import (
 	"github.com/openshift-metalkube/kni-installer/pkg/asset/kubeconfig"
 	"github.com/openshift-metalkube/kni-installer/pkg/asset/machines"
 	"github.com/openshift-metalkube/kni-installer/pkg/asset/manifests"
+	"github.com/openshift-metalkube/kni-installer/pkg/asset/password"
 	"github.com/openshift-metalkube/kni-installer/pkg/asset/templates/content/bootkube"
 	"github.com/openshift-metalkube/kni-installer/pkg/asset/templates/content/openshift"
 	"github.com/openshift-metalkube/kni-installer/pkg/asset/tls"
@@ -43,6 +44,7 @@ var (
 		&bootkube.HostEtcdServiceKubeSystem{},
 		&bootkube.OpenshiftConfigSecretEtcdMetricClient{},
 		&bootkube.OpenshiftConfigConfigmapEtcdMetricServingCA{},
+		&bootkube.OpenshiftConfigSecretPullSecret{},
 		&openshift.BindingDiscovery{},
 		&openshift.CloudCredsSecret{},
 		&openshift.KubeadminPasswordSecret{},
@@ -62,6 +64,7 @@ var (
 	Cluster = []asset.WritableAsset{
 		&cluster.TerraformVariables{},
 		&kubeconfig.AdminClient{},
+		&password.KubeadminPassword{},
 		&tls.JournalCertKey{},
 		&cluster.Metadata{},
 		&cluster.Cluster{},

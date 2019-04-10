@@ -69,7 +69,27 @@ func validLibvirtPlatform() *libvirt.Platform {
 			IfName: "tt0",
 		},
 	}
+}
 
+func validVSpherePlatform() *vsphere.Platform {
+	return &vsphere.Platform{
+		VirtualCenters: []vsphere.VirtualCenter{
+			{
+				Name:        "test-server",
+				Username:    "test-username",
+				Password:    "test-password",
+				Datacenters: []string{"test-datacenter"},
+			},
+		},
+		Workspace: vsphere.Workspace{
+			Server:           "test-server",
+			Datacenter:       "test-datacenter",
+			DefaultDatastore: "test-datastore",
+			Folder:           "test-folder",
+		},
+		SCSIControllerType: "test-controller-type",
+		PublicNetwork:      "test-network",
+	}
 }
 
 func TestValidateInstallConfig(t *testing.T) {
@@ -352,7 +372,7 @@ func TestValidateInstallConfig(t *testing.T) {
 				c.Platform = types.Platform{}
 				return c
 			}(),
-			expectedError: `^platform: Invalid value: types\.Platform{((, )?\w+:\(\*\w+\.Platform\)\(nil\))+}: must specify one of the platforms \(aws, none, openstack, vsphere\)$`,
+			expectedError: `^platform: Invalid value: types\.Platform{((, )?\w+:\(\*\w+\.Platform\)\(nil\))+}: must specify one of the platforms \(aws, azure, none, openstack, vsphere\)$`,
 		},
 		{
 			name: "multiple platforms",
@@ -383,7 +403,7 @@ func TestValidateInstallConfig(t *testing.T) {
 				}
 				return c
 			}(),
-			expectedError: `^platform: Invalid value: types\.Platform{((, )?(\w+:\(\*\w+\.Platform\)\(nil\)|Libvirt:\(\*libvirt\.Platform\)\(0x[0-9a-f]*\)))+}: must specify one of the platforms \(aws, none, openstack, vsphere\)$`,
+			expectedError: `^platform: Invalid value: types\.Platform{((, )?(\w+:\(\*\w+\.Platform\)\(nil\)|Libvirt:\(\*libvirt\.Platform\)\(0x[0-9a-f]*\)))+}: must specify one of the platforms \(aws, azure, none, openstack, vsphere\)$`,
 		},
 		{
 			name: "invalid libvirt platform",
@@ -395,7 +415,7 @@ func TestValidateInstallConfig(t *testing.T) {
 				c.Platform.Libvirt.URI = ""
 				return c
 			}(),
-			expectedError: `^\[platform: Invalid value: types\.Platform{((, )?(\w+:\(\*\w+\.Platform\)\(nil\)|Libvirt:\(\*libvirt\.Platform\)\(0x[0-9a-f]*\)))+}: must specify one of the platforms \(aws, none, openstack, vsphere\), platform\.libvirt\.uri: Invalid value: "": invalid URI "" \(no scheme\)]$`,
+			expectedError: `^\[platform: Invalid value: types\.Platform{((, )?(\w+:\(\*\w+\.Platform\)\(nil\)|Libvirt:\(\*libvirt\.Platform\)\(0x[0-9a-f]*\)))+}: must specify one of the platforms \(aws, azure, none, openstack, vsphere\), platform\.libvirt\.uri: Invalid value: "": invalid URI "" \(no scheme\)]$`,
 		},
 		{
 			name: "valid none platform",
@@ -438,10 +458,22 @@ func TestValidateInstallConfig(t *testing.T) {
 			installConfig: func() *types.InstallConfig {
 				c := validInstallConfig()
 				c.Platform = types.Platform{
-					VSphere: &vsphere.Platform{},
+					VSphere: validVSpherePlatform(),
 				}
 				return c
 			}(),
+		},
+		{
+			name: "invalid vsphere platform",
+			installConfig: func() *types.InstallConfig {
+				c := validInstallConfig()
+				c.Platform = types.Platform{
+					VSphere: validVSpherePlatform(),
+				}
+				c.Platform.VSphere.Workspace.Server = ""
+				return c
+			}(),
+			expectedError: `^platform\.vsphere.workspace.server: Required value: must specify the workspace server$`,
 		},
 	}
 	for _, tc := range cases {

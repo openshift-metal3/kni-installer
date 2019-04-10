@@ -108,7 +108,7 @@ var (
 				logrus.Warn("FIXME! Exiting after bootstrap, remove when all operators will come up successfully.")
 				return
 
-				err = finish(ctx, config, rootOpts.dir)
+				err = waitForClusterReady(ctx, config, rootOpts.dir)
 				if err != nil {
 					logrus.Fatal(err)
 				}
@@ -146,7 +146,7 @@ func runTargetCmd(targets ...asset.WritableAsset) func(cmd *cobra.Command, args 
 		}
 
 		for _, a := range targets {
-			err := assetStore.Fetch(a)
+			err := assetStore.Fetch(a, targets...)
 			if err != nil {
 				err = errors.Wrapf(err, "failed to fetch %s", a.Name())
 			}
@@ -436,7 +436,7 @@ func logComplete(directory, consoleURL string) error {
 	return nil
 }
 
-func finish(ctx context.Context, config *rest.Config, directory string) error {
+func waitForClusterReady(ctx context.Context, config *rest.Config, directory string) error {
 	if err := waitForInitializedCluster(ctx, config); err != nil {
 		return err
 	}

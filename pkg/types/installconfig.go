@@ -5,6 +5,7 @@ import (
 
 	"github.com/openshift-metalkube/kni-installer/pkg/ipnet"
 	"github.com/openshift-metalkube/kni-installer/pkg/types/aws"
+	"github.com/openshift-metalkube/kni-installer/pkg/types/azure"
 	"github.com/openshift-metalkube/kni-installer/pkg/types/baremetal"
 	"github.com/openshift-metalkube/kni-installer/pkg/types/libvirt"
 	"github.com/openshift-metalkube/kni-installer/pkg/types/none"
@@ -33,6 +34,7 @@ var (
 	HiddenPlatformNames = []string{
 		aws.Name,
 		none.Name,
+		azure.Name,
 		openstack.Name,
 		vsphere.Name,
 	}
@@ -100,6 +102,10 @@ type Platform struct {
 	// +optional
 	VSphere *vsphere.Platform `json:"vsphere,omitempty"`
 
+	// Azure is the configuration used when installing on Azure.
+	// +optional
+	Azure *azure.Platform `json:"azure,omitempty"`
+
 	// BareMetal is the configuration used when installing on bare metal.
 	// +optional
 	BareMetal *baremetal.Platform `json:"baremetal,omitempty"`
@@ -122,6 +128,8 @@ func (p *Platform) Name() string {
 		return openstack.Name
 	case p.VSphere != nil:
 		return vsphere.Name
+	case p.Azure != nil:
+		return azure.Name
 	case p.BareMetal != nil:
 		return baremetal.Name
 	default:
