@@ -11,12 +11,16 @@ import (
 	"github.com/openshift-metalkube/kni-installer/pkg/types"
 	"github.com/openshift-metalkube/kni-installer/pkg/types/aws"
 	awsvalidation "github.com/openshift-metalkube/kni-installer/pkg/types/aws/validation"
+	"github.com/openshift-metalkube/kni-installer/pkg/types/azure"
+	azurevalidation "github.com/openshift-metalkube/kni-installer/pkg/types/azure/validation"
 	"github.com/openshift-metalkube/kni-installer/pkg/types/baremetal"
 	baremetalvalidation "github.com/openshift-metalkube/kni-installer/pkg/types/baremetal/validation"
 	"github.com/openshift-metalkube/kni-installer/pkg/types/libvirt"
 	libvirtvalidation "github.com/openshift-metalkube/kni-installer/pkg/types/libvirt/validation"
 	"github.com/openshift-metalkube/kni-installer/pkg/types/openstack"
 	openstackvalidation "github.com/openshift-metalkube/kni-installer/pkg/types/openstack/validation"
+	"github.com/openshift-metalkube/kni-installer/pkg/types/vsphere"
+	vspherevalidation "github.com/openshift-metalkube/kni-installer/pkg/types/vsphere/validation"
 	"github.com/openshift-metalkube/kni-installer/pkg/validate"
 )
 
@@ -211,6 +215,9 @@ func validatePlatform(platform *types.Platform, fldPath *field.Path, openStackVa
 	if platform.AWS != nil {
 		validate(aws.Name, platform.AWS, func(f *field.Path) field.ErrorList { return awsvalidation.ValidatePlatform(platform.AWS, f) })
 	}
+	if platform.Azure != nil {
+		validate(azure.Name, platform.Azure, func(f *field.Path) field.ErrorList { return azurevalidation.ValidatePlatform(platform.Azure, f) })
+	}
 	if platform.Libvirt != nil {
 		validate(libvirt.Name, platform.Libvirt, func(f *field.Path) field.ErrorList { return libvirtvalidation.ValidatePlatform(platform.Libvirt, f) })
 	}
@@ -218,6 +225,9 @@ func validatePlatform(platform *types.Platform, fldPath *field.Path, openStackVa
 		validate(openstack.Name, platform.OpenStack, func(f *field.Path) field.ErrorList {
 			return openstackvalidation.ValidatePlatform(platform.OpenStack, f, openStackValidValuesFetcher)
 		})
+	}
+	if platform.VSphere != nil {
+		validate(vsphere.Name, platform.VSphere, func(f *field.Path) field.ErrorList { return vspherevalidation.ValidatePlatform(platform.VSphere, f) })
 	}
 	if platform.BareMetal != nil {
 		validate(baremetal.Name, platform.BareMetal, func(f *field.Path) field.ErrorList {
