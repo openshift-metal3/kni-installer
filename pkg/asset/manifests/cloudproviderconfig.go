@@ -17,6 +17,7 @@ import (
 	vspheremanifests "github.com/openshift-metalkube/kni-installer/pkg/asset/manifests/vsphere"
 	awstypes "github.com/openshift-metalkube/kni-installer/pkg/types/aws"
 	azuretypes "github.com/openshift-metalkube/kni-installer/pkg/types/azure"
+	baremetaltypes "github.com/openshift-metalkube/kni-installer/pkg/types/baremetal"
 	libvirttypes "github.com/openshift-metalkube/kni-installer/pkg/types/libvirt"
 	nonetypes "github.com/openshift-metalkube/kni-installer/pkg/types/none"
 	openstacktypes "github.com/openshift-metalkube/kni-installer/pkg/types/openstack"
@@ -77,7 +78,7 @@ func (cpc *CloudProviderConfig) Generate(dependencies asset.Parents) error {
 	}
 
 	switch installConfig.Config.Platform.Name() {
-	case awstypes.Name, libvirttypes.Name, nonetypes.Name:
+	case awstypes.Name, libvirttypes.Name, nonetypes.Name, baremetaltypes.Name:
 		return nil
 	case openstacktypes.Name:
 		cm.Data[cloudProviderConfigDataKey] = openstackmanifests.CloudProviderConfig()
