@@ -63,4 +63,4 @@ ignored = [
 
 [[constraint]]
   name = "github.com/openshift-metalkube/terraform-provider-ironic"
-  revision = "7cf70fc4ddaffb3e3351905e7892e40463cecae2"
+  revision = "0538d0a8b33df2c112857649021c558d6375d2c8"
