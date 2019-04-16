@@ -28,64 +28,22 @@ variable "master_configuration" {
   description = "Configuration information for masters such as image location"
 }
 
-variable "master_0" {
+variable "master_nodes" {
   type = "map"
-  description = "Master 0 bare metal node details"
+  description = "Master bare metal node details"
 }
 
-variable "properties_0" {
+variable "properties" {
   type = "map"
-  description = "Master 0 bare metal properties"
+  description = "Master bare metal properties"
 }
 
-variable "root_device_0" {
+variable "root_devices" {
   type = "map"
-  description = "Master 0 root device configuration"
+  description = "Master root device configurations"
 }
 
-variable "driver_info_0" {
+variable "driver_infos" {
   type = "map"
-  description = "Master 0 driver info"
+  description = "Master driver infos"
 }
-
-variable "master_1" {
-  type = "map"
-  description = "Master 1 bare metal node details"
-}
-
-variable "properties_1" {
-  type = "map"
-  description = "Master 1 bare metal properties"
-}
-
-variable "root_device_1" {
-  type = "map"
-  description = "Master 1 root device configuration"
-}
-
-variable "driver_info_1" {
-  type = "map"
-  description = "Master 1 driver info"
-}
-
-variable "master_2" {
-  type = "map"
-  description = "Master 2 bare metal node details"
-}
-
-variable "properties_2" {
-  type = "map"
-  description = "Master 2 bare metal properties"
-}
-
-variable "root_device_2" {
-  type = "map"
-  description = "Master 2 root device configuration"
-}
-
-variable "driver_info_2" {
-  type = "map"
-  description = "Master 2 driver info"
-}
-
-
