@@ -628,6 +628,14 @@
 
 [[projects]]
   branch = "master"
+  digest = "1:07de8180d5ce67dad2cd9fd94227a5d8612424cf80f2023d1386f4ff5e272567"
+  name = "github.com/rodaine/hclencoder"
+  packages = ["."]
+  pruneopts = "NUT"
+  revision = "fb9757bb536eb49d3d16503228b4bf6b258907f6"
+
+[[projects]]
+  branch = "master"
   digest = "1:7ca2584fa7da0520cd2d1136a10194fe5a5b220bdb215074ab6f7b5ad91115f4"
   name = "github.com/shurcooL/httpfs"
   packages = ["vfsutil"]
