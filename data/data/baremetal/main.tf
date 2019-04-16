@@ -26,19 +26,9 @@ module "masters" {
   root_gb        = "${var.master_configuration["root_gb"]}"
   root_disk      = "${var.master_configuration["root_disk"]}"
 
-  master_0 = "${var.master_0}"
-  properties_0 = "${var.properties_0}"
-  root_device_0 = "${var.root_device_0}"
-  driver_info_0 = "${var.driver_info_0}"
-
-  master_1 = "${var.master_1}"
-  properties_1 = "${var.properties_1}"
-  root_device_1 = "${var.root_device_1}"
-  driver_info_1 = "${var.driver_info_1}"
-
-  master_2 = "${var.master_2}"
-  properties_2 = "${var.properties_2}"
-  root_device_2 = "${var.root_device_2}"
-  driver_info_2 = "${var.driver_info_2}"
+  master_nodes = "${var.master_nodes}"
+  properties = "${var.properties}"
+  root_devices = "${var.root_devices}"
+  driver_infos = "${var.driver_infos}"
 }
 
