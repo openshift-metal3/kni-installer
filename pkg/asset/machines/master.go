@@ -6,22 +6,6 @@ import (
 	"path/filepath"
 
 	"github.com/ghodss/yaml"
-	"github.com/openshift-metalkube/kni-installer/pkg/asset"
-	"github.com/openshift-metalkube/kni-installer/pkg/asset/ignition/machine"
-	"github.com/openshift-metalkube/kni-installer/pkg/asset/installconfig"
-	"github.com/openshift-metalkube/kni-installer/pkg/asset/machines/aws"
-	"github.com/openshift-metalkube/kni-installer/pkg/asset/machines/baremetal"
-	"github.com/openshift-metalkube/kni-installer/pkg/asset/machines/libvirt"
-	"github.com/openshift-metalkube/kni-installer/pkg/asset/machines/machineconfig"
-	"github.com/openshift-metalkube/kni-installer/pkg/asset/machines/openstack"
-	"github.com/openshift-metalkube/kni-installer/pkg/asset/rhcos"
-	awstypes "github.com/openshift-metalkube/kni-installer/pkg/types/aws"
-	awsdefaults "github.com/openshift-metalkube/kni-installer/pkg/types/aws/defaults"
-	baremetaltypes "github.com/openshift-metalkube/kni-installer/pkg/types/baremetal"
-	libvirttypes "github.com/openshift-metalkube/kni-installer/pkg/types/libvirt"
-	nonetypes "github.com/openshift-metalkube/kni-installer/pkg/types/none"
-	openstacktypes "github.com/openshift-metalkube/kni-installer/pkg/types/openstack"
-	vspheretypes "github.com/openshift-metalkube/kni-installer/pkg/types/vsphere"
 	libvirtapi "github.com/openshift/cluster-api-provider-libvirt/pkg/apis"
 	libvirtprovider "github.com/openshift/cluster-api-provider-libvirt/pkg/apis/libvirtproviderconfig/v1alpha1"
 	machineapi "github.com/openshift/cluster-api/pkg/apis/machine/v1beta1"
@@ -33,6 +17,27 @@ import (
 	awsprovider "sigs.k8s.io/cluster-api-provider-aws/pkg/apis/awsproviderconfig/v1beta1"
 	openstackapi "sigs.k8s.io/cluster-api-provider-openstack/pkg/apis"
 	openstackprovider "sigs.k8s.io/cluster-api-provider-openstack/pkg/apis/openstackproviderconfig/v1alpha1"
+
+	"github.com/openshift-metalkube/kni-installer/pkg/asset"
+	"github.com/openshift-metalkube/kni-installer/pkg/asset/ignition/machine"
+	"github.com/openshift-metalkube/kni-installer/pkg/asset/installconfig"
+	"github.com/openshift-metalkube/kni-installer/pkg/asset/machines/aws"
+	"github.com/openshift-metalkube/kni-installer/pkg/asset/machines/azure"
+	"github.com/openshift-metalkube/kni-installer/pkg/asset/machines/baremetal"
+	"github.com/openshift-metalkube/kni-installer/pkg/asset/machines/libvirt"
+	"github.com/openshift-metalkube/kni-installer/pkg/asset/machines/machineconfig"
+	"github.com/openshift-metalkube/kni-installer/pkg/asset/machines/openstack"
+	"github.com/openshift-metalkube/kni-installer/pkg/asset/rhcos"
+	"github.com/openshift-metalkube/kni-installer/pkg/types"
+	awstypes "github.com/openshift-metalkube/kni-installer/pkg/types/aws"
+	awsdefaults "github.com/openshift-metalkube/kni-installer/pkg/types/aws/defaults"
+	azuretypes "github.com/openshift-metalkube/kni-installer/pkg/types/azure"
+	azuredefaults "github.com/openshift-metalkube/kni-installer/pkg/types/azure/defaults"
+	baremetaltypes "github.com/openshift-metalkube/kni-installer/pkg/types/baremetal"
+	libvirttypes "github.com/openshift-metalkube/kni-installer/pkg/types/libvirt"
+	nonetypes "github.com/openshift-metalkube/kni-installer/pkg/types/none"
+	openstacktypes "github.com/openshift-metalkube/kni-installer/pkg/types/openstack"
+	vspheretypes "github.com/openshift-metalkube/kni-installer/pkg/types/vsphere"
 )
 
 // Master generates the machines for the `master` machine pool.
@@ -93,6 +98,7 @@ func (m *Master) Generate(dependencies asset.Parents) error {
 	dependencies.Get(clusterID, installconfig, rhcosImage, mign)
 
 	ic := installconfig.Config
+
 	pool := ic.ControlPlane
 	var err error
 	machines := []machineapi.Machine{}
@@ -135,6 +141,18 @@ func (m *Master) Generate(dependencies asset.Parents) error {
 			return errors.Wrap(err, "failed to create master machine objects")
 		}
 		openstack.ConfigMasters(machines, clusterID.InfraID)
+	case azuretypes.Name:
+		mpool := defaultAzureMachinePoolPlatform()
+		mpool.InstanceType = azuredefaults.InstanceClass(installconfig.Config.Platform.Azure.Region)
+		mpool.Set(ic.Platform.Azure.DefaultMachinePlatform)
+		mpool.Set(pool.Platform.Azure)
+		pool.Platform.Azure = &mpool
+
+		machines, err = azure.Machines(clusterID.InfraID, ic, pool, string(*rhcosImage), "master", "master-user-data")
+		if err != nil {
+			return errors.Wrap(err, "failed to create master machine objects")
+		}
+		azure.ConfigMasters(machines, clusterID.InfraID)
 	case baremetaltypes.Name:
 		// FIXME: baremetal
 		mpool := defaultBareMetalMachinePoolPlatform()
@@ -162,6 +180,9 @@ func (m *Master) Generate(dependencies asset.Parents) error {
 	}
 
 	machineConfigs := []*mcfgv1.MachineConfig{}
+	if pool.Hyperthreading == types.HyperthreadingDisabled {
+		machineConfigs = append(machineConfigs, machineconfig.ForHyperthreadingDisabled("master"))
+	}
 	if ic.SSHKey != "" {
 		machineConfigs = append(machineConfigs, machineconfig.ForAuthorizedKeys(ic.SSHKey, "master"))
 	}

@@ -17,7 +17,6 @@ import (
 	"github.com/openshift-metalkube/kni-installer/pkg/asset/templates/content/bootkube"
 	"github.com/openshift-metalkube/kni-installer/pkg/asset/tls"
 	"github.com/openshift-metalkube/kni-installer/pkg/types"
-	vspheretypes "github.com/openshift-metalkube/kni-installer/pkg/types/vsphere"
 )
 
 const (
@@ -87,7 +86,6 @@ func (m *Manifests) Dependencies() []asset.Asset {
 		&bootkube.OpenshiftConfigSecretEtcdMetricClient{},
 		&bootkube.OpenshiftConfigSecretPullSecret{},
 		&bootkube.OpenshiftMachineConfigOperator{},
-		&bootkube.Pull{},
 	}
 }
 
@@ -209,7 +207,6 @@ func (m *Manifests) generateBootKubeManifests(dependencies asset.Parents) []*ass
 		&bootkube.OpenshiftConfigSecretEtcdMetricClient{},
 		&bootkube.OpenshiftConfigSecretPullSecret{},
 		&bootkube.OpenshiftMachineConfigOperator{},
-		&bootkube.Pull{},
 	} {
 		dependencies.Get(a)
 		for _, f := range a.Files() {
@@ -268,12 +265,8 @@ func redactedInstallConfig(config types.InstallConfig) ([]byte, error) {
 	config.PullSecret = ""
 	if config.Platform.VSphere != nil {
 		p := *config.Platform.VSphere
-		p.VirtualCenters = make([]vspheretypes.VirtualCenter, len(config.Platform.VSphere.VirtualCenters))
-		for i, vc := range config.Platform.VSphere.VirtualCenters {
-			vc.Username = ""
-			vc.Password = ""
-			p.VirtualCenters[i] = vc
-		}
+		p.Username = ""
+		p.Password = ""
 		config.Platform.VSphere = &p
 	}
 	return yaml.Marshal(config)

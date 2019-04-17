@@ -33,7 +33,6 @@ var (
 	ManifestTemplates = []asset.WritableAsset{
 		&bootkube.KubeCloudConfig{},
 		&bootkube.MachineConfigServerTLSSecret{},
-		&bootkube.Pull{},
 		&bootkube.CVOOverrides{},
 		&bootkube.HostEtcdServiceEndpointsKubeSystem{},
 		&bootkube.KubeSystemConfigmapEtcdServingCA{},
@@ -54,6 +53,7 @@ var (
 	// IgnitionConfigs are the ignition-configs targeted assets.
 	IgnitionConfigs = []asset.WritableAsset{
 		&kubeconfig.AdminClient{},
+		&password.KubeadminPassword{},
 		&machine.Master{},
 		&machine.Worker{},
 		&bootstrap.Bootstrap{},

@@ -10,11 +10,14 @@ import (
 	"github.com/gophercloud/utils/openstack/clientconfig"
 	"github.com/openshift-metalkube/kni-installer/pkg/asset"
 	"github.com/openshift-metalkube/kni-installer/pkg/asset/installconfig"
+	"github.com/openshift-metalkube/kni-installer/pkg/asset/installconfig/azure"
 	"github.com/openshift-metalkube/kni-installer/pkg/asset/machines"
+
 	osmachine "github.com/openshift-metalkube/kni-installer/pkg/asset/machines/openstack"
 	"github.com/openshift-metalkube/kni-installer/pkg/asset/password"
 	"github.com/openshift-metalkube/kni-installer/pkg/asset/templates/content/openshift"
 	awstypes "github.com/openshift-metalkube/kni-installer/pkg/types/aws"
+	azuretypes "github.com/openshift-metalkube/kni-installer/pkg/types/azure"
 	openstacktypes "github.com/openshift-metalkube/kni-installer/pkg/types/openstack"
 	vspheretypes "github.com/openshift-metalkube/kni-installer/pkg/types/vsphere"
 )
@@ -42,6 +45,7 @@ func (o *Openshift) Name() string {
 func (o *Openshift) Dependencies() []asset.Asset {
 	return []asset.Asset{
 		&installconfig.InstallConfig{},
+		&installconfig.ClusterID{},
 		&password.KubeadminPassword{},
 
 		&openshift.BindingDiscovery{},
@@ -54,8 +58,9 @@ func (o *Openshift) Dependencies() []asset.Asset {
 // Generate generates the respective operator config.yml files
 func (o *Openshift) Generate(dependencies asset.Parents) error {
 	installConfig := &installconfig.InstallConfig{}
+	clusterID := &installconfig.ClusterID{}
 	kubeadminPassword := &password.KubeadminPassword{}
-	dependencies.Get(installConfig, kubeadminPassword)
+	dependencies.Get(installConfig, kubeadminPassword, clusterID)
 	var cloudCreds cloudCredsSecretData
 	platform := installConfig.Config.Platform.Name()
 	switch platform {
@@ -71,6 +76,25 @@ func (o *Openshift) Generate(dependencies asset.Parents) error {
 			AWS: &AwsCredsSecretData{
 				Base64encodeAccessKeyID:     base64.StdEncoding.EncodeToString([]byte(creds.AccessKeyID)),
 				Base64encodeSecretAccessKey: base64.StdEncoding.EncodeToString([]byte(creds.SecretAccessKey)),
+			},
+		}
+
+	case azuretypes.Name:
+		resourceGroupName := clusterID.InfraID + "-rg"
+		session, err := azure.GetSession()
+		if err != nil {
+			return err
+		}
+		creds := session.Credentials
+		cloudCreds = cloudCredsSecretData{
+			Azure: &AzureCredsSecretData{
+				Base64encodeSubscriptionID: base64.StdEncoding.EncodeToString([]byte(creds.SubscriptionID)),
+				Base64encodeClientID:       base64.StdEncoding.EncodeToString([]byte(creds.ClientID)),
+				Base64encodeClientSecret:   base64.StdEncoding.EncodeToString([]byte(creds.ClientSecret)),
+				Base64encodeTenantID:       base64.StdEncoding.EncodeToString([]byte(creds.TenantID)),
+				Base64encodeResourcePrefix: base64.StdEncoding.EncodeToString([]byte(clusterID.InfraID)),
+				Base64encodeResourceGroup:  base64.StdEncoding.EncodeToString([]byte(resourceGroupName)),
+				Base64encodeRegion:         base64.StdEncoding.EncodeToString([]byte(installConfig.Config.Azure.Region)),
 			},
 		}
 	case openstacktypes.Name:
@@ -97,15 +121,11 @@ func (o *Openshift) Generate(dependencies asset.Parents) error {
 			},
 		}
 	case vspheretypes.Name:
-		vcCreds := make([]VSphereVirtualCenterCredsSecretData, len(installConfig.Config.VSphere.VirtualCenters))
-		for i, vc := range installConfig.Config.VSphere.VirtualCenters {
-			vcCreds[i].Name = vc.Name
-			vcCreds[i].Base64encodeUsername = base64.StdEncoding.EncodeToString([]byte(vc.Username))
-			vcCreds[i].Base64encodePassword = base64.StdEncoding.EncodeToString([]byte(vc.Password))
-		}
 		cloudCreds = cloudCredsSecretData{
 			VSphere: &VSphereCredsSecretData{
-				VirtualCenters: vcCreds,
+				VCenter:              installConfig.Config.VSphere.VCenter,
+				Base64encodeUsername: base64.StdEncoding.EncodeToString([]byte(installConfig.Config.VSphere.Username)),
+				Base64encodePassword: base64.StdEncoding.EncodeToString([]byte(installConfig.Config.VSphere.Password)),
 			},
 		}
 	}
@@ -131,7 +151,7 @@ func (o *Openshift) Generate(dependencies asset.Parents) error {
 	}
 
 	switch platform {
-	case awstypes.Name, openstacktypes.Name, vspheretypes.Name:
+	case awstypes.Name, openstacktypes.Name, vspheretypes.Name, azuretypes.Name:
 		assetData["99_cloud-creds-secret.yaml"] = applyTemplateData(cloudCredsSecret.Files()[0].Data, templateData)
 		assetData["99_role-cloud-creds-secret-reader.yaml"] = applyTemplateData(roleCloudCredsSecretReader.Files()[0].Data, templateData)
 	}

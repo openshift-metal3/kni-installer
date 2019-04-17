@@ -51,7 +51,9 @@ OpenShift 4.x requires all nodes to have internet access to pull images for plat
 
 Before you install OpenShift, you must provision two load balancers.
 
-* A load balancer for the control plane machines that targets port 6443 (Kubernetes APIServer) and 22623([Machine Config server][machine-config-server]). Port 6443 must be accessible to both clients external to the cluster and nodes within the cluster, and port 22623 must be accessible to nodes within the cluster.
+* A load balancer for the control plane and bootstrap machines that targets port 6443 (Kubernetes APIServer) and 22623([Machine Config server][machine-config-server]). Port 6443 must be accessible to both clients external to the cluster and nodes within the cluster, and port 22623 must be accessible to nodes within the cluster.
+
+  NOTE: Bootstrap machine can be deleted as target after cluster installation is finished.
 
 * A load balancer for the machines that run the [ingress router][openshift-router] pods that balances ports 443 and 80. Both the ports must be accessible to both clients external to the cluster and nodes within the cluster.
 
@@ -89,9 +91,9 @@ All the RHCOS machines require network in `initramfs` during boot to fetch Ignit
 
 * Kubernetes API
 
-    OpenShift 4.x requires the DNS record `api.$cluster_name.$base_domain` to point to the Load balancer targeting the control plane machines. This record must be resolvable by both clients external to the cluster and from all the nodes within the cluster.
+    OpenShift 4.x requires the DNS records `api.$cluster_name.$base_domain` and `api-int.$cluster_name.$base_domain` to point to the Load balancer targeting the control plane machines. Both records must be resolvable from all the nodes within the cluster. The `api.$cluster_name.$base_domain` must also be resolvable by clients external to the cluster.
 
-* Etcd
+* etcd
 
     For each control plane machine, OpenShift 4.x requires DNS records `etcd-$idx.$cluster_name.$base_domain` to point to `$idx`'th control plane machine. The DNS record must resolve to an unicast IPV4 address for the control plane machine and the records must be resolvable from all the nodes in the cluster.
 
@@ -213,10 +215,10 @@ INFO Waiting up to 30m0s for the bootstrap-complete event...
 
 ## Monitor for cluster completion
 
-The administrators can use the `wait-for cluster-ready` target of the OpenShift Installer to monitor cluster completion. The command succeeds when it notices that Cluster Version Operator has completed rolling out the OpenShift cluster from Kubernetes APIServer.
+The administrators can use the `wait-for install-complete` target of the OpenShift Installer to monitor cluster completion. The command succeeds when it notices that Cluster Version Operator has completed rolling out the OpenShift cluster from Kubernetes APIServer.
 
 ```console
-$ openshift-install wait-for cluster-ready
+$ openshift-install wait-for install-complete
 INFO Waiting up to 30m0s for the cluster to initialize...
 ```
 
