@@ -16,6 +16,7 @@ import (
 	libvirttfvars "github.com/openshift-metalkube/kni-installer/pkg/tfvars/libvirt"
 	openstacktfvars "github.com/openshift-metalkube/kni-installer/pkg/tfvars/openstack"
 	"github.com/openshift-metalkube/kni-installer/pkg/types/aws"
+	"github.com/openshift-metalkube/kni-installer/pkg/types/azure"
 	"github.com/openshift-metalkube/kni-installer/pkg/types/baremetal"
 	"github.com/openshift-metalkube/kni-installer/pkg/types/libvirt"
 	"github.com/openshift-metalkube/kni-installer/pkg/types/none"
@@ -137,6 +138,8 @@ func (t *TerraformVariables) Generate(parents asset.Parents) error {
 			Filename: fmt.Sprintf(TfPlatformVarsFileName, platform),
 			Data:     data,
 		})
+	case azure.Name:
+		//TODO(serbrech): call generate azure tfvars, relying on MachineProviderConfig once available
 	case libvirt.Name:
 		masters, err := mastersAsset.Machines()
 		if err != nil {

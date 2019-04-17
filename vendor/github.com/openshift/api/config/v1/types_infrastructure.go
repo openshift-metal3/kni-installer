@@ -68,6 +68,9 @@ const (
 	// AzurePlatformType represents Microsoft Azure infrastructure.
 	AzurePlatformType PlatformType = "Azure"
 
+	// BareMetalPlatformType represents managed bare metal infrastructure.
+	BareMetalPlatformType PlatformType = "BareMetal"
+
 	// GCPPlatformType represents Google Cloud Platform infrastructure.
 	GCPPlatformType PlatformType = "GCP"
 

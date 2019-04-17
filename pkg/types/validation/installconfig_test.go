@@ -39,16 +39,8 @@ func validInstallConfig() *types.InstallConfig {
 				},
 			},
 		},
-		ControlPlane: &types.MachinePool{
-			Name:     "master",
-			Replicas: pointer.Int64Ptr(3),
-		},
-		Compute: []types.MachinePool{
-			{
-				Name:     "worker",
-				Replicas: pointer.Int64Ptr(3),
-			},
-		},
+		ControlPlane: validMachinePool("master"),
+		Compute:      []types.MachinePool{*validMachinePool("worker")},
 		Platform: types.Platform{
 			AWS: validAWSPlatform(),
 		},
@@ -73,22 +65,11 @@ func validLibvirtPlatform() *libvirt.Platform {
 
 func validVSpherePlatform() *vsphere.Platform {
 	return &vsphere.Platform{
-		VirtualCenters: []vsphere.VirtualCenter{
-			{
-				Name:        "test-server",
-				Username:    "test-username",
-				Password:    "test-password",
-				Datacenters: []string{"test-datacenter"},
-			},
-		},
-		Workspace: vsphere.Workspace{
-			Server:           "test-server",
-			Datacenter:       "test-datacenter",
-			DefaultDatastore: "test-datastore",
-			Folder:           "test-folder",
-		},
-		SCSIControllerType: "test-controller-type",
-		PublicNetwork:      "test-network",
+		VCenter:          "test-server",
+		Username:         "test-username",
+		Password:         "test-password",
+		Datacenter:       "test-datacenter",
+		DefaultDatastore: "test-datastore",
 	}
 }
 
@@ -322,14 +303,8 @@ func TestValidateInstallConfig(t *testing.T) {
 			installConfig: func() *types.InstallConfig {
 				c := validInstallConfig()
 				c.Compute = []types.MachinePool{
-					{
-						Name:     "worker",
-						Replicas: pointer.Int64Ptr(1),
-					},
-					{
-						Name:     "worker",
-						Replicas: pointer.Int64Ptr(2),
-					},
+					*validMachinePool("worker"),
+					*validMachinePool("worker"),
 				}
 				return c
 			}(),
@@ -340,10 +315,11 @@ func TestValidateInstallConfig(t *testing.T) {
 			installConfig: func() *types.InstallConfig {
 				c := validInstallConfig()
 				c.Compute = []types.MachinePool{
-					{
-						Name:     "worker",
-						Replicas: pointer.Int64Ptr(0),
-					},
+					func() types.MachinePool {
+						p := *validMachinePool("worker")
+						p.Replicas = pointer.Int64Ptr(0)
+						return p
+					}(),
 				}
 				return c
 			}(),
@@ -353,13 +329,13 @@ func TestValidateInstallConfig(t *testing.T) {
 			installConfig: func() *types.InstallConfig {
 				c := validInstallConfig()
 				c.Compute = []types.MachinePool{
-					{
-						Name:     "worker",
-						Replicas: pointer.Int64Ptr(3),
-						Platform: types.MachinePoolPlatform{
+					func() types.MachinePool {
+						p := *validMachinePool("worker")
+						p.Platform = types.MachinePoolPlatform{
 							OpenStack: &openstack.MachinePool{},
-						},
-					},
+						}
+						return p
+					}(),
 				}
 				return c
 			}(),
@@ -470,10 +446,10 @@ func TestValidateInstallConfig(t *testing.T) {
 				c.Platform = types.Platform{
 					VSphere: validVSpherePlatform(),
 				}
-				c.Platform.VSphere.Workspace.Server = ""
+				c.Platform.VSphere.VCenter = ""
 				return c
 			}(),
-			expectedError: `^platform\.vsphere.workspace.server: Required value: must specify the workspace server$`,
+			expectedError: `^platform\.vsphere.vCenter: Required value: must specify the name of the vCenter$`,
 		},
 	}
 	for _, tc := range cases {

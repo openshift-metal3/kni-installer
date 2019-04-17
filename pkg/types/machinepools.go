@@ -9,6 +9,16 @@ import (
 	"github.com/openshift-metalkube/kni-installer/pkg/types/vsphere"
 )
 
+// HyperthreadingMode is the mode of hyperthreading for a machine.
+type HyperthreadingMode string
+
+const (
+	// HyperthreadingEnabled indicates that hyperthreading is enabled.
+	HyperthreadingEnabled HyperthreadingMode = "Enabled"
+	// HyperthreadingDisabled indicates that hyperthreading is disabled.
+	HyperthreadingDisabled HyperthreadingMode = "Disabled"
+)
+
 // MachinePool is a pool of machines to be installed.
 type MachinePool struct {
 	// Name is the name of the machine pool.
@@ -19,8 +29,14 @@ type MachinePool struct {
 	// Replicas is the count of machines for this machine pool.
 	Replicas *int64 `json:"replicas,omitempty"`
 
-	// Platform is configuration for machine pool specific to the platfrom.
+	// Platform is configuration for machine pool specific to the platform.
 	Platform MachinePoolPlatform `json:"platform"`
+
+	// Hyperthreading determines the mode of hyperthreading that machines in this
+	// pool will utilize.
+	// +optional
+	// Default is for hyperthreading to be enabled.
+	Hyperthreading HyperthreadingMode `json:"hyperthreading,omitempty"`
 }
 
 // MachinePoolPlatform is the platform-specific configuration for a machine
