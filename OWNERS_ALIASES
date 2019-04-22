@@ -20,3 +20,9 @@ aliases:
     - abhinavdahiya
     - dav1x
     - staebler
+  baremetal-approvers:
+    - celebdor
+    - markmc
+    - russellb
+    - hardys
+    - stbenjam
