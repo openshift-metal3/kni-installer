@@ -510,7 +510,8 @@ func (workflow *provisionStateWorkflow) toAvailable() (done bool, err error) {
 	case "available":
 		// We're done!
 		return true, nil
-	case "cleaning":
+	case "cleaning",
+		"clean wait":
 		// Not done, no error - Ironic is working
 		log.Printf("[DEBUG] Node %s is '%s', waiting for Ironic to finish.", workflow.d.Id(), state)
 		return false, nil
@@ -563,7 +564,8 @@ func (workflow *provisionStateWorkflow) toActive() (bool, error) {
 // Change a node to be "deleted," and remove the object from Ironic
 func (workflow *provisionStateWorkflow) toDeleted() (bool, error) {
 	switch state := workflow.d.Get("provision_state"); state {
-	case "available":
+	case "available",
+		"enroll":
 		// We're done deleting the node, we can now remove the object
 		err := nodes.Delete(workflow.client, workflow.d.Id()).ExtractErr()
 		return true, err
