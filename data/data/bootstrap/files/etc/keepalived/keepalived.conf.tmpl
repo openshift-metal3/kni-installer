@@ -9,7 +9,7 @@ vrrp_instance ${CLUSTER_NAME}_API {
         auth_pass ${CLUSTER_NAME}_api_vip
     }
     virtual_ipaddress {
-        ${API_VIP}
+        ${API_VIP}/${NET_MASK}
     }
 }
 
@@ -24,6 +24,6 @@ vrrp_instance ${CLUSTER_NAME}_DNS {
         auth_pass ${CLUSTER_NAME}_dns_vip
     }
     virtual_ipaddress {
-        ${DNS_VIP}
+        ${DNS_VIP}/${NET_MASK}
     }
 }
