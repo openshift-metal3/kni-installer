@@ -1,15 +1,15 @@
 package defaults
 
 import (
-	"github.com/openshift-metalkube/kni-installer/pkg/ipnet"
-	"github.com/openshift-metalkube/kni-installer/pkg/types"
-	awsdefaults "github.com/openshift-metalkube/kni-installer/pkg/types/aws/defaults"
-	azuredefaults "github.com/openshift-metalkube/kni-installer/pkg/types/azure/defaults"
-	baremetaldefaults "github.com/openshift-metalkube/kni-installer/pkg/types/baremetal/defaults"
-	libvirtdefaults "github.com/openshift-metalkube/kni-installer/pkg/types/libvirt/defaults"
-	nonedefaults "github.com/openshift-metalkube/kni-installer/pkg/types/none/defaults"
-	openstackdefaults "github.com/openshift-metalkube/kni-installer/pkg/types/openstack/defaults"
-	vspheredefaults "github.com/openshift-metalkube/kni-installer/pkg/types/vsphere/defaults"
+	"github.com/openshift-metal3/kni-installer/pkg/ipnet"
+	"github.com/openshift-metal3/kni-installer/pkg/types"
+	awsdefaults "github.com/openshift-metal3/kni-installer/pkg/types/aws/defaults"
+	azuredefaults "github.com/openshift-metal3/kni-installer/pkg/types/azure/defaults"
+	baremetaldefaults "github.com/openshift-metal3/kni-installer/pkg/types/baremetal/defaults"
+	libvirtdefaults "github.com/openshift-metal3/kni-installer/pkg/types/libvirt/defaults"
+	nonedefaults "github.com/openshift-metal3/kni-installer/pkg/types/none/defaults"
+	openstackdefaults "github.com/openshift-metal3/kni-installer/pkg/types/openstack/defaults"
+	vspheredefaults "github.com/openshift-metal3/kni-installer/pkg/types/vsphere/defaults"
 )
 
 var (

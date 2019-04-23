@@ -4,7 +4,7 @@ import (
 	"fmt"
 	"testing"
 
-	"github.com/openshift-metalkube/kni-installer/pkg/asset"
+	"github.com/openshift-metal3/kni-installer/pkg/asset"
 
 	"github.com/stretchr/testify/assert"
 )

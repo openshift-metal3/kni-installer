@@ -5,17 +5,17 @@ import (
 
 	"k8s.io/apimachinery/pkg/util/validation/field"
 
-	"github.com/openshift-metalkube/kni-installer/pkg/types"
-	"github.com/openshift-metalkube/kni-installer/pkg/types/aws"
-	awsvalidation "github.com/openshift-metalkube/kni-installer/pkg/types/aws/validation"
-	"github.com/openshift-metalkube/kni-installer/pkg/types/azure"
-	azurevalidation "github.com/openshift-metalkube/kni-installer/pkg/types/azure/validation"
-	"github.com/openshift-metalkube/kni-installer/pkg/types/baremetal"
-	baremetalvalidation "github.com/openshift-metalkube/kni-installer/pkg/types/baremetal/validation"
-	"github.com/openshift-metalkube/kni-installer/pkg/types/libvirt"
-	libvirtvalidation "github.com/openshift-metalkube/kni-installer/pkg/types/libvirt/validation"
-	"github.com/openshift-metalkube/kni-installer/pkg/types/openstack"
-	openstackvalidation "github.com/openshift-metalkube/kni-installer/pkg/types/openstack/validation"
+	"github.com/openshift-metal3/kni-installer/pkg/types"
+	"github.com/openshift-metal3/kni-installer/pkg/types/aws"
+	awsvalidation "github.com/openshift-metal3/kni-installer/pkg/types/aws/validation"
+	"github.com/openshift-metal3/kni-installer/pkg/types/azure"
+	azurevalidation "github.com/openshift-metal3/kni-installer/pkg/types/azure/validation"
+	"github.com/openshift-metal3/kni-installer/pkg/types/baremetal"
+	baremetalvalidation "github.com/openshift-metal3/kni-installer/pkg/types/baremetal/validation"
+	"github.com/openshift-metal3/kni-installer/pkg/types/libvirt"
+	libvirtvalidation "github.com/openshift-metal3/kni-installer/pkg/types/libvirt/validation"
+	"github.com/openshift-metal3/kni-installer/pkg/types/openstack"
+	openstackvalidation "github.com/openshift-metal3/kni-installer/pkg/types/openstack/validation"
 )
 
 var (

@@ -4,7 +4,7 @@ import (
 	"crypto/x509"
 	"crypto/x509/pkix"
 
-	"github.com/openshift-metalkube/kni-installer/pkg/asset"
+	"github.com/openshift-metal3/kni-installer/pkg/asset"
 )
 
 // KubeControlPlaneSignerCertKey is a key/cert pair that signs the kube control-plane client certs.

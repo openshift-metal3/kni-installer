@@ -482,7 +482,7 @@
 
 [[projects]]
   digest = "1:1bf1fef73c9218824f6ea795bab09e0af6ace7527757eb5b4cd71becfa9a2fa6"
-  name = "github.com/openshift-metalkube/terraform-provider-ironic"
+  name = "github.com/openshift-metal3/terraform-provider-ironic"
   packages = ["ironic"]
   pruneopts = "NUT"
   revision = "0538d0a8b33df2c112857649021c558d6375d2c8"
@@ -625,7 +625,7 @@
   analyzer-version = 1
   input-imports = [
     "github.com/dmacvicar/terraform-provider-libvirt/libvirt",
-    "github.com/openshift-metalkube/terraform-provider-ironic/ironic",
+    "github.com/openshift-metal3/terraform-provider-ironic/ironic",
     "github.com/terraform-providers/terraform-provider-aws/aws",
     "github.com/terraform-providers/terraform-provider-ignition/ignition",
     "github.com/terraform-providers/terraform-provider-openstack/openstack",

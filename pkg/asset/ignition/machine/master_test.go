@@ -7,12 +7,12 @@ import (
 	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
 	"k8s.io/utils/pointer"
 
-	"github.com/openshift-metalkube/kni-installer/pkg/asset"
-	"github.com/openshift-metalkube/kni-installer/pkg/asset/installconfig"
-	"github.com/openshift-metalkube/kni-installer/pkg/asset/tls"
-	"github.com/openshift-metalkube/kni-installer/pkg/ipnet"
-	"github.com/openshift-metalkube/kni-installer/pkg/types"
-	"github.com/openshift-metalkube/kni-installer/pkg/types/aws"
+	"github.com/openshift-metal3/kni-installer/pkg/asset"
+	"github.com/openshift-metal3/kni-installer/pkg/asset/installconfig"
+	"github.com/openshift-metal3/kni-installer/pkg/asset/tls"
+	"github.com/openshift-metal3/kni-installer/pkg/ipnet"
+	"github.com/openshift-metal3/kni-installer/pkg/types"
+	"github.com/openshift-metal3/kni-installer/pkg/types/aws"
 )
 
 // TestMasterGenerate tests generating the master asset.

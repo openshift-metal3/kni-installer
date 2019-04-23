@@ -22,7 +22,7 @@ import (
 	"github.com/sirupsen/logrus"
 	"k8s.io/apimachinery/pkg/util/wait"
 
-	"github.com/openshift-metalkube/kni-installer/pkg/version"
+	"github.com/openshift-metal3/kni-installer/pkg/version"
 )
 
 var (

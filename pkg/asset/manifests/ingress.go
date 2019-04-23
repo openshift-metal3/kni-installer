@@ -7,8 +7,8 @@ import (
 	"github.com/ghodss/yaml"
 	"github.com/pkg/errors"
 
-	"github.com/openshift-metalkube/kni-installer/pkg/asset"
-	"github.com/openshift-metalkube/kni-installer/pkg/asset/installconfig"
+	"github.com/openshift-metal3/kni-installer/pkg/asset"
+	"github.com/openshift-metal3/kni-installer/pkg/asset/installconfig"
 	configv1 "github.com/openshift/api/config/v1"
 	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
 )

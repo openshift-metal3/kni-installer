@@ -4,7 +4,7 @@ import (
 	"io/ioutil"
 	"path"
 
-	"github.com/openshift-metalkube/kni-installer/data"
+	"github.com/openshift-metal3/kni-installer/data"
 )
 
 const (

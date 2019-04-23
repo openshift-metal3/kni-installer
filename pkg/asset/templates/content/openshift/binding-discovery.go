@@ -4,8 +4,8 @@ import (
 	"os"
 	"path/filepath"
 
-	"github.com/openshift-metalkube/kni-installer/pkg/asset"
-	"github.com/openshift-metalkube/kni-installer/pkg/asset/templates/content"
+	"github.com/openshift-metal3/kni-installer/pkg/asset"
+	"github.com/openshift-metal3/kni-installer/pkg/asset/templates/content"
 )
 
 const (

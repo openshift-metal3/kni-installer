@@ -14,7 +14,7 @@ SUBNET_CIDR="$(/usr/local/bin/get_vip_subnet_cidr "$API_VIP" "$IFACE_CIDRS")"
 DNS_VIP="$(dig +noall +answer "ns1.${CLUSTER_DOMAIN}" | awk '{print $NF}')"
 grep -Ev "${DNS_VIP}|127.0.0.1" /etc/resolv.conf | tee /etc/coredns/resolv.conf
 
-COREDNS_IMAGE="quay.io/openshift-metalkube/coredns-mdns:latest"
+COREDNS_IMAGE="quay.io/openshift-metal3/coredns-mdns:latest"
 if ! podman inspect "$COREDNS_IMAGE" &>/dev/null; then
     echo "Pulling release image..."
     podman pull "$COREDNS_IMAGE"

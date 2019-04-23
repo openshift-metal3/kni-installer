@@ -29,7 +29,7 @@ The bootstrap node is launched via the libvirt terraform provider.
 
 ### Provisioning Master Nodes
 
-Master nodes are deployed with Ironic using [a terraform provider](https://github.com/metalkube/terraform-provider-ironic),
+Master nodes are deployed with Ironic using [a terraform provider](https://github.com/metal3-io/terraform-provider-ironic),
 so the baremetal platform works the same as the cloud-based providers. Users
 need to provide information about the hardware nodes.  This is currently
 provided in the format of ironic_nodes.json, which is flattened due to
@@ -63,7 +63,7 @@ terraform configuration and deploy the masters.
 The terraform provider would need to be refactored to support this,
 either by allowing the node resource to consume an existing baremetal
 node, or by separating the hardware defintion from the concept of a
-deployment.  This is tracked by [this issue](https://github.com/openshift-metalkube/terraform-provider-ironic/issues/6).
+deployment.  This is tracked by [this issue](https://github.com/openshift-metal3/terraform-provider-ironic/issues/6).
 
 
 ### Bootstrap Ignition Customizations
@@ -90,7 +90,7 @@ Checkout this repo and add `github.com/openshift/installer` as a
 remote that we'll call `upstream`:
 
 ```sh
-git clone git@github.com:openshift-metalkube/kni-installer.git
+git clone git@github.com:openshift-metal3/kni-installer.git
 cd kni-installer
 git remote add -f upstream git@github.com:openshift/installer.git
 ```
@@ -159,10 +159,10 @@ rename commit:
 
 ```sh
 git checkout -b tmp-rebase upstream/master
-sed -i 's|openshift/installer|openshift-metalkube/kni-installer|g' $(git grep -l openshift/installer | grep '\(cmd\|build.sh\|pkg\|assets_generate.go\)')
+sed -i 's|openshift/installer|openshift-metal3/kni-installer|g' $(git grep -l openshift/installer | grep '\(cmd\|build.sh\|pkg\|assets_generate.go\)')
 sed -i 's|openshift-install|kni-install|g' $(git grep -l openshift-install | grep '\(cmd\|build.sh\|pkg\)')
 git mv cmd/openshift-install cmd/kni-install
-gofmt -w $(git grep -l github.com/openshift-metalkube/kni-installer)
+gofmt -w $(git grep -l github.com/openshift-metal3/kni-installer)
 TAGS=libvirt ./hack/build.sh
 git commit -a -c $RENAME_COMMIT
 ```
@@ -217,7 +217,7 @@ like merge conflicts on files that were deleted.
 
 Now create a new `rebasing` tag, push both branches to your personal
 remote, and create a PR for the `latest-upstream` branch against
-`master` of `openshift-metalkube/kni-installer`:
+`master` of `openshift-metal3/kni-installer`:
 
 ```
 REBASING_TAG=rebasing-$(date -I)-$(git rev-parse --short master)

@@ -7,7 +7,7 @@ import (
 
 	"github.com/pkg/errors"
 
-	"github.com/openshift-metalkube/kni-installer/pkg/asset"
+	"github.com/openshift-metal3/kni-installer/pkg/asset"
 )
 
 // CertInterface contains cert.

@@ -17,15 +17,15 @@ import (
 	"github.com/pkg/errors"
 	"github.com/sirupsen/logrus"
 
-	"github.com/openshift-metalkube/kni-installer/data"
-	"github.com/openshift-metalkube/kni-installer/pkg/asset"
-	"github.com/openshift-metalkube/kni-installer/pkg/asset/ignition"
-	"github.com/openshift-metalkube/kni-installer/pkg/asset/installconfig"
-	"github.com/openshift-metalkube/kni-installer/pkg/asset/kubeconfig"
-	"github.com/openshift-metalkube/kni-installer/pkg/asset/machines"
-	"github.com/openshift-metalkube/kni-installer/pkg/asset/manifests"
-	"github.com/openshift-metalkube/kni-installer/pkg/asset/tls"
-	"github.com/openshift-metalkube/kni-installer/pkg/types"
+	"github.com/openshift-metal3/kni-installer/data"
+	"github.com/openshift-metal3/kni-installer/pkg/asset"
+	"github.com/openshift-metal3/kni-installer/pkg/asset/ignition"
+	"github.com/openshift-metal3/kni-installer/pkg/asset/installconfig"
+	"github.com/openshift-metal3/kni-installer/pkg/asset/kubeconfig"
+	"github.com/openshift-metal3/kni-installer/pkg/asset/machines"
+	"github.com/openshift-metal3/kni-installer/pkg/asset/manifests"
+	"github.com/openshift-metal3/kni-installer/pkg/asset/tls"
+	"github.com/openshift-metal3/kni-installer/pkg/types"
 )
 
 const (

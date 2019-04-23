@@ -8,9 +8,9 @@ import (
 	"github.com/pkg/errors"
 	clientcmd "k8s.io/client-go/tools/clientcmd/api/v1"
 
-	"github.com/openshift-metalkube/kni-installer/pkg/asset"
-	"github.com/openshift-metalkube/kni-installer/pkg/asset/tls"
-	"github.com/openshift-metalkube/kni-installer/pkg/types"
+	"github.com/openshift-metal3/kni-installer/pkg/asset"
+	"github.com/openshift-metal3/kni-installer/pkg/asset/tls"
+	"github.com/openshift-metal3/kni-installer/pkg/types"
 )
 
 type kubeconfig struct {

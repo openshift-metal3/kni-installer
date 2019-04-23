@@ -2,7 +2,7 @@
 package baremetal
 
 import (
-	libvirttfvars "github.com/openshift-metalkube/kni-installer/pkg/tfvars/libvirt"
+	libvirttfvars "github.com/openshift-metal3/kni-installer/pkg/tfvars/libvirt"
 	"github.com/pkg/errors"
 	"github.com/rodaine/hclencoder"
 )

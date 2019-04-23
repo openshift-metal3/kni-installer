@@ -3,9 +3,9 @@ package kubeconfig
 import (
 	"path/filepath"
 
-	"github.com/openshift-metalkube/kni-installer/pkg/asset"
-	"github.com/openshift-metalkube/kni-installer/pkg/asset/installconfig"
-	"github.com/openshift-metalkube/kni-installer/pkg/asset/tls"
+	"github.com/openshift-metal3/kni-installer/pkg/asset"
+	"github.com/openshift-metal3/kni-installer/pkg/asset/installconfig"
+	"github.com/openshift-metal3/kni-installer/pkg/asset/tls"
 )
 
 var (

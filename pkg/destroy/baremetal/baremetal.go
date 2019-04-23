@@ -5,8 +5,8 @@ import (
 	"github.com/pkg/errors"
 	"github.com/sirupsen/logrus"
 
-	"github.com/openshift-metalkube/kni-installer/pkg/destroy"
-	"github.com/openshift-metalkube/kni-installer/pkg/types"
+	"github.com/openshift-metal3/kni-installer/pkg/destroy"
+	"github.com/openshift-metal3/kni-installer/pkg/types"
 )
 
 // ClusterUninstaller holds the various options for the cluster we want to delete.

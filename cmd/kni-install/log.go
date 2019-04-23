@@ -8,7 +8,7 @@ import (
 	"github.com/pkg/errors"
 	"github.com/sirupsen/logrus"
 
-	"github.com/openshift-metalkube/kni-installer/pkg/version"
+	"github.com/openshift-metal3/kni-installer/pkg/version"
 )
 
 type fileHook struct {

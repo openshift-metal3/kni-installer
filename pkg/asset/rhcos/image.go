@@ -9,16 +9,16 @@ import (
 	"github.com/pkg/errors"
 	"github.com/sirupsen/logrus"
 
-	"github.com/openshift-metalkube/kni-installer/pkg/asset"
-	"github.com/openshift-metalkube/kni-installer/pkg/asset/installconfig"
-	"github.com/openshift-metalkube/kni-installer/pkg/rhcos"
-	"github.com/openshift-metalkube/kni-installer/pkg/types/aws"
-	"github.com/openshift-metalkube/kni-installer/pkg/types/azure"
-	"github.com/openshift-metalkube/kni-installer/pkg/types/baremetal"
-	"github.com/openshift-metalkube/kni-installer/pkg/types/libvirt"
-	"github.com/openshift-metalkube/kni-installer/pkg/types/none"
-	"github.com/openshift-metalkube/kni-installer/pkg/types/openstack"
-	"github.com/openshift-metalkube/kni-installer/pkg/types/vsphere"
+	"github.com/openshift-metal3/kni-installer/pkg/asset"
+	"github.com/openshift-metal3/kni-installer/pkg/asset/installconfig"
+	"github.com/openshift-metal3/kni-installer/pkg/rhcos"
+	"github.com/openshift-metal3/kni-installer/pkg/types/aws"
+	"github.com/openshift-metal3/kni-installer/pkg/types/azure"
+	"github.com/openshift-metal3/kni-installer/pkg/types/baremetal"
+	"github.com/openshift-metal3/kni-installer/pkg/types/libvirt"
+	"github.com/openshift-metal3/kni-installer/pkg/types/none"
+	"github.com/openshift-metal3/kni-installer/pkg/types/openstack"
+	"github.com/openshift-metal3/kni-installer/pkg/types/vsphere"
 )
 
 // Image is location of RHCOS image.

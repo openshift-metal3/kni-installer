@@ -1,8 +1,8 @@
 package defaults
 
 import (
-	"github.com/openshift-metalkube/kni-installer/pkg/types"
-	"github.com/openshift-metalkube/kni-installer/pkg/types/vsphere"
+	"github.com/openshift-metal3/kni-installer/pkg/types"
+	"github.com/openshift-metal3/kni-installer/pkg/types/vsphere"
 )
 
 // SetPlatformDefaults sets the defaults for the platform.

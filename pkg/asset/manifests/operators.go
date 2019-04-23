@@ -12,11 +12,11 @@ import (
 	"github.com/ghodss/yaml"
 	"github.com/pkg/errors"
 
-	"github.com/openshift-metalkube/kni-installer/pkg/asset"
-	"github.com/openshift-metalkube/kni-installer/pkg/asset/installconfig"
-	"github.com/openshift-metalkube/kni-installer/pkg/asset/templates/content/bootkube"
-	"github.com/openshift-metalkube/kni-installer/pkg/asset/tls"
-	"github.com/openshift-metalkube/kni-installer/pkg/types"
+	"github.com/openshift-metal3/kni-installer/pkg/asset"
+	"github.com/openshift-metal3/kni-installer/pkg/asset/installconfig"
+	"github.com/openshift-metal3/kni-installer/pkg/asset/templates/content/bootkube"
+	"github.com/openshift-metal3/kni-installer/pkg/asset/tls"
+	"github.com/openshift-metal3/kni-installer/pkg/types"
 )
 
 const (

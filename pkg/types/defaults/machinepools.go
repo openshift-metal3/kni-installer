@@ -1,8 +1,8 @@
 package defaults
 
 import (
-	"github.com/openshift-metalkube/kni-installer/pkg/types"
-	"github.com/openshift-metalkube/kni-installer/pkg/types/libvirt"
+	"github.com/openshift-metal3/kni-installer/pkg/types"
+	"github.com/openshift-metal3/kni-installer/pkg/types/libvirt"
 )
 
 // SetMachinePoolDefaults sets the defaults for the machine pool.

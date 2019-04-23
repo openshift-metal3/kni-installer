@@ -7,7 +7,7 @@ import (
 
 	"github.com/apparentlymart/go-cidr/cidr"
 
-	"github.com/openshift-metalkube/kni-installer/pkg/types"
+	"github.com/openshift-metal3/kni-installer/pkg/types"
 )
 
 const (
