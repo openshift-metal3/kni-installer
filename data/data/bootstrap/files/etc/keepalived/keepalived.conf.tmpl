@@ -14,10 +14,10 @@ vrrp_instance ${CLUSTER_NAME}_API {
 }
 
 vrrp_instance ${CLUSTER_NAME}_DNS {
-    state BACKUP
+    state MASTER
     interface ${INTERFACE}
     virtual_router_id ${DNS_VRID}
-    priority 50
+    priority 140
     advert_int 1
     authentication {
         auth_type PASS
