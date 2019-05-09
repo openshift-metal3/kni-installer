@@ -80,7 +80,7 @@ need changes to accomodate consuming existing nodes.
 
 ## How to rebase?
 
-The kni-installer `rebasing` branch regularly rebases to latest
+The kni-installer `rebasing` branch regularly rebases to releases of
 openshift/installer whereas the master branch will never rebase and
 only merges from openshift/installer.
 
@@ -95,12 +95,28 @@ cd kni-installer
 git remote add -f upstream git@github.com:openshift/installer.git
 ```
 
+### Identify the openshift release commit
+
+From the release payload, identify the commit that openshift/installer
+was built from. Do not rely on the "built from commit" information from
+the installer, but rather extract the release info as shown below:
+
+```console
+$ ./openshift-install version
+./openshift-install v4.1.0-201905061832-dirty
+built from commit 9b486eedf57c20ce446b25734afc1187259a599e
+release image quay.io/openshift-release-dev/ocp-release@sha256:be61a9ec132118e41a417b347242361d9cc96b1a73753e121dc7a74a1905baea
+$ oc adm release info -a <PULL SECRET> -o json quay.io/openshift-release-dev/ocp-release@sha256:be61a9ec132118e41a417b347242361d9cc96b1a73753e121dc7a74a1905baea | jq -r '.references.spec.tags[] | select(.name == "installer") | .annotations["io.openshift.build.commit.id"] '
+7adf0ade1bedbb619d595927eaf8b25db1e19d02
+$ RELEASE_COMMIT=7adf0ade1bedbb619d595927eaf8b25db1e19d02
+```
+
 ### Update the rebasing branch
 
 Identify the last upstream commit that we merged:
 
 ```sh
-BASE_COMMIT=$(git merge-base upstream/master origin/master)
+BASE_COMMIT=$(git merge-base $RELEASE_COMMIT origin/master)
 ```
 
 Create a rebasing branch if you have not already done so.
@@ -137,7 +153,7 @@ git push origin tag rebasing-$(date -I)-$(git rev-parse --short origin/master)
 git push origin +rebasing:rebasing
 ```
 
-### Rebase to latest upstream
+### Rebase to an openshift release
 
 Still on the `rebasing` branch, identify the "Rename to kni-install"
 commit:
@@ -151,14 +167,14 @@ yourself with the changes since the last rebase.
 
 ```sh
 git fetch -t upstream
-git log --graph $BASE_COMMIT..upstream/master
+git log --graph $BASE_COMMIT..$RELEASE_COMMIT
 ```
 
-Create a temporary branch from latest openshift/install and redo the
+Create a temporary branch from the release commit and redo the
 rename commit:
 
 ```sh
-git checkout -b tmp-rebase upstream/master
+git checkout -b tmp-rebase $RELEASE_COMMIT
 sed -i 's|openshift/installer|openshift-metalkube/kni-installer|g' $(git grep -l openshift/installer | grep '\(cmd\|build.sh\|pkg\|assets_generate.go\)')
 sed -i 's|openshift-install|kni-install|g' $(git grep -l openshift-install | grep '\(cmd\|build.sh\|pkg\)')
 git mv cmd/openshift-install cmd/kni-install
@@ -175,7 +191,7 @@ merge conflicts!
 git checkout rebasing
 git rebase --onto tmp-rebase $RENAME_COMMIT
 git branch -D tmp-rebase
-BASE_COMMIT=$(git merge-base upstream/master HEAD)
+BASE_COMMIT=$(git merge-base $RELEASE_COMMIT HEAD)
 ```
 
 It's a good idea at this point to check that each commit in the series
@@ -189,7 +205,7 @@ while TAGS=libvirt ./hack/build.sh ; do git rebase --continue || break ; done
 # If all goes well, this will end on a clean build and no rebase left to continue.
 ```
 
-### Merge latest upstream
+### Merge release
 
 With all the hard rebasing work done, we can now update the master
 branch to incorporate this work as a merge commit!
@@ -197,7 +213,7 @@ branch to incorporate this work as a merge commit!
 ```sh
 git checkout master
 git merge --ff-only origin/master
-git merge upstream/master
+git merge $RELEASE_COMMIT
 ```
 
 This merge will more than likely fail with conflicts, but we can
@@ -205,7 +221,7 @@ resolve those by using the source tree from the `rebasing` branch.
 
 ```sh
 git checkout rebasing .
-git commit -a -m 'Merge latest openshift/installer'
+git commit -a -m 'Merge latest openshift/installer release'
 git diff rebasing
 ```
 
@@ -234,3 +250,16 @@ tag to the main repo:
 git push origin +rebasing:rebasing
 git push origin tag $REBASING_TAG
 ```
+
+## Handling Conflicts
+
+### Gopkg.lock
+
+We have vendored some additional dependencies (namely,
+terraform-provider-ironic).  This may result in a conflict in
+Gopkg.lock.
+
+It is best not to try to resolve those conflicts by hand.  Handle the
+merge in Gopkg.toml, and then run `dep ensure` to create a correct
+Gopkg.lock that includes all of the updates from openshift, as well as
+our changes to vendoring.
