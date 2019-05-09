@@ -10,58 +10,6 @@ import (
 	"github.com/pkg/errors"
 )
 
-// APIServerCertKey is the asset that generates the API server key/cert pair.
-// [DEPRECATED]
-type APIServerCertKey struct {
-	SignedCertKey
-}
-
-var _ asset.Asset = (*APIServerCertKey)(nil)
-
-// Dependencies returns the dependency of the the cert/key pair, which includes
-// the parent CA, and install config if it depends on the install config for
-// DNS names, etc.
-func (a *APIServerCertKey) Dependencies() []asset.Asset {
-	return []asset.Asset{
-		&KubeCA{},
-		&installconfig.InstallConfig{},
-	}
-}
-
-// Generate generates the cert/key pair based on its dependencies.
-func (a *APIServerCertKey) Generate(dependencies asset.Parents) error {
-	kubeCA := &KubeCA{}
-	installConfig := &installconfig.InstallConfig{}
-	dependencies.Get(kubeCA, installConfig)
-
-	apiServerAddress, err := cidrhost(installConfig.Config.Networking.ServiceNetwork[0].IPNet, 1)
-	if err != nil {
-		return errors.Wrap(err, "failed to get API Server address from InstallConfig")
-	}
-
-	cfg := &CertCfg{
-		Subject:      pkix.Name{CommonName: "system:kube-apiserver", Organization: []string{"kube-master"}},
-		KeyUsages:    x509.KeyUsageKeyEncipherment | x509.KeyUsageDigitalSignature,
-		ExtKeyUsages: []x509.ExtKeyUsage{x509.ExtKeyUsageServerAuth, x509.ExtKeyUsageClientAuth},
-		Validity:     ValidityTenYears,
-		DNSNames: []string{
-			apiAddress(installConfig.Config),
-			"kubernetes", "kubernetes.default",
-			"kubernetes.default.svc",
-			"kubernetes.default.svc.cluster.local",
-			"localhost",
-		},
-		IPAddresses: []net.IP{net.ParseIP(apiServerAddress), net.ParseIP("127.0.0.1")},
-	}
-
-	return a.SignedCertKey.Generate(cfg, kubeCA, "apiserver", AppendParent)
-}
-
-// Name returns the human-friendly name of the asset.
-func (a *APIServerCertKey) Name() string {
-	return "Certificate (kube-apiaserver)"
-}
-
 // KubeAPIServerToKubeletSignerCertKey is a key/cert pair that signs the kube-apiserver to kubelet client certs.
 type KubeAPIServerToKubeletSignerCertKey struct {
 	SelfSignedCertKey
@@ -505,7 +453,6 @@ var _ asset.Asset = (*KubeAPIServerCompleteCABundle)(nil)
 // Dependencies returns the dependency of the cert bundle.
 func (a *KubeAPIServerCompleteCABundle) Dependencies() []asset.Asset {
 	return []asset.Asset{
-		&KubeCA{}, // TODO this should be removed once the KAS no longer serves with it
 		&KubeAPIServerLocalhostCABundle{},
 		&KubeAPIServerServiceNetworkCABundle{},
 		&KubeAPIServerLBCABundle{},
@@ -538,12 +485,11 @@ var _ asset.Asset = (*KubeAPIServerCompleteClientCABundle)(nil)
 // Dependencies returns the dependency of the cert bundle.
 func (a *KubeAPIServerCompleteClientCABundle) Dependencies() []asset.Asset {
 	return []asset.Asset{
-		&KubeCA{},                              // TODO this should be removed once it never signs a client
-		&AdminKubeConfigCABundle{},             // admin.kubeconfig
-		&KubeletClientCABundle{},               // signed kubelet certs
-		&KubeControlPlaneCABundle{},            // controller-manager, scheduler
-		&KubeAPIServerToKubeletClientCertKey{}, // kube-apiserver to kubelet (kubelet piggy-backs on KAS client-ca)
-		&KubeletBootstrapCABundle{},            // used to create the kubelet kubeconfig files that are used to create CSRs
+		&AdminKubeConfigCABundle{},        // admin.kubeconfig
+		&KubeletClientCABundle{},          // signed kubelet certs
+		&KubeControlPlaneCABundle{},       // controller-manager, scheduler
+		&KubeAPIServerToKubeletCABundle{}, // kube-apiserver to kubelet (kubelet piggy-backs on KAS client-ca)
+		&KubeletBootstrapCABundle{},       // used to create the kubelet kubeconfig files that are used to create CSRs
 	}
 }
 

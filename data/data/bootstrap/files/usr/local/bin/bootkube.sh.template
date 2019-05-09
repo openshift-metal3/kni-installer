@@ -99,10 +99,10 @@ then
 		--volume "$PWD:/assets:z" \
 		"${MACHINE_CONFIG_OPERATOR_IMAGE}" \
 		bootstrap \
-			--etcd-ca=/assets/tls/etcd-client-ca.crt \
+			--etcd-ca=/assets/tls/etcd-ca-bundle.crt \
 			--etcd-metric-ca=/assets/tls/etcd-metric-ca-bundle.crt \
 			--root-ca=/assets/tls/root-ca.crt \
-			--kube-ca=/assets/tls/kube-apiserver-complete-server-ca-bundle.crt \
+			--kube-ca=/assets/tls/kube-apiserver-complete-client-ca-bundle.crt \
 			--config-file=/assets/manifests/cluster-config.yaml \
 			--dest-dir=/assets/mco-bootstrap \
 			--pull-secret=/assets/manifests/openshift-config-secret-pull-secret.yaml \
@@ -113,7 +113,8 @@ then
 			--machine-config-server-image=${MACHINE_CONFIG_SERVER_IMAGE} \
 			--machine-config-daemon-image=${MACHINE_CONFIG_DAEMON_IMAGE} \
 			--machine-config-oscontent-image=${MACHINE_CONFIG_OSCONTENT} \
-			--infra-image=${MACHINE_CONFIG_INFRA_IMAGE}
+			--infra-image=${MACHINE_CONFIG_INFRA_IMAGE} \
+			--cloud-config-file=/assets/manifests/cloud-provider-config.yaml
 
 	# Bootstrap MachineConfigController uses /etc/mcc/bootstrap/manifests/ dir to
 	# 1. read the controller config rendered by MachineConfigOperator
@@ -172,8 +173,8 @@ then
 		--volume "$PWD:/assets:z" \
 		"${KUBE_APISERVER_OPERATOR_IMAGE}" \
 		/usr/bin/cluster-kube-apiserver-operator render \
-		--manifest-etcd-serving-ca=etcd-client-ca.crt \
-		--manifest-etcd-server-urls=$(etcd-server-urls $ETCD_MEMBERS) \
+		--manifest-etcd-serving-ca=etcd-ca-bundle.crt \
+		--manifest-etcd-server-urls={{.EtcdCluster}} \
 		--manifest-image=${OPENSHIFT_HYPERSHIFT_IMAGE} \
 		--asset-input-dir=/assets/tls \
 		--asset-output-dir=/assets/kube-apiserver-bootstrap \
@@ -255,12 +256,14 @@ podman run \
 	--network host \
 	"${KUBE_ETCD_SIGNER_SERVER_IMAGE}" \
 	serve \
-	--cacrt=/opt/openshift/tls/etcd-client-ca.crt \
-	--cakey=/opt/openshift/tls/etcd-client-ca.key \
+	--cacrt=/opt/openshift/tls/etcd-signer.crt \
+	--cakey=/opt/openshift/tls/etcd-signer.key \
 	--metric-cacrt=/opt/openshift/tls/etcd-metric-signer.crt \
 	--metric-cakey=/opt/openshift/tls/etcd-metric-signer.key \
-	--servcrt=/opt/openshift/tls/apiserver.crt \
-	--servkey=/opt/openshift/tls/apiserver.key \
+	--servcrt=/opt/openshift/tls/kube-apiserver-lb-server.crt \
+	--servkey=/opt/openshift/tls/kube-apiserver-lb-server.key \
+	--servcrt=/opt/openshift/tls/kube-apiserver-internal-lb-server.crt \
+	--servkey=/opt/openshift/tls/kube-apiserver-internal-lb-server.key \
 	--address=0.0.0.0:6443 \
 	--csrdir=/tmp \
 	--peercertdur=26280h \
@@ -281,7 +284,7 @@ until podman run \
 		--entrypoint etcdctl \
 		"${MACHINE_CONFIG_ETCD_IMAGE}" \
 		--dial-timeout=10m \
-		--cacert=/opt/openshift/tls/etcd-client-ca.crt \
+		--cacert=/opt/openshift/tls/etcd-ca-bundle.crt \
 		--cert=/opt/openshift/tls/etcd-client.crt \
 		--key=/opt/openshift/tls/etcd-client.key \
 		--endpoints=$(etcd-server-urls $ETCD_MEMBERS) \
@@ -306,7 +309,7 @@ podman run \
 	--volume /etc/kubernetes:/etc/kubernetes:z \
 	--network=host \
 	"${CLUSTER_BOOTSTRAP_IMAGE}" \
-	start --asset-dir=/assets --required-pods="kube-apiserver:openshift-kube-apiserver/openshift-kube-apiserver|openshift-kube-apiserver/kube-apiserver,openshift-kube-scheduler/openshift-kube-scheduler,kube-controller-manager:openshift-kube-controller-manager/openshift-kube-controller-manager|openshift-kube-controller-manager/kube-controller-manager,openshift-cluster-version/cluster-version-operator"
+	start --asset-dir=/assets --required-pods="openshift-kube-apiserver/kube-apiserver,openshift-kube-scheduler/openshift-kube-scheduler,openshift-kube-controller-manager/kube-controller-manager,openshift-cluster-version/cluster-version-operator"
 
 # Workaround for https://github.com/opencontainers/runc/pull/1807
 touch /opt/openshift/.bootkube.done

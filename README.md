@@ -19,6 +19,9 @@ provision the cluster.
 
 ## Supported Platforms
 
+* [AWS](docs/user/aws/README.md)
+* [Libvirt with KVM](docs/dev/libvirt/README.md) (development only)
+* [OpenStack (experimental)](docs/user/openstack/README.md)
 * [Bare-metal](docs/dev/baremetal.md)
 
 ## Quick Start

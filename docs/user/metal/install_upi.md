@@ -69,8 +69,6 @@ You must configure the network connectivity between machines to allow cluster co
 
     As the etcd members are located on the control plane machines. Each control plane machine requires connectivity to [etcd server][etcd-ports], [etcd peer][etcd-ports] and [etcd-metrics][etcd-ports] on every other control plane machine.
 
-    All the worker machines should have connectivity to [etcd server][etcd-ports] and [etcd-metrics][etcd-ports] ports on the control plane machines.
-
 * OpenShift SDN
 
     All the machines require connectivity to certain reserved ports on every other machine to establish in-cluster networking. For more details refer [doc][snd-ports].
@@ -127,7 +125,7 @@ The OpenShift installer uses an [Install Config][install-config] to drive all in
 An example install config for bare-metal UPI is as follows:
 
 ```yaml
-apiVersion: v1beta3
+apiVersion: v1
 ## The base domain of the cluster. All DNS records will be sub-domains of this base and will also include the cluster name.
 baseDomain: example.com
 compute:
@@ -291,7 +289,7 @@ oc get csr -ojson | jq -r '.items[] | select(.status == {} ) | .metadata.name' |
 The Cluster Image Registry [Operator][cluster-image-registry-operator] does not pick an storage backend for `None` platform. Therefore, the cluster operator is will be stuck in progressing because it is waiting for administrator to [configure][cluster-image-registry-operator-configuration] a storage backend for the image-registry. You can pick `emptyDir` for non-production clusters by following:
 
 ```sh
-oc patch configs.imageregistry.operator.openshift.io cluster --type merge --patch '{"spec":{"storage":{"filesystem":{"volumeSource": {"emptyDir":{}}}}}}'
+oc patch configs.imageregistry.operator.openshift.io cluster --type merge --patch '{"spec":{"storage":{"emptyDir":{}}}}'
 ```
 
 #### Monitoring cluster completion

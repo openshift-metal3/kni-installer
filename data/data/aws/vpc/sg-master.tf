@@ -1,6 +1,10 @@
 resource "aws_security_group" "master" {
   vpc_id = "${data.aws_vpc.cluster_vpc.id}"
 
+  timeouts {
+    create = "20m"
+  }
+
   tags = "${merge(map(
     "Name", "${var.cluster_id}-master-sg",
   ), var.tags)}"
@@ -121,8 +125,8 @@ resource "aws_security_group_rule" "master_ingress_kube_scheduler" {
   security_group_id = "${aws_security_group.master.id}"
 
   protocol  = "tcp"
-  from_port = 10251
-  to_port   = 10251
+  from_port = 10259
+  to_port   = 10259
   self      = true
 }
 
@@ -132,8 +136,8 @@ resource "aws_security_group_rule" "master_ingress_kube_scheduler_from_worker" {
   source_security_group_id = "${aws_security_group.worker.id}"
 
   protocol  = "tcp"
-  from_port = 10251
-  to_port   = 10251
+  from_port = 10259
+  to_port   = 10259
 }
 
 resource "aws_security_group_rule" "master_ingress_kube_controller_manager" {
@@ -141,8 +145,8 @@ resource "aws_security_group_rule" "master_ingress_kube_controller_manager" {
   security_group_id = "${aws_security_group.master.id}"
 
   protocol  = "tcp"
-  from_port = 10252
-  to_port   = 10252
+  from_port = 10257
+  to_port   = 10257
   self      = true
 }
 
@@ -152,8 +156,8 @@ resource "aws_security_group_rule" "master_ingress_kube_controller_manager_from_
   source_security_group_id = "${aws_security_group.worker.id}"
 
   protocol  = "tcp"
-  from_port = 10252
-  to_port   = 10252
+  from_port = 10257
+  to_port   = 10257
 }
 
 resource "aws_security_group_rule" "master_ingress_kubelet_secure" {
