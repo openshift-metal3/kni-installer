@@ -5,4 +5,7 @@
     forward . /etc/coredns/resolv.conf
     cache 30
     reload
+    hosts /etc/coredns/api-int.hosts {$CLUSTER_DOMAIN} {
+        fallthrough
+    }
 }
