@@ -3,6 +3,7 @@ package tls
 import (
 	"crypto/x509"
 	"crypto/x509/pkix"
+	"net"
 
 	"github.com/openshift-metalkube/kni-installer/pkg/asset"
 	"github.com/openshift-metalkube/kni-installer/pkg/asset/installconfig"
@@ -35,9 +36,10 @@ func (a *MCSCertKey) Generate(dependencies asset.Parents) error {
 
 	cfg := &CertCfg{
 		Subject:      pkix.Name{CommonName: hostname},
+		IPAddresses:  []net.IP{net.ParseIP(installConfig.Config.BareMetal.ApiVIP)},
 		ExtKeyUsages: []x509.ExtKeyUsage{x509.ExtKeyUsageServerAuth},
 		Validity:     ValidityTenYears,
-		DNSNames:     []string{hostname},
+		DNSNames:     []string{hostname, installConfig.Config.BareMetal.ApiVIP},
 	}
 
 	return a.SignedCertKey.Generate(cfg, ca, "machine-config-server", DoNotAppendParent)
