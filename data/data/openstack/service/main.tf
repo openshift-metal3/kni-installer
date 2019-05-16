@@ -83,7 +83,7 @@ WORKERS=$(oc get nodes -l node-role.kubernetes.io/worker -ogo-template="$TEMPLAT
 
 update_cfg_and_restart() {
     CHANGED=$(diff /etc/haproxy/haproxy.cfg /etc/haproxy/haproxy.cfg.new)
-    
+
     if [[ ! -f /etc/haproxy/haproxy.cfg ]] || [[ ! $CHANGED -eq "" ]];
     then
         cp /etc/haproxy/haproxy.cfg /etc/haproxy/haproxy.cfg.backup || true
@@ -153,6 +153,11 @@ data "ignition_file" "corefile" {
 
 ${length(var.lb_floating_ip) == 0 ? "" : "    file /etc/coredns/db.${var.cluster_domain} api.${var.cluster_domain} {\n    }\n"}
 
+    hosts {
+        ${replace(join("\n", formatlist("%s %s", var.master_ips, var.master_port_names)), "port-", "")}
+        fallthrough
+    }
+
 
     file /etc/coredns/db.${var.cluster_domain} _etcd-server-ssl._tcp.${var.cluster_domain} {
     }
@@ -203,6 +208,8 @@ $ORIGIN ${var.cluster_domain}.
 ${length(var.lb_floating_ip) == 0 ? "api  IN  A  ${var.service_port_ip}" : "api  IN  A  ${var.lb_floating_ip}"}
 ${length(var.lb_floating_ip) == 0 ? "*.apps  IN  A  ${var.service_port_ip}" : "*.apps  IN  A  ${var.lb_floating_ip}"}
 
+api-int  IN  A  ${var.service_port_ip}
+
 bootstrap.${var.cluster_domain}  IN  A  ${var.bootstrap_ip}
 ${replace(join("\n", formatlist("%s  IN  A %s", var.master_port_names, var.master_ips)), "port-", "")}
 ${replace(join("\n", formatlist("master-%s  IN  A %s", var.master_port_names, var.master_ips)), "${var.cluster_id}-master-port-", "")}
@@ -237,7 +244,7 @@ data "ignition_file" "hostname" {
 
   content {
     content = <<EOF
-${var.cluster_id}-api.${var.cluster_domain}
+${var.cluster_id}-api
 EOF
   }
 }

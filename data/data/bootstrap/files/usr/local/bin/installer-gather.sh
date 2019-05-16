@@ -1,7 +1,6 @@
 #!/usr/bin/env bash
-set -eo pipefail
 
-ARTIFACTS="${1:-/tmp/artifacts}"
+ARTIFACTS="/tmp/artifacts"
 
 echo "Gathering bootstrap journals ..."
 mkdir -p "${ARTIFACTS}/bootstrap/journals"
@@ -15,8 +14,8 @@ mkdir -p "${ARTIFACTS}/bootstrap/containers"
 sudo crictl ps --all --quiet | while read -r container
 do
     container_name="$(sudo crictl ps -a --id "${container}" -v | grep -oP "Name: \\K(.*)")"
-    sudo crictl logs "${container}" >& "${ARTIFACTS}/bootstrap/containers/${container_name}.log" || true
-    sudo crictl inspect "${container}" >& "${ARTIFACTS}/bootstrap/containers/${container_name}.inspect" || true
+    sudo crictl logs "${container}" >& "${ARTIFACTS}/bootstrap/containers/${container_name}.log"
+    sudo crictl inspect "${container}" >& "${ARTIFACTS}/bootstrap/containers/${container_name}.inspect"
 done
 mkdir -p "${ARTIFACTS}/bootstrap/pods"
 sudo podman ps --all --quiet | while read -r container
@@ -24,6 +23,17 @@ do
     sudo podman logs "${container}" >& "${ARTIFACTS}/bootstrap/pods/${container}.log"
     sudo podman inspect "${container}" >& "${ARTIFACTS}/bootstrap/pods/${container}.inspect"
 done
+
+echo "Gathering rendered assets..."
+mkdir -p "${ARTIFACTS}/rendered-assets"
+cp -r /var/opt/openshift/ "${ARTIFACTS}/rendered-assets"
+# remove sensitive information
+# TODO leave tls.crt inside of secret yaml files
+find "${ARTIFACTS}/rendered-assets" -name "*secret*" -print0 | xargs -0 rm
+find "${ARTIFACTS}/rendered-assets" -name "*kubeconfig*" -print0 | xargs -0 rm
+find "${ARTIFACTS}/rendered-assets" -name "*.key" -print0 | xargs -0 rm
+find "${ARTIFACTS}/rendered-assets" -name ".kube" -print0 | xargs -0 rm -rf
+
 
 # Collect cluster data
 function queue() {
@@ -71,7 +81,10 @@ queue resources/openshiftapiserver.json oc --config=/opt/openshift/auth/kubeconf
 queue resources/pods.json oc --config=/opt/openshift/auth/kubeconfig --request-timeout=5s get pods --all-namespaces -o json
 queue resources/rolebindings.json oc --config=/opt/openshift/auth/kubeconfig --request-timeout=5s get rolebindings --all-namespaces -o json
 queue resources/roles.json oc --config=/opt/openshift/auth/kubeconfig --request-timeout=5s get roles --all-namespaces -o json
-#queue resources/secrets.json oc --config=/opt/openshift/auth/kubeconfig --request-timeout=5s get secrets --all-namespaces -o json
+# this just lists names and number of keys
+queue resources/secrets-names.txt oc --config=/opt/openshift/auth/kubeconfig --request-timeout=5s get secrets --all-namespaces
+# this adds annotations, but strips out the SA tokens and dockercfg secrets which are noisy and may contain secrets in the annotations
+queue resources/secrets-names-with-annotations.txt oc --config=/opt/openshift/auth/kubeconfig --request-timeout=5s get secrets --all-namespaces -o=custom-columns=NAMESPACE:.metadata.namespace,NAME:.metadata.name,TYPE:.type,ANNOTATIONS:.metadata.annotations | grep -v -- '-token-' | grep -v -- '-dockercfg-'
 queue resources/services.json oc --config=/opt/openshift/auth/kubeconfig --request-timeout=5s get services --all-namespaces -o json
 
 FILTER=gzip queue resources/openapi.json.gz oc --config=/opt/openshift/auth/kubeconfig --request-timeout=5s get --raw /openapi/v2
@@ -81,24 +94,23 @@ wait
 
 echo "Gather remote logs"
 export MASTERS=()
-if [ "$(stat --printf="%s" "${ARTIFACTS}/resources/masters.list")" -ne "0" ]
+if [ "$#" -ne 0 ]; then
+    MASTERS=( "$@" )
+elif test ! -s "${ARTIFACTS}/resources/masters.list"
 then
-    # shellcheck disable=SC2030
-    mapfile -t MASTERS < "${ARTIFACTS}/resources/masters.list"
-else
     # Find out master IPs from etcd discovery record
     DOMAIN=$(sudo oc --config=/opt/openshift/auth/kubeconfig whoami --show-server | grep -oP "api.\\K([a-z\\.]*)")
-    # shellcheck disable=SC2031
-    mapfile -t MASTERS < "$(dig -t SRV "_etcd-server-ssl._tcp.${DOMAIN}" +short | cut -f 4 -d ' ' | sed 's/.$//')"
+    dig -t SRV "_etcd-server-ssl._tcp.${DOMAIN}" +short | cut -f 4 -d ' ' | sed 's/.$//' >"${ARTIFACTS}/resources/masters.list"
 fi
+mapfile -t MASTERS < "${ARTIFACTS}/resources/masters.list"
 
 for master in "${MASTERS[@]}"
 do
   echo "Collecting info from ${master}"
-  scp -o PreferredAuthentications=publickey -o StrictHostKeyChecking=false -o UserKnownHostsFile=/dev/null /usr/local/bin/installer-masters-gather.sh "core@${master}:" || true
+  scp -o PreferredAuthentications=publickey -o StrictHostKeyChecking=false -o UserKnownHostsFile=/dev/null /usr/local/bin/installer-masters-gather.sh "core@${master}:"
   mkdir -p "${ARTIFACTS}/control-plane/${master}"
-  ssh -o PreferredAuthentications=publickey -o StrictHostKeyChecking=false -o UserKnownHostsFile=/dev/null "core@${master}" -C 'sudo ./installer-masters-gather.sh' </dev/null  || true
-  ssh -o PreferredAuthentications=publickey -o StrictHostKeyChecking=false -o UserKnownHostsFile=/dev/null "core@${master}" -C 'sudo tar c -C /tmp/artifacts/ .' </dev/null | tar -x -C "${ARTIFACTS}/control-plane/${master}/" || true
+  ssh -o PreferredAuthentications=publickey -o StrictHostKeyChecking=false -o UserKnownHostsFile=/dev/null "core@${master}" -C 'sudo ./installer-masters-gather.sh' </dev/null
+  ssh -o PreferredAuthentications=publickey -o StrictHostKeyChecking=false -o UserKnownHostsFile=/dev/null "core@${master}" -C 'sudo tar c -C /tmp/artifacts/ .' </dev/null | tar -x -C "${ARTIFACTS}/control-plane/${master}/"
 done
 tar cz -C /tmp/artifacts . > ~/log-bundle.tar.gz
 echo "Log bundle written to ~/log-bundle.tar.gz"
