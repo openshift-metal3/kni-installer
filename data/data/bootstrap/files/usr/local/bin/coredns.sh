@@ -15,7 +15,6 @@ DNS_VIP="$(dig +noall +answer "ns1.${CLUSTER_DOMAIN}" | awk '{print $NF}')"
 grep -Ev "${DNS_VIP}|127.0.0.1" /etc/resolv.conf | tee /etc/coredns/resolv.conf
 NUM_DNS_MEMBERS=$(grep -A 5 'controlPlane' /opt/openshift/manifests/cluster-config.yaml | awk '/replicas/ {print $2}')
 export API_VIP CLUSTER_DOMAIN
-envsubst < /etc/coredns/api-int.hosts.env > /etc/coredns/api-int.hosts
 
 COREDNS_IMAGE="quay.io/openshift-metalkube/coredns-mdns:latest"
 if ! podman inspect "$COREDNS_IMAGE" &>/dev/null; then
@@ -31,6 +30,7 @@ if [[ -z "$MATCHES" ]]; then
         --env CLUSTER_DOMAIN="$CLUSTER_DOMAIN" \
         --env CLUSTER_NAME="$CLUSTER_NAME" \
         --env NUM_DNS_MEMBERS="$NUM_DNS_MEMBERS" \
+        --env API_VIP="$API_VIP" \
         "${COREDNS_IMAGE}" \
             --conf /etc/coredns/Corefile
 fi

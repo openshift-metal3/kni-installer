@@ -132,3 +132,12 @@ func URIWithProtocol(uri string, protocol string) error {
 	}
 	return nil
 }
+
+// IP validates if a string is a valid IP.
+func IP(ip string) error {
+	addr := net.ParseIP(ip)
+	if addr == nil {
+		return fmt.Errorf("%s is not a valid IP", ip)
+	}
+	return nil
+}

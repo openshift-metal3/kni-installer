@@ -12,7 +12,7 @@ import (
 
 // Platform collects bare metal specific configuration.
 func Platform() (*baremetal.Platform, error) {
-	var libvirtURI, ironicURI, nodesJSON string
+	var libvirtURI, ironicURI, nodesJSON, apiVIP string
 	err := survey.Ask([]*survey.Question{
 		{
 			Prompt: &survey.Input{
@@ -58,10 +58,24 @@ func Platform() (*baremetal.Platform, error) {
 		return nil, err
 	}
 
+	err = survey.Ask([]*survey.Question{
+		{
+			Prompt: &survey.Input{
+				Message: "API VIP",
+				Help:    "The VIP to be used for internal API communication.",
+			},
+			Validate: survey.ComposeValidators(survey.Required, ipValidator),
+		},
+	}, &apiVIP)
+	if err != nil {
+		return nil, err
+	}
+
 	return &baremetal.Platform{
 		LibvirtURI: libvirtURI,
 		IronicURI: ironicURI,
 		Nodes: nodes,
+		ApiVIP: apiVIP,
 	}, nil
 }
 
@@ -69,4 +83,8 @@ func Platform() (*baremetal.Platform, error) {
 // url and has non-empty scheme.
 func uriValidator(ans interface{}) error {
 	return validate.URI(ans.(string))
+}
+
+func ipValidator(ans interface{}) error {
+	return validate.IP(ans.(string))
 }
