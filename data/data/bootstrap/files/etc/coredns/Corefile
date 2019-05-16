@@ -6,6 +6,7 @@
     cache 30
     reload
     hosts /etc/coredns/api-int.hosts {$CLUSTER_DOMAIN} {
+        {$API_VIP} api-int.{$CLUSTER_DOMAIN}
         fallthrough
     }
 }
