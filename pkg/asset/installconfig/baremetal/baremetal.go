@@ -12,7 +12,7 @@ import (
 
 // Platform collects bare metal specific configuration.
 func Platform() (*baremetal.Platform, error) {
-	var libvirtURI, ironicURI, nodesJSON, apiVIP string
+	var libvirtURI, ironicURI, externalBridge, provisioningBridge, apiVIP, nodesJSON string
 	err := survey.Ask([]*survey.Question{
 		{
 			Prompt: &survey.Input{
@@ -37,6 +37,34 @@ func Platform() (*baremetal.Platform, error) {
 			Validate: survey.ComposeValidators(survey.Required, uriValidator),
 		},
 	}, &libvirtURI)
+	if err != nil {
+		return nil, err
+	}
+
+	err = survey.Ask([]*survey.Question{
+		{
+			Prompt: &survey.Input{
+				Message: "External bridge",
+				Help:    "External bridge is used for external communication.",
+				Default: baremetaldefaults.ExternalBridge,
+			},
+			Validate: survey.ComposeValidators(survey.Required, uriValidator),
+		},
+	}, &externalBridge)
+	if err != nil {
+		return nil, err
+	}
+
+	err = survey.Ask([]*survey.Question{
+		{
+			Prompt: &survey.Input{
+				Message: "Provisioning bridge",
+				Help:    "Provisioning bridge is used to provision machines.",
+				Default: baremetaldefaults.ProvisioningBridge,
+			},
+			Validate: survey.ComposeValidators(survey.Required, uriValidator),
+		},
+	}, &provisioningBridge)
 	if err != nil {
 		return nil, err
 	}
@@ -72,10 +100,12 @@ func Platform() (*baremetal.Platform, error) {
 	}
 
 	return &baremetal.Platform{
-		LibvirtURI: libvirtURI,
-		IronicURI: ironicURI,
-		Nodes: nodes,
-		ApiVIP: apiVIP,
+		LibvirtURI:         libvirtURI,
+		IronicURI:          ironicURI,
+		Nodes:              nodes,
+		ApiVIP:             apiVIP,
+		ExternalBridge:     externalBridge,
+		ProvisioningBridge: provisioningBridge,
 	}, nil
 }
 

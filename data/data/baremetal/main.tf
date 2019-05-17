@@ -10,11 +10,11 @@ provider "ironic" {
 module "bootstrap" {
   source = "./bootstrap"
 
-  cluster_id       = "${var.cluster_id}"
-  image            = "${var.os_image}"
-  ignition         = "${var.ignition_bootstrap}"
-  baremetal_bridge = "${var.baremetal_bridge}"
-  overcloud_bridge = "${var.overcloud_bridge}"
+  cluster_id          = "${var.cluster_id}"
+  image               = "${var.os_image}"
+  ignition            = "${var.ignition_bootstrap}"
+  external_bridge     = "${var.external_bridge}"
+  provisioning_bridge = "${var.provisioning_bridge}"
 }
 
 module "masters" {
@@ -27,8 +27,7 @@ module "masters" {
   root_disk      = "${var.master_configuration["root_disk"]}"
 
   master_nodes = "${var.master_nodes}"
-  properties = "${var.properties}"
+  properties   = "${var.properties}"
   root_devices = "${var.root_devices}"
   driver_infos = "${var.driver_infos}"
 }
-
