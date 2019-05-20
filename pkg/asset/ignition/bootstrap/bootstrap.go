@@ -250,6 +250,7 @@ func (a *Bootstrap) addSystemdUnits(uri string, templateData *bootstrapTemplateD
 		"keepalived.service":              {},
 		"coredns.service":                 {},
 		"systemd-journal-gatewayd.socket": {},
+		"approve-csr.service":             {},
 	}
 
 	directory, err := data.Assets.Open(uri)
