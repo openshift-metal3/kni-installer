@@ -103,3 +103,8 @@ required = [
   branch = "master"
   name = "sigs.k8s.io/cluster-api-provider-azure"
   source = "https://github.com/openshift/cluster-api-provider-azure.git"
+
+[[constraint]]
+  branch = "master"
+  name = "github.com/metal3-io/cluster-api-provider-baremetal"
+  source = "github.com/openshift/cluster-api-provider-baremetal/pkg/apis"
