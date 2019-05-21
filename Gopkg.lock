@@ -467,6 +467,18 @@
 
 [[projects]]
   branch = "master"
+  digest = "1:f6eb318ba8e4077e55d4eb85732da14166d0948df8ee3bbee40c7f5f75f9127f"
+  name = "github.com/metal3-io/cluster-api-provider-baremetal"
+  packages = [
+    "pkg/apis",
+    "pkg/apis/baremetal/v1alpha1",
+  ]
+  pruneopts = "NUT"
+  revision = "551b94073d2fc1c93e2b6d0b419ab39d7a438bee"
+  source = "github.com/openshift/cluster-api-provider-baremetal/pkg/apis"
+
+[[projects]]
+  branch = "master"
   digest = "1:063d55b87e200bced5e2be658cc70acafb4c5bbc4afa04d4b82f66298b73d089"
   name = "github.com/mgutz/ansi"
   packages = ["."]
@@ -1230,6 +1242,7 @@
     "github.com/gophercloud/gophercloud/openstack/objectstorage/v1/objects",
     "github.com/gophercloud/utils/openstack/clientconfig",
     "github.com/libvirt/libvirt-go",
+    "github.com/metal3-io/cluster-api-provider-baremetal/pkg/apis",
     "github.com/openshift/api/config/v1",
     "github.com/openshift/client-go/config/clientset/versioned",
     "github.com/openshift/client-go/route/clientset/versioned",
