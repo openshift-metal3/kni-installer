@@ -75,9 +75,10 @@ func Platform() (*baremetal.Platform, error) {
 		{
 			Prompt: &survey.Input{
 				Message: "API VIP",
-				Help:    "The VIP to be used for internal API communication.",
+				Help:    "The VIP to be used for internal API communication. If blank, the address will be looked up from DNS.",
+				Default: baremetaldefaults.ApiVIP,
 			},
-			Validate: survey.ComposeValidators(survey.Required, ipValidator),
+			Validate: ipValidator,
 		},
 	}, &apiVIP)
 	if err != nil {
@@ -123,7 +124,10 @@ func uriValidator(ans interface{}) error {
 }
 
 func ipValidator(ans interface{}) error {
-	return validate.IP(ans.(string))
+	if (ans.(string) != baremetaldefaults.ApiVIP) {
+		return validate.IP(ans.(string))
+	}
+	return nil
 }
 
 // interfaceValidator validates if the answer provided is a valid network

@@ -71,7 +71,7 @@ func SetInstallConfigDefaults(c *types.InstallConfig) {
 	case c.Platform.VSphere != nil:
 		vspheredefaults.SetPlatformDefaults(c.Platform.VSphere, c)
 	case c.Platform.BareMetal != nil:
-		baremetaldefaults.SetPlatformDefaults(c.Platform.BareMetal)
+		baremetaldefaults.SetPlatformDefaults(c.Platform.BareMetal, c)
 	case c.Platform.None != nil:
 		nonedefaults.SetPlatformDefaults(c.Platform.None)
 	}
