@@ -69,7 +69,7 @@ func (i *Infrastructure) Generate(dependencies asset.Parents) error {
 	case azure.Name:
 		platform = configv1.AzurePlatformType
 	case baremetal.Name:
-		platform = configv1.BareMetalPlatform
+		platform = configv1.BareMetalPlatformType
 	default:
 		platform = configv1.NonePlatformType
 	}
