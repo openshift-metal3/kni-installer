@@ -1,7 +1,27 @@
 package baremetal
 
-// Platform stores all the global configuration that all
-// machinesets use.
+type BMC struct {
+	Username string `json:"username"`
+	Password string `json:"password"`
+	Address  string `json":"address"`
+}
+
+type Host struct {
+	Name            string `json:"name,omitempty"`
+	BMC             BMC    `json:"bmc"`
+	Role            string `json:"role"`
+	BootMACAddress  string `json:"bootMACAddress"`
+	HardwareProfile string `json:"hardwareProfile"`
+}
+
+type Image struct {
+	Source        string `json:"source"`
+	Checksum      string `json:"checksum"`
+	DeployKernel  string `json:"deployKernel"`
+	DeployRamdisk string `json:"deployRamdisk"`
+}
+
+// Platform stores all the global configuration that all machinesets use.
 type Platform struct {
 	// LibvirtURI is the identifier for the libvirtd connection.  It must be
 	// reachable from the host where the installer is run.
@@ -22,13 +42,11 @@ type Platform struct {
 	// +optional
 	ProvisioningBridge string `json:"provisioning_bridge,omitempty"`
 
-	// Nodes is the information needed to create the master nodes in
-	// Ironic.
-	Nodes map[string]interface{} `json:"nodes"`
+	// Hosts is the information needed to create the objects in Ironic.
+	Hosts []*Host `json:"hosts"`
 
-	// MasterConfiguration contains the information needed to provision
-	// a master.
-	MasterConfiguration map[string]interface{} `json:"master_configuration"`
+	// Images contains the information needed to provision a host
+	Image Image `json:"image"`
 
 	// DefaultMachinePlatform is the default configuration used when
 	// installing on bare metal for machine pools which do not define their own
