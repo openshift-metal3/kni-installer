@@ -149,3 +149,9 @@ func Interface(iface string) error {
 	}
 	return nil
 }
+
+// MAC validates that a value is a valid mac address
+func MAC(addr string) error {
+	_, err := net.ParseMAC(addr)
+	return err
+}

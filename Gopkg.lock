@@ -467,6 +467,17 @@
 
 [[projects]]
   branch = "master"
+  digest = "1:eeb4dc1fe5163871428f9049ecdfbae752b9bec868ed4558d168e109a2f3a4e6"
+  name = "github.com/metal3-io/baremetal-operator"
+  packages = [
+    "pkg/bmc",
+    "pkg/hardware",
+  ]
+  pruneopts = "NUT"
+  revision = "cbdbe42e35bf58687ff7442271fedbc2ac5f1c5b"
+
+[[projects]]
+  branch = "master"
   digest = "1:f6eb318ba8e4077e55d4eb85732da14166d0948df8ee3bbee40c7f5f75f9127f"
   name = "github.com/metal3-io/cluster-api-provider-baremetal"
   packages = [
@@ -1242,7 +1253,10 @@
     "github.com/gophercloud/gophercloud/openstack/objectstorage/v1/objects",
     "github.com/gophercloud/utils/openstack/clientconfig",
     "github.com/libvirt/libvirt-go",
+    "github.com/metal3-io/baremetal-operator/pkg/bmc",
+    "github.com/metal3-io/baremetal-operator/pkg/hardware",
     "github.com/metal3-io/cluster-api-provider-baremetal/pkg/apis",
+    "github.com/metal3-io/cluster-api-provider-baremetal/pkg/apis/baremetal/v1alpha1",
     "github.com/openshift/api/config/v1",
     "github.com/openshift/client-go/config/clientset/versioned",
     "github.com/openshift/client-go/route/clientset/versioned",
@@ -1250,11 +1264,15 @@
     "github.com/openshift/cluster-api-provider-libvirt/pkg/apis",
     "github.com/openshift/cluster-api-provider-libvirt/pkg/apis/libvirtproviderconfig/v1beta1",
     "github.com/openshift/cluster-api/pkg/apis/machine/v1beta1",
+    "github.com/openshift/installer/pkg/asset/installconfig/aws",
+    "github.com/openshift/installer/pkg/types/aws/defaults",
+    "github.com/openshift/installer/pkg/types/aws/validation",
     "github.com/openshift/library-go/pkg/config/clusteroperator/v1helpers",
     "github.com/openshift/machine-config-operator/pkg/apis/machineconfiguration.openshift.io/v1",
     "github.com/pborman/uuid",
     "github.com/pkg/errors",
     "github.com/pkg/sftp",
+    "github.com/rodaine/hclencoder",
     "github.com/shurcooL/vfsgen",
     "github.com/sirupsen/logrus",
     "github.com/spf13/cobra",
