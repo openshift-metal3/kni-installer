@@ -10,6 +10,7 @@ const (
 	IronicURI          = "http://localhost:6385/v1"
 	ExternalBridge     = "baremetal"
 	ProvisioningBridge = "provisioning"
+	HardwareProfile    = "default"
 )
 
 // SetPlatformDefaults sets the defaults for the platform.
@@ -28,5 +29,11 @@ func SetPlatformDefaults(p *baremetal.Platform) {
 
 	if p.ProvisioningBridge == "" {
 		p.ProvisioningBridge = ProvisioningBridge
+	}
+
+	for _, host := range p.Hosts {
+		if host.HardwareProfile == "" {
+			host.HardwareProfile = HardwareProfile
+		}
 	}
 }
