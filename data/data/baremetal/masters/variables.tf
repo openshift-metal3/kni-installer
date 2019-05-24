@@ -1,40 +1,35 @@
-variable "image_source" {
-  description = "The URL of the OS disk image"
+variable "master_count" {
   type        = string
+  description = "Number of masters"
+  default     = 3
 }
-
-variable "image_checksum" {
-  type        = string
-  description = "The URL or checksum value of the image"
-}
-
-variable "root_gb" {
-  type        = string
-  description = "Size of the root disk"
-}
-
 variable "ignition" {
   type        = string
   description = "The content of the master ignition file"
 }
 
-variable "master_nodes" {
-  type        = map(map(string))
-  description = "Master bare metal node details"
+variable "hosts" {
+  type        = list(map(string))
+  description = "Hardware details for hosts"
 }
 
 variable "properties" {
-  type        = map(map(string))
-  description = "Master bare metal properties"
+  type        = list(map(string))
+  description = "Properties for hosts"
 }
 
 variable "root_devices" {
-  type        = map(map(string))
-  description = "Master root device configuration"
+  type        = list(map(string))
+  description = "Root devices for hosts"
 }
 
 variable "driver_infos" {
-  type        = map(map(string))
-  description = "Master driver info"
+  type        = list(map(string))
+  description = "BMC information for hosts"
+}
+
+variable "instance_infos" {
+  type        = list(map(string))
+  description = "Instance information for hosts"
 }
 
