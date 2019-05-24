@@ -1,6 +1,6 @@
-resource "ironic_node_v1" "openshift-master-node" {
-  count          = length(keys(var.master_nodes))
-  name           = var.master_nodes[format("openshift-master-%d", count.index)]["name"]
+resource "ironic_node_v1" "openshift-master-host" {
+  count          = var.master_count
+  name           = var.hosts[count.index]["name"]
   resource_class = "baremetal"
 
   inspect   = true
@@ -9,43 +9,34 @@ resource "ironic_node_v1" "openshift-master-node" {
 
   ports = [
     {
-      address     = var.master_nodes[format("openshift-master-%d", count.index)]["port_address"]
+      address     = var.hosts[count.index]["port_address"]
       pxe_enabled = "true"
     },
   ]
 
-  properties  = var.properties[format("openshift-master-%d", count.index)]
-  root_device = var.root_devices[format("openshift-master-%d", count.index)]
+  properties  = var.properties[count.index]
+  root_device = var.root_devices[count.index]
 
-  driver      = var.master_nodes[format("openshift-master-%d", count.index)]["driver"]
-  driver_info = var.driver_infos[format("openshift-master-%d", count.index)]
-
-  management_interface = var.master_nodes[format("openshift-master-%d", count.index)]["management_interface"]
-  power_interface      = var.master_nodes[format("openshift-master-%d", count.index)]["power_interface"]
-  vendor_interface     = var.master_nodes[format("openshift-master-%d", count.index)]["vendor_interface"]
+  driver      = var.hosts[count.index]["driver"]
+  driver_info = var.driver_infos[count.index]
 }
 
 resource "ironic_allocation_v1" "openshift-master-allocation" {
   name           = "master-${count.index}"
-  count          = 3
+  count          = var.master_count
   resource_class = "baremetal"
 
-  candidate_nodes = ironic_node_v1.openshift-master-node.*.id
+  candidate_nodes = ironic_node_v1.openshift-master-host.*.id
 }
 
 resource "ironic_deployment" "openshift-master-deployment" {
-  count = 3
+  count = var.master_count
   node_uuid = element(
     ironic_allocation_v1.openshift-master-allocation.*.node_uuid,
     count.index,
   )
 
-  instance_info = {
-    image_source   = var.image_source
-    image_checksum = var.image_checksum
-    root_gb        = var.root_gb
-  }
-
-  user_data = var.ignition
+  instance_info = var.instance_infos[count.index]
+  user_data     = var.ignition
 }
 
