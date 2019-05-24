@@ -25,8 +25,8 @@ func ValidatePlatform(p *baremetal.Platform, fldPath *field.Path) field.ErrorLis
 		allErrs = append(allErrs, field.Invalid(fldPath.Child("provisioning_bridge"), p.ProvisioningBridge, err.Error()))
 	}
 
-	if p.Nodes == nil {
-		allErrs = append(allErrs, field.Invalid(fldPath.Child("nodes"), p.Nodes, "nodes is missing"))
+	if p.Hosts == nil {
+		allErrs = append(allErrs, field.Invalid(fldPath.Child("nodes"), p.Hosts, "bare metal hosts are missing"))
 	}
 
 	if p.DefaultMachinePlatform != nil {

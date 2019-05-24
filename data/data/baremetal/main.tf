@@ -20,14 +20,13 @@ module "bootstrap" {
 module "masters" {
   source = "./masters"
 
-  ignition       = var.ignition_master
-  image_source   = var.master_configuration["image_source"]
-  image_checksum = var.master_configuration["image_checksum"]
-  root_gb        = var.master_configuration["root_gb"]
+  master_count = var.master_count
+  ignition     = var.ignition_master
 
-  master_nodes = var.master_nodes
-  properties   = var.properties
-  root_devices = var.root_devices
-  driver_infos = var.driver_infos
+  hosts          = var.hosts
+  properties     = var.properties
+  root_devices   = var.root_devices
+  driver_infos   = var.driver_infos
+  instance_infos = var.instance_infos
 }
 

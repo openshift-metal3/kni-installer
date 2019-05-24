@@ -63,8 +63,8 @@ func Machines(clusterID string, config *types.InstallConfig, pool *types.Machine
 func provider(clusterName string, networkInterfaceAddress string, platform *baremetal.Platform, userDataSecret string) *baremetalprovider.BareMetalMachineProviderSpec {
 	return &baremetalprovider.BareMetalMachineProviderSpec{
                 Image: baremetalprovider.Image{
-                        URL: platform.MasterConfiguration["image_source"].(string),
-                        Checksum: platform.MasterConfiguration["image_checksum"].(string),
+                        URL: platform.Image.Source,
+                        Checksum: platform.Image.Checksum,
                 },
                 UserData: &corev1.SecretReference{Name: userDataSecret},
         }
