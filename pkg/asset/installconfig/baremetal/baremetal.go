@@ -3,7 +3,7 @@ package baremetal
 
 import (
 	"encoding/json"
-	survey "gopkg.in/AlecAivazis/survey.v1"
+	"gopkg.in/AlecAivazis/survey.v1"
 
 	"github.com/openshift-metalkube/kni-installer/pkg/types/baremetal"
 	baremetaldefaults "github.com/openshift-metalkube/kni-installer/pkg/types/baremetal/defaults"
@@ -48,7 +48,7 @@ func Platform() (*baremetal.Platform, error) {
 				Help:    "External bridge is used for external communication.",
 				Default: baremetaldefaults.ExternalBridge,
 			},
-			Validate: survey.ComposeValidators(survey.Required, uriValidator),
+			Validate: survey.ComposeValidators(survey.Required, interfaceValidator),
 		},
 	}, &externalBridge)
 	if err != nil {
@@ -62,7 +62,7 @@ func Platform() (*baremetal.Platform, error) {
 				Help:    "Provisioning bridge is used to provision machines.",
 				Default: baremetaldefaults.ProvisioningBridge,
 			},
-			Validate: survey.ComposeValidators(survey.Required, uriValidator),
+			Validate: survey.ComposeValidators(survey.Required, interfaceValidator),
 		},
 	}, &provisioningBridge)
 	if err != nil {
@@ -117,4 +117,11 @@ func uriValidator(ans interface{}) error {
 
 func ipValidator(ans interface{}) error {
 	return validate.IP(ans.(string))
+}
+
+// interfaceValidator validates if the answer provided is a valid network
+// interface.  net.Interfaces in Go does not let us know if it's a bridge, but
+// we can at least make sure an interface by that name exists.
+func interfaceValidator(ans interface{}) error {
+	return validate.Interface(ans.(string))
 }
