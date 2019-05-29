@@ -26,15 +26,15 @@ var (
 	// platform names in alphabetical order. This is the list of
 	// platforms presented to the user in the interactive wizard.
 	PlatformNames = []string{
-		baremetal.Name,
+		aws.Name,
+		azure.Name,
 	}
 	// HiddenPlatformNames is a slice with all the
 	// hidden-but-supported platform names. This list isn't presented
 	// to the user in the interactive wizard.
 	HiddenPlatformNames = []string{
-		aws.Name,
+		baremetal.Name,
 		none.Name,
-		azure.Name,
 		openstack.Name,
 		vsphere.Name,
 	}

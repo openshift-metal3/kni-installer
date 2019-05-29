@@ -20,9 +20,10 @@ provision the cluster.
 ## Supported Platforms
 
 * [AWS](docs/user/aws/README.md)
+* [Bare-metal](docs/dev/baremetal.md)
 * [Libvirt with KVM](docs/dev/libvirt/README.md) (development only)
 * [OpenStack (experimental)](docs/user/openstack/README.md)
-* [Bare-metal](docs/dev/baremetal.md)
+* [vSphere (experimental)](docs/user/vsphere/install_upi.md)
 
 ## Quick Start
 

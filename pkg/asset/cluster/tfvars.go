@@ -8,10 +8,12 @@ import (
 	"github.com/openshift-metalkube/kni-installer/pkg/asset/ignition/bootstrap"
 	"github.com/openshift-metalkube/kni-installer/pkg/asset/ignition/machine"
 	"github.com/openshift-metalkube/kni-installer/pkg/asset/installconfig"
+	azureconfig "github.com/openshift-metalkube/kni-installer/pkg/asset/installconfig/azure"
 	"github.com/openshift-metalkube/kni-installer/pkg/asset/machines"
 	"github.com/openshift-metalkube/kni-installer/pkg/asset/rhcos"
 	"github.com/openshift-metalkube/kni-installer/pkg/tfvars"
 	awstfvars "github.com/openshift-metalkube/kni-installer/pkg/tfvars/aws"
+	azuretfvars "github.com/openshift-metalkube/kni-installer/pkg/tfvars/azure"
 	baremetaltfvars "github.com/openshift-metalkube/kni-installer/pkg/tfvars/baremetal"
 	libvirttfvars "github.com/openshift-metalkube/kni-installer/pkg/tfvars/libvirt"
 	openstacktfvars "github.com/openshift-metalkube/kni-installer/pkg/tfvars/openstack"
@@ -22,22 +24,23 @@ import (
 	"github.com/openshift-metalkube/kni-installer/pkg/types/none"
 	"github.com/openshift-metalkube/kni-installer/pkg/types/openstack"
 	"github.com/openshift-metalkube/kni-installer/pkg/types/vsphere"
-	libvirtprovider "github.com/openshift/cluster-api-provider-libvirt/pkg/apis/libvirtproviderconfig/v1alpha1"
+	libvirtprovider "github.com/openshift/cluster-api-provider-libvirt/pkg/apis/libvirtproviderconfig/v1beta1"
 	"github.com/pkg/errors"
 	"github.com/sirupsen/logrus"
 	awsprovider "sigs.k8s.io/cluster-api-provider-aws/pkg/apis/awsproviderconfig/v1beta1"
+	azureprovider "sigs.k8s.io/cluster-api-provider-azure/pkg/apis/azureprovider/v1alpha1"
 	openstackprovider "sigs.k8s.io/cluster-api-provider-openstack/pkg/apis/openstackproviderconfig/v1alpha1"
 )
 
 const (
 	// TfVarsFileName is the filename for Terraform variables.
-	TfVarsFileName = "terraform.tfvars"
+	TfVarsFileName = "terraform.tfvars.json"
 
 	// TfPlatformVarsFileName is a template for platform-specific
 	// Terraform variable files.
 	//
 	// https://www.terraform.io/docs/configuration/variables.html#variable-files
-	TfPlatformVarsFileName = "terraform.%s.auto.tfvars"
+	TfPlatformVarsFileName = "terraform.%s.auto.tfvars.json"
 
 	tfvarsAssetName = "Terraform Variables"
 )
@@ -139,7 +142,36 @@ func (t *TerraformVariables) Generate(parents asset.Parents) error {
 			Data:     data,
 		})
 	case azure.Name:
-		//TODO(serbrech): call generate azure tfvars, relying on MachineProviderConfig once available
+		sess, err := azureconfig.GetSession()
+		if err != nil {
+			return err
+		}
+		auth := azuretfvars.Auth{
+			SubscriptionID: sess.Credentials.SubscriptionID,
+			ClientID:       sess.Credentials.ClientID,
+			ClientSecret:   sess.Credentials.ClientSecret,
+			TenantID:       sess.Credentials.TenantID,
+		}
+		masters, err := mastersAsset.Machines()
+		if err != nil {
+			return err
+		}
+		masterConfigs := make([]*azureprovider.AzureMachineProviderSpec, len(masters))
+		for i, m := range masters {
+			masterConfigs[i] = m.Spec.ProviderSpec.Value.Object.(*azureprovider.AzureMachineProviderSpec)
+		}
+		data, err := azuretfvars.TFVars(
+			auth,
+			installConfig.Config.Azure.BaseDomainResourceGroupName,
+			masterConfigs,
+		)
+		if err != nil {
+			return errors.Wrapf(err, "failed to get %s Terraform variables", platform)
+		}
+		t.FileList = append(t.FileList, &asset.File{
+			Filename: fmt.Sprintf(TfPlatformVarsFileName, platform),
+			Data:     data,
+		})
 	case libvirt.Name:
 		masters, err := mastersAsset.Machines()
 		if err != nil {
