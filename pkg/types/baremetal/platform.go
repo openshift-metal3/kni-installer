@@ -14,6 +14,14 @@ type Platform struct {
 	// +optional
 	IronicURI string `json:"ironic_uri,omitempty"`
 
+	// External bridge is used for external communication.
+	// +optional
+	ExternalBridge string `json:"external_bridge,omitempty"`
+
+	// Provisioning bridge is used for provisioning nodes.
+	// +optional
+	ProvisioningBridge string `json:"provisioning_bridge,omitempty"`
+
 	// Nodes is the information needed to create the master nodes in
 	// Ironic.
 	Nodes map[string]interface{} `json:"nodes"`
