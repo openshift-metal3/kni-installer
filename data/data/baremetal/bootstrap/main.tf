@@ -1,11 +1,11 @@
 resource "libvirt_volume" "bootstrap" {
   name   = "${var.cluster_id}-bootstrap"
-  source = "${var.image}"
+  source = var.image
 }
 
 resource "libvirt_ignition" "bootstrap" {
   name    = "${var.cluster_id}-bootstrap.ign"
-  content = "${var.ignition}"
+  content = var.ignition
 }
 
 resource "libvirt_domain" "bootstrap" {
@@ -15,10 +15,10 @@ resource "libvirt_domain" "bootstrap" {
 
   vcpu = "4"
 
-  coreos_ignition = "${libvirt_ignition.bootstrap.id}"
+  coreos_ignition = libvirt_ignition.bootstrap.id
 
   disk {
-    volume_id = "${libvirt_volume.bootstrap.id}"
+    volume_id = libvirt_volume.bootstrap.id
   }
 
   console {
@@ -26,15 +26,16 @@ resource "libvirt_domain" "bootstrap" {
     target_port = 0
   }
 
-  cpu {
+  cpu = {
     mode = "host-passthrough"
   }
 
   network_interface {
-    bridge         = "${var.external_bridge}"
+    bridge = var.external_bridge
   }
 
   network_interface {
-    bridge = "${var.provisioning_bridge}"
+    bridge = var.provisioning_bridge
   }
 }
+
