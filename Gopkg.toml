@@ -1,6 +1,6 @@
 ignored = [
-  "github.com/openshift-metalkube/kni-installer/tests*",
-  "github.com/openshift-metalkube/kni-installer/pkg/terraform/exec*"
+  "github.com/openshift-metal3/kni-installer/tests*",
+  "github.com/openshift-metal3/kni-installer/pkg/terraform/exec*"
 ]
 
 required = [
