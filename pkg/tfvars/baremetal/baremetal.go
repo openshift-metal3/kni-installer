@@ -8,11 +8,11 @@ import (
 )
 
 type config struct {
-	LibvirtURI      string `hcl:"libvirt_uri,omitempty"`
-	IronicURI       string `hcl:"ironic_uri,omitempty"`
-	Image           string `hcl:"os_image,omitempty"`
-	BareMetalBridge string `hcl:"baremetal_bridge,omitempty"`
-	OverCloudBridge string `hcl:"overcloud_bridge,omitempty"`
+	LibvirtURI         string `hcl:"libvirt_uri,omitempty"`
+	IronicURI          string `hcl:"ironic_uri,omitempty"`
+	Image              string `hcl:"os_image,omitempty"`
+	ExternalBridge     string `hcl:"external_bridge,omitempty"`
+	ProvisioningBridge string `hcl:"provisioning_bridge,omitempty"`
 
 	// Data required for masters deployment - several maps per master, because of terraform's
 	// limitation that maps cannot be strings
@@ -25,7 +25,7 @@ type config struct {
 }
 
 // TFVars generates bare metal specific Terraform variables.
-func TFVars(libvirtURI, ironicURI, osImage, baremetalBridge, overcloudBridge string, nodes map[string]interface{}, configuration map[string]interface{}) ([]byte, error) {
+func TFVars(libvirtURI, ironicURI, osImage, externalBridge, provisioningBridge string, nodes map[string]interface{}, configuration map[string]interface{}) ([]byte, error) {
 	osImage, err := libvirttfvars.CachedImage(osImage)
 	if err != nil {
 		return nil, errors.Wrap(err, "failed to use cached libvirt image")
@@ -35,8 +35,8 @@ func TFVars(libvirtURI, ironicURI, osImage, baremetalBridge, overcloudBridge str
 		LibvirtURI:          libvirtURI,
 		IronicURI:           ironicURI,
 		Image:               osImage,
-		BareMetalBridge:     baremetalBridge,
-		OverCloudBridge:     overcloudBridge,
+		ExternalBridge:      externalBridge,
+		ProvisioningBridge:  provisioningBridge,
 		MasterNodes:         nodes["master_nodes"],
 		Properties:          nodes["properties"],
 		RootDevices:         nodes["root_devices"],
