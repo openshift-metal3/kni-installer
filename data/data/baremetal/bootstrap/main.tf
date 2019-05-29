@@ -31,10 +31,10 @@ resource "libvirt_domain" "bootstrap" {
   }
 
   network_interface {
-    bridge         = "${var.baremetal_bridge}"
+    bridge         = "${var.external_bridge}"
   }
 
   network_interface {
-    bridge = "${var.overcloud_bridge}"
+    bridge = "${var.provisioning_bridge}"
   }
 }
