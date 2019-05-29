@@ -13,12 +13,12 @@ variable "ignition" {
   description = "The content of the bootstrap ignition file."
 }
 
-variable "baremetal_bridge" {
+variable "external_bridge" {
   type        = "string"
-  description = "The name of the baremetal bridge"
+  description = "The name of the bridge providing external access"
 }
 
-variable "overcloud_bridge" {
+variable "provisioning_bridge" {
   type        = "string"
-  description = "The name of the overcloud bridge"
+  description = "The name of the bridge used for provisioning"
 }
