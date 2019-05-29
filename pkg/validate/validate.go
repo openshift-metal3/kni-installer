@@ -141,3 +141,11 @@ func IP(ip string) error {
 	}
 	return nil
 }
+
+// Interface validates if a string is a valid network interface
+func Interface(iface string) error {
+	if _, err := net.InterfaceByName(iface); err != nil {
+		return fmt.Errorf("%s is not a valid network interface: %s", iface, err)
+	}
+	return nil
+}
