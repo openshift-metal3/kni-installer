@@ -13,14 +13,14 @@ variable "os_image" {
   description = "The URL of the OS disk image"
 }
 
-variable "baremetal_bridge" {
+variable "external_bridge" {
   type = "string"
-  description = "The name of the baremetal bridge"
+  description = "The name of the external bridge"
 }
 
-variable "overcloud_bridge" {
+variable "provisioning_bridge" {
   type = "string"
-  description = "The name of the overcloud bridge"
+  description = "The name of the provisioning bridge"
 }
 
 variable "master_configuration" {
