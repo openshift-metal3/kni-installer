@@ -1,11 +1,13 @@
 package machines
 
 import (
+	"encoding/base64"
 	"fmt"
 	"os"
 	"path/filepath"
 
 	"github.com/ghodss/yaml"
+	baremetalhost "github.com/metal3-io/baremetal-operator/pkg/apis/metal3/v1alpha1"
 	baremetalapi "github.com/metal3-io/cluster-api-provider-baremetal/pkg/apis"
 	baremetalprovider "github.com/metal3-io/cluster-api-provider-baremetal/pkg/apis/baremetal/v1alpha1"
 	libvirtapi "github.com/openshift/cluster-api-provider-libvirt/pkg/apis"
@@ -13,6 +15,9 @@ import (
 	machineapi "github.com/openshift/cluster-api/pkg/apis/machine/v1beta1"
 	mcfgv1 "github.com/openshift/machine-config-operator/pkg/apis/machineconfiguration.openshift.io/v1"
 	"github.com/pkg/errors"
+	"github.com/sirupsen/logrus"
+	corev1 "k8s.io/api/core/v1"
+	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
 	"k8s.io/apimachinery/pkg/runtime"
 	"k8s.io/apimachinery/pkg/runtime/serializer"
 	awsapi "sigs.k8s.io/cluster-api-provider-aws/pkg/apis"
@@ -48,11 +53,19 @@ import (
 type Master struct {
 	UserDataFile       *asset.File
 	MachineConfigFiles []*asset.File
+	SecretFiles        []*asset.File
+	HostFiles          []*asset.File
 	MachineFiles       []*asset.File
 }
 
 const (
 	directory = "openshift"
+
+	// secretFileName is the format string for constucting the Secret filenames.
+	secretFileName = "99_openshift-cluster-api_host-bmc-secrets-%s.yaml"
+
+	// hostFileName is the format string for constucting the Host filenames.
+	hostFileName = "99_openshift-cluster-api_hosts-%s.yaml"
 
 	// masterMachineFileName is the format string for constucting the master Machine filenames.
 	masterMachineFileName = "99_openshift-cluster-api_master-machines-%s.yaml"
@@ -62,6 +75,8 @@ const (
 )
 
 var (
+	secretFileNamePattern        = fmt.Sprintf(secretFileName, "*")
+	hostFileNamePattern          = fmt.Sprintf(hostFileName, "*")
 	masterMachineFileNamePattern = fmt.Sprintf(masterMachineFileName, "*")
 
 	_ asset.WritableAsset = (*Master)(nil)
@@ -106,6 +121,8 @@ func (m *Master) Generate(dependencies asset.Parents) error {
 	pool := ic.ControlPlane
 	var err error
 	machines := []machineapi.Machine{}
+	hosts := []baremetalhost.BareMetalHost{}
+	secrets := []corev1.Secret{}
 	switch ic.Platform.Name() {
 	case awstypes.Name:
 		mpool := defaultAWSMachinePoolPlatform()
@@ -163,10 +180,83 @@ func (m *Master) Generate(dependencies asset.Parents) error {
 		mpool.Set(ic.Platform.BareMetal.DefaultMachinePlatform)
 		mpool.Set(pool.Platform.BareMetal)
 		pool.Platform.BareMetal = &mpool
+		// FIXME(dhellmann): Iterate over the hosts we have been given
+		// in the config and use their names for these nodes?
+		//
+		// FIXME(dhellmann): Should we link machines to hosts through
+		// annotations/labels or will the actuator do that?
 		machines, err = baremetal.Machines(clusterID.InfraID, ic, pool, "master", "master-user-data")
 		if err != nil {
 			return errors.Wrap(err, "failed to create master machine objects")
 		}
+
+		logrus.Debugf("hosts: %v\n", ic.Platform.BareMetal.Hosts)
+
+		// FIXME(dhellmann): Move host creation to a separate
+		// function, as with baremetal.Machines(). Args are probably
+		// the config and the machines (so the hosts and machines can
+		// be matched up).
+		for i, host := range ic.Platform.BareMetal.Hosts {
+			logrus.Debugf("configured host: name = %s, details = %v\n", host.Name, host)
+
+			secret := corev1.Secret{
+				TypeMeta: metav1.TypeMeta{
+					APIVersion: "v1",
+					Kind:       "Secret",
+				},
+				ObjectMeta: metav1.ObjectMeta{
+					Name:      fmt.Sprintf("%s-bmc-secret", host.Name),
+					Namespace: "openshift-machine-api",
+				},
+				Data: map[string][]byte{
+					"username": []byte(base64.StdEncoding.EncodeToString([]byte(host.BMC.Username))),
+					"password": []byte(base64.StdEncoding.EncodeToString([]byte(host.BMC.Password))),
+				},
+			}
+			secrets = append(secrets, secret)
+
+			newHost := baremetalhost.BareMetalHost{
+				TypeMeta: metav1.TypeMeta{
+					APIVersion: "metal3.io/v1alpha1",
+					Kind:       "BareMetalHost",
+				},
+				ObjectMeta: metav1.ObjectMeta{
+					Name:      host.Name,
+					Namespace: "openshift-machine-api",
+				},
+				Spec: baremetalhost.BareMetalHostSpec{
+					Online: true,
+					BMC: baremetalhost.BMCDetails{
+						Address:         host.BMC.Address,
+						CredentialsName: secret.Name,
+					},
+					BootMACAddress:  host.BootMACAddress,
+					HardwareProfile: host.HardwareProfile,
+				},
+			}
+			if i < len(machines) {
+				// NOTE(dhellmann): Setting ExternallyProvisioned to
+				// true and adding a MachineRef without setting Image
+				// associates the host with a machine without
+				// triggering provisioning. We only want to do that
+				// for control plane hosts. We assume the first known
+				// hosts are the control plane.
+				newHost.Spec.ExternallyProvisioned = true
+				machine := machines[i]
+				newHost.Spec.MachineRef = &corev1.ObjectReference{
+					APIVersion: machine.TypeMeta.APIVersion,
+					Kind:       machine.TypeMeta.Kind,
+					Namespace:  machine.ObjectMeta.Namespace,
+					Name:       machine.ObjectMeta.Name,
+				}
+			}
+			logrus.Debugf("new host: %v\n", newHost)
+			hosts = append(hosts, newHost)
+		}
+
+		logrus.Debugf("hosts: %v\n", hosts)
+
+		// return fmt.Errorf("need to build host list")
 	case nonetypes.Name, vspheretypes.Name:
 	default:
 		return fmt.Errorf("invalid Platform")
@@ -210,6 +300,40 @@ func (m *Master) Generate(dependencies asset.Parents) error {
 		}
 	}
 
+	if len(hosts) > 0 {
+		m.HostFiles = make([]*asset.File, len(hosts))
+		padFormat := fmt.Sprintf("%%0%dd", len(fmt.Sprintf("%d", len(hosts))))
+		for i, host := range hosts {
+			data, err := yaml.Marshal(host)
+			if err != nil {
+				return errors.Wrapf(err, "marshal host %d", i)
+			}
+
+			padded := fmt.Sprintf(padFormat, i)
+			m.HostFiles[i] = &asset.File{
+				Filename: filepath.Join(directory, fmt.Sprintf(hostFileName, padded)),
+				Data:     data,
+			}
+		}
+	}
+
+	if len(secrets) > 0 {
+		m.SecretFiles = make([]*asset.File, len(secrets))
+		padFormat := fmt.Sprintf("%%0%dd", len(fmt.Sprintf("%d", len(secrets))))
+		for i, secret := range secrets {
+			data, err := yaml.Marshal(secret)
+			if err != nil {
+				return errors.Wrapf(err, "marshal secret %d", i)
+			}
+
+			padded := fmt.Sprintf(padFormat, i)
+			m.SecretFiles[i] = &asset.File{
+				Filename: filepath.Join(directory, fmt.Sprintf(secretFileName, padded)),
+				Data:     data,
+			}
+		}
+	}
+
 	return nil
 }
 
@@ -220,12 +344,24 @@ func (m *Master) Files() []*asset.File {
 		files = append(files, m.UserDataFile)
 	}
 	files = append(files, m.MachineConfigFiles...)
+	// Hosts refer to secrets, so place those first.
+	files = append(files, m.SecretFiles...)
+	// Machines are linked to hosts via the machineRef, so we create
+	// the hosts first to ensure if the operator starts trying to
+	// reconcile a machine it can pick up the related host.
+	files = append(files, m.HostFiles...)
 	files = append(files, m.MachineFiles...)
+
+	for _, file := range files {
+		logrus.Debugf("Master file %s %q", file.Filename, file.Data)
+	}
 	return files
 }
 
 // Load reads the asset files from disk.
 func (m *Master) Load(f asset.FileFetcher) (found bool, err error) {
+	var fileList []*asset.File
+
 	file, err := f.FetchByName(filepath.Join(directory, masterUserDataFileName))
 	if err != nil {
 		if os.IsNotExist(err) {
@@ -240,12 +376,26 @@ func (m *Master) Load(f asset.FileFetcher) (found bool, err error) {
 		return true, err
 	}
 
-	fileList, err := f.FetchByPattern(filepath.Join(directory, masterMachineFileNamePattern))
+	fileList, err = f.FetchByPattern(filepath.Join(directory, secretFileNamePattern))
 	if err != nil {
 		return true, err
 	}
+	m.SecretFiles = fileList
+	logrus.Debugf("Found %d secret files", len(m.SecretFiles))
 
+	fileList, err = f.FetchByPattern(filepath.Join(directory, hostFileNamePattern))
+	if err != nil {
+		return true, err
+	}
+	m.HostFiles = fileList
+	logrus.Debugf("Found %d host files", len(m.HostFiles))
+
+	fileList, err = f.FetchByPattern(filepath.Join(directory, masterMachineFileNamePattern))
+	if err != nil {
+		return true, err
+	}
 	m.MachineFiles = fileList
+
 	return true, nil
 }
 
