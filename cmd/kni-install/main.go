@@ -4,11 +4,9 @@ import (
 	"flag"
 	"github.com/openshift-metalkube/kni-installer/pkg/terraform/exec/provisioners"
 	"io/ioutil"
-	"math/rand"
 	"os"
 	"path/filepath"
 	"strings"
-	"time"
 
 	"github.com/pkg/errors"
 	"github.com/sirupsen/logrus"
@@ -30,10 +28,6 @@ func main() {
 	// to log anything. Nobody likes you, glog. Go away.
 	flag.CommandLine.Parse([]string{})
 	flag.CommandLine.Set("stderrthreshold", "4")
-
-	// Submitted upstream to openshift/installer
-	// https://github.com/openshift/installer/pull/1478
-	rand.Seed(time.Now().UTC().UnixNano())
 
 	if argLen := len(os.Args); argLen > 0 {
 		// Support external terraform plugins
