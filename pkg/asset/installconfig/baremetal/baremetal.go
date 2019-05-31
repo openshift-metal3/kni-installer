@@ -2,7 +2,7 @@
 package baremetal
 
 import (
-	"encoding/json"
+	"fmt"
 	"gopkg.in/AlecAivazis/survey.v1"
 
 	"github.com/openshift-metalkube/kni-installer/pkg/types/baremetal"
@@ -12,7 +12,9 @@ import (
 
 // Platform collects bare metal specific configuration.
 func Platform() (*baremetal.Platform, error) {
-	var libvirtURI, ironicURI, externalBridge, provisioningBridge, apiVIP, nodesJSON string
+	var libvirtURI, ironicURI, externalBridge, provisioningBridge, apiVIP string
+	var hosts []*baremetal.Host
+
 	err := survey.Ask([]*survey.Question{
 		{
 			Prompt: &survey.Input{
@@ -72,23 +74,6 @@ func Platform() (*baremetal.Platform, error) {
 	err = survey.Ask([]*survey.Question{
 		{
 			Prompt: &survey.Input{
-				Message: "Master node definition JSON",
-				Help:    "JSON data containing information about the baremetal nodes for use by Ironic.",
-			},
-		},
-	}, &nodesJSON)
-	if err != nil {
-		return nil, err
-	}
-
-	var nodes map[string]interface{}
-	if err = json.Unmarshal([]byte(nodesJSON), &nodes); err != nil {
-		return nil, err
-	}
-
-	err = survey.Ask([]*survey.Question{
-		{
-			Prompt: &survey.Input{
 				Message: "API VIP",
 				Help:    "The VIP to be used for internal API communication.",
 			},
@@ -99,13 +84,35 @@ func Platform() (*baremetal.Platform, error) {
 		return nil, err
 	}
 
+	// Keep prompting for hosts
+	for {
+		var host *baremetal.Host
+		host, err = Host()
+		host.Role = "master" // FIXME(stbenjam): Support workers
+
+		if err != nil {
+			fmt.Printf("Invalid host - please try again")
+			continue
+		}
+		hosts = append(hosts, host)
+
+		more := false
+		prompt := &survey.Confirm{
+			Message: "Add another?",
+		}
+		survey.AskOne(prompt, &more, nil)
+		if !more {
+			break
+		}
+	}
+
 	return &baremetal.Platform{
 		LibvirtURI:         libvirtURI,
 		IronicURI:          ironicURI,
-		Nodes:              nodes,
 		ApiVIP:             apiVIP,
 		ExternalBridge:     externalBridge,
 		ProvisioningBridge: provisioningBridge,
+		Hosts:              hosts,
 	}, nil
 }
 
@@ -124,4 +131,9 @@ func ipValidator(ans interface{}) error {
 // we can at least make sure an interface by that name exists.
 func interfaceValidator(ans interface{}) error {
 	return validate.Interface(ans.(string))
+}
+
+// macValidator validates if the answer provided is a valid mac address
+func macValidator(ans interface{}) error {
+	return validate.MAC(ans.(string))
 }
