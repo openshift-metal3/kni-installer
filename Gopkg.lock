@@ -576,6 +576,20 @@
   revision = "2705e5265b62886d8df453b8d4a4601dc0c33084"
 
 [[projects]]
+  digest = "1:257b1c96c70ade3bbeea7db8b09e0aee9fd0a2ccbfe9cc897e415f206d9db913"
+  name = "github.com/openshift/installer"
+  packages = [
+    "pkg/asset/installconfig/aws",
+    "pkg/types/aws",
+    "pkg/types/aws/defaults",
+    "pkg/types/aws/validation",
+    "pkg/version",
+  ]
+  pruneopts = "NUT"
+  revision = "e3fceacc975953f56cb09931e6be015a36eb6075"
+  version = "v0.16.1"
+
+[[projects]]
   branch = "master"
   digest = "1:a32828cebfa63f79265d9062005c23f3c737def9e8a956ddd5dc3fd5f4caffe6"
   name = "github.com/openshift/library-go"
@@ -641,14 +655,6 @@
   pruneopts = "NUT"
   revision = "792786c7400a136282c1664665ae0a8db921c6c2"
   version = "v1.0.0"
-
-[[projects]]
-  branch = "master"
-  digest = "1:07de8180d5ce67dad2cd9fd94227a5d8612424cf80f2023d1386f4ff5e272567"
-  name = "github.com/rodaine/hclencoder"
-  packages = ["."]
-  pruneopts = "NUT"
-  revision = "fb9757bb536eb49d3d16503228b4bf6b258907f6"
 
 [[projects]]
   branch = "master"
@@ -1280,7 +1286,6 @@
     "github.com/pborman/uuid",
     "github.com/pkg/errors",
     "github.com/pkg/sftp",
-    "github.com/rodaine/hclencoder",
     "github.com/shurcooL/vfsgen",
     "github.com/sirupsen/logrus",
     "github.com/spf13/cobra",
