@@ -23,7 +23,7 @@ provision the cluster.
 * [Bare-metal](docs/dev/baremetal.md)
 * [Libvirt with KVM](docs/dev/libvirt/README.md) (development only)
 * [OpenStack (experimental)](docs/user/openstack/README.md)
-* [vSphere (experimental)](docs/user/vsphere/install_upi.md)
+* [vSphere](docs/user/vsphere/install_upi.md)
 
 ## Quick Start
 
