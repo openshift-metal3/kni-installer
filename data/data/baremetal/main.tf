@@ -20,13 +20,12 @@ module "bootstrap" {
 module "masters" {
   source = "./masters"
 
-  master_count = var.master_count
-  ignition     = var.ignition_master
-
+  ironic_uri     = var.ironic_uri
+  master_count   = var.master_count
+  ignition       = var.ignition_master
   hosts          = var.hosts
   properties     = var.properties
   root_devices   = var.root_devices
   driver_infos   = var.driver_infos
   instance_infos = var.instance_infos
 }
-

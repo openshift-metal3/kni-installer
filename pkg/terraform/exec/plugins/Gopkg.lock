@@ -811,6 +811,17 @@
   version = "v1.2.1"
 
 [[projects]]
+  digest = "1:0cfe2d873b1ce297b35bc3fdf91916f6a6e116e8d29e7cb8833b4dbfdb66701d"
+  name = "github.com/terraform-providers/terraform-provider-null"
+  packages = [
+    ".",
+    "null",
+  ]
+  pruneopts = "NUT"
+  revision = "8d3d85a60e207f7cd1ba2f86a69ad5afe18b0e2e"
+  version = "v2.1.2"
+
+[[projects]]
   digest = "1:b8a750f12db9c1591945939fe10d0b11ed69507a4fc0302538686360c7b11886"
   name = "github.com/terraform-providers/terraform-provider-openstack"
   packages = ["openstack"]
@@ -1024,6 +1035,8 @@
     "github.com/terraform-providers/terraform-provider-azurerm/azurerm",
     "github.com/terraform-providers/terraform-provider-ignition/ignition",
     "github.com/terraform-providers/terraform-provider-local/local",
+    "github.com/terraform-providers/terraform-provider-null",
+    "github.com/terraform-providers/terraform-provider-null/null",
     "github.com/terraform-providers/terraform-provider-openstack/openstack",
     "github.com/terraform-providers/terraform-provider-random/random",
   ]
