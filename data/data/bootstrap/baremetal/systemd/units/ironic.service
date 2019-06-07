@@ -1,0 +1,17 @@
+[Unit]
+Description=Baremetal Deployment Ironic Services
+Wants=network-online.target
+After=network-online.target
+
+[Service]
+Type=exec
+ExecStart=/usr/local/bin/startironic.sh
+ExecStop=/usr/local/bin/stopironic.sh
+ConditionPathExists=!/etc/pivot/image-pullspec
+
+Restart=on-failure
+RestartSec=10
+TimeoutStartSec=600
+
+[Install]
+WantedBy=multi-user.target
