@@ -1,3 +1,8 @@
+variable "ironic_uri" {
+  type        = string
+  description = "URI for Ironic that bootstrap should wait for to be available"
+}
+
 variable "master_count" {
   type        = string
   description = "Number of masters"
@@ -32,4 +37,3 @@ variable "instance_infos" {
   type        = list(map(string))
   description = "Instance information for hosts"
 }
-
