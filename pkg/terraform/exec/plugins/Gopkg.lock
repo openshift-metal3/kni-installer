@@ -430,7 +430,7 @@
   version = "v1.1.1"
 
 [[projects]]
-  digest = "1:594c8c18e2da9a55a0743cf8f7f9255c26b89a78e50ce4bcf0a81b76d2853916"
+  digest = "1:c1024fa089f6cf75ea25d2a6d10bb001643e8464d710fa4d8205f8edfa8454bb"
   name = "github.com/gophercloud/gophercloud"
   packages = [
     ".",
@@ -440,6 +440,8 @@
     "openstack/baremetal/v1/allocations",
     "openstack/baremetal/v1/nodes",
     "openstack/baremetal/v1/ports",
+    "openstack/baremetalintrospection/noauth",
+    "openstack/baremetalintrospection/v1/introspection",
     "openstack/blockstorage/extensions/volumeactions",
     "openstack/blockstorage/v1/volumes",
     "openstack/blockstorage/v2/snapshots",
@@ -727,12 +729,12 @@
   version = "v1.0.0"
 
 [[projects]]
-  digest = "1:61f1cd67d9c6ce439fb943b0f680fa4527d3913b4e895821d592689ffd7b02f3"
+  digest = "1:a0886267c60262a245d6eeb0be12bf8e165026ad088bce106b9c55c5d613144f"
   name = "github.com/openshift-metalkube/terraform-provider-ironic"
   packages = ["ironic"]
   pruneopts = "NUT"
-  revision = "e16eaebdfdb17fc6883695b932786eb588625a95"
-  version = "v0.1.3"
+  revision = "9f5bba54dad78c10ed572eb2541f8178a5500656"
+  version = "v0.1.4"
 
 [[projects]]
   branch = "master"
@@ -811,12 +813,9 @@
   version = "v1.2.1"
 
 [[projects]]
-  digest = "1:0cfe2d873b1ce297b35bc3fdf91916f6a6e116e8d29e7cb8833b4dbfdb66701d"
+  digest = "1:baa2dc0cf6e02ec0637688ca15f44b2864491bd10be0ac7d34ad35eb85b5925e"
   name = "github.com/terraform-providers/terraform-provider-null"
-  packages = [
-    ".",
-    "null",
-  ]
+  packages = ["null"]
   pruneopts = "NUT"
   revision = "8d3d85a60e207f7cd1ba2f86a69ad5afe18b0e2e"
   version = "v2.1.2"
@@ -1035,7 +1034,6 @@
     "github.com/terraform-providers/terraform-provider-azurerm/azurerm",
     "github.com/terraform-providers/terraform-provider-ignition/ignition",
     "github.com/terraform-providers/terraform-provider-local/local",
-    "github.com/terraform-providers/terraform-provider-null",
     "github.com/terraform-providers/terraform-provider-null/null",
     "github.com/terraform-providers/terraform-provider-openstack/openstack",
     "github.com/terraform-providers/terraform-provider-random/random",
