@@ -16,6 +16,7 @@ const (
 	ProvisioningBridge = "provisioning"
 	HardwareProfile    = "default"
 	APIVIP             = ""
+	IngressVIP         = ""
 )
 
 // SetPlatformDefaults sets the defaults for the platform.
@@ -50,6 +51,17 @@ func SetPlatformDefaults(p *baremetal.Platform, c *types.InstallConfig) {
 			p.APIVIP = fmt.Sprintf("DNS lookup failure: %s", err.Error())
 		} else {
 			p.APIVIP = vip[0]
+		}
+	}
+
+	if p.IngressVIP == IngressVIP {
+		// This name should resolve to exactly one address
+		vip, err := net.LookupHost("test.apps." + c.ClusterDomain())
+		if err != nil {
+			// This will fail validation and abort the install
+			p.IngressVIP = fmt.Sprintf("DNS lookup failure: %s", err.Error())
+		} else {
+			p.IngressVIP = vip[0]
 		}
 	}
 }
