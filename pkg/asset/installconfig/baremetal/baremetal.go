@@ -12,7 +12,7 @@ import (
 
 // Platform collects bare metal specific configuration.
 func Platform() (*baremetal.Platform, error) {
-	var libvirtURI, ironicURI, externalBridge, provisioningBridge, apiVIP string
+	var libvirtURI, ironicURI, externalBridge, provisioningBridge, apiVIP, ingressVIP string
 	var hosts []*baremetal.Host
 
 	err := survey.Ask([]*survey.Question{
@@ -78,9 +78,23 @@ func Platform() (*baremetal.Platform, error) {
 				Help:    "The VIP to be used for internal API communication. If blank, the address will be looked up from DNS.",
 				Default: baremetaldefaults.APIVIP,
 			},
-			Validate: ipValidator,
+			Validate: apiVIPValidator,
 		},
 	}, &apiVIP)
+	if err != nil {
+		return nil, err
+	}
+
+	err = survey.Ask([]*survey.Question{
+		{
+			Prompt: &survey.Input{
+				Message: "Ingress VIP",
+				Help:    "The VIP to be used for ingress. If blank, the address will be looked up from DNS.",
+				Default: baremetaldefaults.IngressVIP,
+			},
+			Validate: ingressVIPValidator,
+		},
+	}, &ingressVIP)
 	if err != nil {
 		return nil, err
 	}
@@ -111,6 +125,7 @@ func Platform() (*baremetal.Platform, error) {
 		LibvirtURI:         libvirtURI,
 		IronicURI:          ironicURI,
 		APIVIP:             apiVIP,
+		IngressVIP:         ingressVIP,
 		ExternalBridge:     externalBridge,
 		ProvisioningBridge: provisioningBridge,
 		Hosts:              hosts,
@@ -123,8 +138,15 @@ func uriValidator(ans interface{}) error {
 	return validate.URI(ans.(string))
 }
 
-func ipValidator(ans interface{}) error {
+func apiVIPValidator(ans interface{}) error {
 	if (ans.(string) != baremetaldefaults.APIVIP) {
+		return validate.IP(ans.(string))
+	}
+	return nil
+}
+
+func ingressVIPValidator(ans interface{}) error {
+	if (ans.(string) != baremetaldefaults.IngressVIP) {
 		return validate.IP(ans.(string))
 	}
 	return nil

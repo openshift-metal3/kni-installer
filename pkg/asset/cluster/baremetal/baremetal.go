@@ -13,5 +13,6 @@ func Metadata(infraID string, config *types.InstallConfig) *baremetal.Metadata {
 		LibvirtURI: config.Platform.BareMetal.LibvirtURI,
 		IronicURI:  config.Platform.BareMetal.IronicURI,
 		APIVIP:     config.Platform.BareMetal.APIVIP,
+		IngressVIP: config.Platform.BareMetal.IngressVIP,
 	}
 }
