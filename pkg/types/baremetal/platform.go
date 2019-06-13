@@ -60,4 +60,7 @@ type Platform struct {
 
 	// APIVIP is the VIP to use for internal API communication
 	APIVIP string `json:"api_vip"`
+
+	// IngressVIP is the VIP to use for ingress traffic
+	IngressVIP string `json:"ingress_vip"`
 }
