@@ -11,10 +11,11 @@ import (
 const (
 	LibvirtURI         = "qemu:///system"
 	IronicURI          = "http://localhost:6385/v1"
+	InspectorURI       = "http://localhost:5050/v1"
 	ExternalBridge     = "baremetal"
 	ProvisioningBridge = "provisioning"
 	HardwareProfile    = "default"
-	ApiVIP = ""
+	ApiVIP             = ""
 )
 
 // SetPlatformDefaults sets the defaults for the platform.
@@ -25,6 +26,10 @@ func SetPlatformDefaults(p *baremetal.Platform, c *types.InstallConfig) {
 
 	if p.IronicURI == "" {
 		p.IronicURI = IronicURI
+	}
+
+	if p.InspectorURI == "" {
+		p.InspectorURI = InspectorURI
 	}
 
 	if p.ExternalBridge == "" {

@@ -34,6 +34,11 @@ type Platform struct {
 	// +optional
 	IronicURI string `json:"ironic_uri,omitempty"`
 
+	// InspectorURI is the identifier for the Inspector connection. It must be
+	// reachable from the host where the installer is run.
+	// +optional
+	InspectorURI string `json:"inspector_uri,omitempty"`
+
 	// External bridge is used for external communication.
 	// +optional
 	ExternalBridge string `json:"external_bridge,omitempty"`

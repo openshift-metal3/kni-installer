@@ -3,6 +3,11 @@ variable "ironic_uri" {
   description = "ironic connection URI"
 }
 
+variable "inspector_uri" {
+  type        = string
+  description = "ironic inpsector URI"
+}
+
 variable "libvirt_uri" {
   type        = string
   description = "libvirt connection URI"

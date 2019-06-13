@@ -15,11 +15,13 @@ import (
 	"github.com/openshift-metalkube/kni-installer/pkg/terraform"
 	gatheraws "github.com/openshift-metalkube/kni-installer/pkg/terraform/gather/aws"
 	gatherazure "github.com/openshift-metalkube/kni-installer/pkg/terraform/gather/azure"
+	gatherbaremetal "github.com/openshift-metalkube/kni-installer/pkg/terraform/gather/baremetal"
 	gatherlibvirt "github.com/openshift-metalkube/kni-installer/pkg/terraform/gather/libvirt"
 	gatheropenstack "github.com/openshift-metalkube/kni-installer/pkg/terraform/gather/openstack"
 	"github.com/openshift-metalkube/kni-installer/pkg/types"
 	awstypes "github.com/openshift-metalkube/kni-installer/pkg/types/aws"
 	azuretypes "github.com/openshift-metalkube/kni-installer/pkg/types/azure"
+	baremetaltypes "github.com/openshift-metalkube/kni-installer/pkg/types/baremetal"
 	libvirttypes "github.com/openshift-metalkube/kni-installer/pkg/types/libvirt"
 	openstacktypes "github.com/openshift-metalkube/kni-installer/pkg/types/openstack"
 )
@@ -142,6 +144,15 @@ func extractHostAddresses(config *types.InstallConfig, tfstate *terraform.State)
 		masters, err = gatherazure.ControlPlaneIPs(tfstate)
 		if err != nil {
 			logrus.Error(err)
+		}
+	case baremetaltypes.Name:
+		bootstrap, err = gatherbaremetal.BootstrapIP(tfstate, config)
+		if err != nil {
+			return bootstrap, port, masters, err
+		}
+		masters, err = gatherbaremetal.ControlPlaneIPs(tfstate)
+		if err != nil {
+			return bootstrap, port, masters, err
 		}
 	case libvirttypes.Name:
 		bootstrap, err = gatherlibvirt.BootstrapIP(tfstate)

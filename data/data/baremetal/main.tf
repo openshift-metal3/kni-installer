@@ -4,6 +4,7 @@ provider "libvirt" {
 
 provider "ironic" {
   url          = var.ironic_uri
+  inspector    = var.inspector_uri
   microversion = "1.52"
 }
 
