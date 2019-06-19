@@ -111,8 +111,9 @@ required = [
 [[constraint]]
   branch = "master"
   name = "github.com/metal3-io/cluster-api-provider-baremetal"
-  source = "github.com/openshift/cluster-api-provider-baremetal/pkg/apis"
+  source = "https://github.com/openshift/cluster-api-provider-baremetal/pkg/apis"
 
 [[constraint]]
   branch = "master"
   name = "github.com/metal3-io/baremetal-operator"
+  source = "https://github.com/openshift/baremetal-operator"
