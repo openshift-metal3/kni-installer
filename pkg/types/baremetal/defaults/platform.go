@@ -42,14 +42,14 @@ func SetPlatformDefaults(p *baremetal.Platform, c *types.InstallConfig) {
 		}
 	}
 
-	if p.ApiVIP == ApiVIP {
+	if p.APIVIP == ApiVIP {
 		// This name should resolve to exactly one address
 		vip, err := net.LookupHost("api." + c.ClusterDomain())
 		if err != nil {
 			// This will fail validation and abort the install
-			p.ApiVIP = fmt.Sprintf("DNS lookup failure: %s", err.Error())
+			p.APIVIP = fmt.Sprintf("DNS lookup failure: %s", err.Error())
 		} else {
-			p.ApiVIP = vip[0]
+			p.APIVIP = vip[0]
 		}
 	}
 }

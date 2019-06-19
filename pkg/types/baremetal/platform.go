@@ -58,6 +58,6 @@ type Platform struct {
 	// +optional
 	DefaultMachinePlatform *MachinePool `json:"defaultMachinePlatform,omitempty"`
 
-	// ApiVIP is the VIP to use for internal API communication
-	ApiVIP string `json:"api_vip"`
+	// APIVIP is the VIP to use for internal API communication
+	APIVIP string `json:"api_vip"`
 }

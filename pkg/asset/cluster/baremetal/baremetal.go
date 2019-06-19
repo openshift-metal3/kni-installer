@@ -11,7 +11,7 @@ import (
 func Metadata(infraID string, config *types.InstallConfig) *baremetal.Metadata {
 	return &baremetal.Metadata{
 		LibvirtURI: config.Platform.BareMetal.LibvirtURI,
-		IronicURI: config.Platform.BareMetal.IronicURI,
-		ApiVIP: config.Platform.BareMetal.ApiVIP,
+		IronicURI:  config.Platform.BareMetal.IronicURI,
+		APIVIP:     config.Platform.BareMetal.APIVIP,
 	}
 }

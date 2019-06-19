@@ -33,8 +33,8 @@ func ValidatePlatform(p *baremetal.Platform, fldPath *field.Path) field.ErrorLis
 		allErrs = append(allErrs, ValidateMachinePool(p.DefaultMachinePlatform, fldPath.Child("defaultMachinePlatform"))...)
 	}
 
-	if err := validate.IP(p.ApiVIP); err != nil {
-		allErrs = append(allErrs, field.Invalid(fldPath.Child("api_vip"), p.ApiVIP, err.Error()))
+	if err := validate.IP(p.APIVIP); err != nil {
+		allErrs = append(allErrs, field.Invalid(fldPath.Child("api_vip"), p.APIVIP, err.Error()))
 	}
 	return allErrs
 }
