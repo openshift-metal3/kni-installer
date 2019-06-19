@@ -36,10 +36,10 @@ func (a *MCSCertKey) Generate(dependencies asset.Parents) error {
 
 	cfg := &CertCfg{
 		Subject:      pkix.Name{CommonName: hostname},
-		IPAddresses:  []net.IP{net.ParseIP(installConfig.Config.BareMetal.ApiVIP)},
+		IPAddresses:  []net.IP{net.ParseIP(installConfig.Config.BareMetal.APIVIP)},
 		ExtKeyUsages: []x509.ExtKeyUsage{x509.ExtKeyUsageServerAuth},
 		Validity:     ValidityTenYears,
-		DNSNames:     []string{hostname, installConfig.Config.BareMetal.ApiVIP},
+		DNSNames:     []string{hostname, installConfig.Config.BareMetal.APIVIP},
 	}
 
 	return a.SignedCertKey.Generate(cfg, ca, "machine-config-server", DoNotAppendParent)
