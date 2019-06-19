@@ -1,11 +1,13 @@
 package baremetal
 
+// BMC stores the information about a baremetal host's management controller.
 type BMC struct {
 	Username string `json:"username"`
 	Password string `json:"password"`
 	Address  string `json":"address"`
 }
 
+// Host stores all the configuration data for a baremetal host.
 type Host struct {
 	Name            string `json:"name,omitempty"`
 	BMC             BMC    `json:"bmc"`
@@ -14,6 +16,8 @@ type Host struct {
 	HardwareProfile string `json:"hardwareProfile"`
 }
 
+// Image stores details about the locations of various images needed for deployment.
+// FIXME: This should be determined by the installer once Ironic and image downloading occurs in bootstrap VM.
 type Image struct {
 	Source        string `json:"source"`
 	Checksum      string `json:"checksum"`
@@ -54,6 +58,6 @@ type Platform struct {
 	// +optional
 	DefaultMachinePlatform *MachinePool `json:"defaultMachinePlatform,omitempty"`
 
-	// ApiVIP is the VIP to use for internal API communication
-	ApiVIP string `json:"api_vip"`
+	// APIVIP is the VIP to use for internal API communication
+	APIVIP string `json:"api_vip"`
 }
