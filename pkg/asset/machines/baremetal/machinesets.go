@@ -1,4 +1,4 @@
-// Package libvirt generates Machine objects for bare metal.
+// Package baremetal generates Machine objects for bare metal.
 package baremetal
 
 import (

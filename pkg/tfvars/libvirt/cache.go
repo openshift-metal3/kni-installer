@@ -14,8 +14,8 @@ import (
 	"golang.org/x/sys/unix"
 )
 
-// FIXME: baremetal
-// Export cachedImage for reuse by baremetal
+// CachedImage returns the location of the cached image.
+// FIXME: Exported for use by baremetal platform.
 func CachedImage(uri string) (string, error) {
 	return cachedImage(uri)
 }
