@@ -17,7 +17,7 @@ func pointerIgnitionConfig(installConfig *types.InstallConfig, rootCA []byte, ro
 	if installConfig.Platform.BareMetal != nil {
 		// Baremetal needs to point directly at the VIP because we don't have a
 		// way to configure DNS before Ignition runs.
-		ignitionHost = fmt.Sprintf("%s:22623", installConfig.BareMetal.ApiVIP)
+		ignitionHost = fmt.Sprintf("%s:22623", installConfig.BareMetal.APIVIP)
 	}
 	return &ignition.Config{
 		Ignition: ignition.Ignition{
