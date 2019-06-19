@@ -583,20 +583,6 @@
   revision = "ecea5317a4ab6e24ef65ad4573d0a358e3585931"
 
 [[projects]]
-  digest = "1:257b1c96c70ade3bbeea7db8b09e0aee9fd0a2ccbfe9cc897e415f206d9db913"
-  name = "github.com/openshift/installer"
-  packages = [
-    "pkg/asset/installconfig/aws",
-    "pkg/types/aws",
-    "pkg/types/aws/defaults",
-    "pkg/types/aws/validation",
-    "pkg/version",
-  ]
-  pruneopts = "NUT"
-  revision = "e3fceacc975953f56cb09931e6be015a36eb6075"
-  version = "v0.16.1"
-
-[[projects]]
   branch = "master"
   digest = "1:a32828cebfa63f79265d9062005c23f3c737def9e8a956ddd5dc3fd5f4caffe6"
   name = "github.com/openshift/library-go"
@@ -1270,9 +1256,6 @@
     "github.com/openshift/cluster-api-provider-libvirt/pkg/apis",
     "github.com/openshift/cluster-api-provider-libvirt/pkg/apis/libvirtproviderconfig/v1beta1",
     "github.com/openshift/cluster-api/pkg/apis/machine/v1beta1",
-    "github.com/openshift/installer/pkg/asset/installconfig/aws",
-    "github.com/openshift/installer/pkg/types/aws/defaults",
-    "github.com/openshift/installer/pkg/types/aws/validation",
     "github.com/openshift/library-go/pkg/config/clusteroperator/v1helpers",
     "github.com/openshift/machine-config-operator/pkg/apis/machineconfiguration.openshift.io/v1",
     "github.com/pborman/uuid",
