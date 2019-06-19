@@ -1,3 +1,5 @@
+// +build ironic
+
 package baremetal
 
 import (
