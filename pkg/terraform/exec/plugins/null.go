@@ -1,4 +1,4 @@
-// +build ironic
+// +build baremetal
 
 package plugins
 
