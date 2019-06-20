@@ -5,6 +5,7 @@ import (
 	"gopkg.in/AlecAivazis/survey.v1"
 )
 
+// Host prompts the user for hardware details about a baremetal host.
 func Host() (*baremetal.Host, error) {
 	var host baremetal.Host
 

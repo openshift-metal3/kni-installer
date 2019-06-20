@@ -110,7 +110,7 @@ func Platform() (*baremetal.Platform, error) {
 	return &baremetal.Platform{
 		LibvirtURI:         libvirtURI,
 		IronicURI:          ironicURI,
-		ApiVIP:             apiVIP,
+		APIVIP:             apiVIP,
 		ExternalBridge:     externalBridge,
 		ProvisioningBridge: provisioningBridge,
 		Hosts:              hosts,
