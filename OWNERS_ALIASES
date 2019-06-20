@@ -31,7 +31,7 @@ aliases:
     - abhinavdahiya
     - dav1x
     - staebler
-  baremetal-approvers:
+  baremetal-reviewers:
     - celebdor
     - markmc
     - russellb
