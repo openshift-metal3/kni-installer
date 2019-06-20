@@ -15,7 +15,7 @@ const (
 	ExternalBridge     = "baremetal"
 	ProvisioningBridge = "provisioning"
 	HardwareProfile    = "default"
-	ApiVIP = ""
+	APIVIP             = ""
 )
 
 // SetPlatformDefaults sets the defaults for the platform.
@@ -42,7 +42,7 @@ func SetPlatformDefaults(p *baremetal.Platform, c *types.InstallConfig) {
 		}
 	}
 
-	if p.APIVIP == ApiVIP {
+	if p.APIVIP == APIVIP {
 		// This name should resolve to exactly one address
 		vip, err := net.LookupHost("api." + c.ClusterDomain())
 		if err != nil {
