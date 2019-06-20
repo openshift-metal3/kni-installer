@@ -7,6 +7,7 @@ import (
 
 	"github.com/openshift-metalkube/kni-installer/pkg/asset"
 	"github.com/openshift-metalkube/kni-installer/pkg/asset/installconfig"
+	baremetaltypes "github.com/openshift-metalkube/kni-installer/pkg/types/baremetal"
 )
 
 // MCSCertKey is the asset that generates the MCS key/cert pair.
@@ -36,10 +37,16 @@ func (a *MCSCertKey) Generate(dependencies asset.Parents) error {
 
 	cfg := &CertCfg{
 		Subject:      pkix.Name{CommonName: hostname},
-		IPAddresses:  []net.IP{net.ParseIP(installConfig.Config.BareMetal.APIVIP)},
 		ExtKeyUsages: []x509.ExtKeyUsage{x509.ExtKeyUsageServerAuth},
 		Validity:     ValidityTenYears,
-		DNSNames:     []string{hostname, installConfig.Config.BareMetal.APIVIP},
+	}
+
+	switch installConfig.Config.Platform.Name() {
+	case baremetaltypes.Name:
+		cfg.IPAddresses = []net.IP{net.ParseIP(installConfig.Config.BareMetal.APIVIP)}
+		cfg.DNSNames = []string{hostname, installConfig.Config.BareMetal.APIVIP}
+	default:
+		cfg.DNSNames = []string{hostname}
 	}
 
 	return a.SignedCertKey.Generate(cfg, ca, "machine-config-server", DoNotAppendParent)
