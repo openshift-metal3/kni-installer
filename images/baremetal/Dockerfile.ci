@@ -4,7 +4,7 @@
 FROM registry.svc.ci.openshift.org/openshift/release:golang-1.10 AS builder
 WORKDIR /go/src/github.com/openshift-metalkube/kni-installer
 COPY . .
-RUN TAGS="libvirt ironic" hack/build.sh
+RUN TAGS="libvirt baremetal" hack/build.sh
 
 
 FROM registry.svc.ci.openshift.org/origin/4.1:base
