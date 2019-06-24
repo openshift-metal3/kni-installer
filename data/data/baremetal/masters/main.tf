@@ -27,8 +27,8 @@ resource "ironic_node_v1" "openshift-master-host" {
 
   driver      = var.hosts[count.index]["driver"]
   driver_info = var.driver_infos[count.index]
-  depends_on  = [
-	null_resource.api-wait,
+  depends_on = [
+    null_resource.api-wait,
   ]
 }
 
