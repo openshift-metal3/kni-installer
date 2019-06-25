@@ -71,9 +71,11 @@ podman run -d --net host --privileged --name httpd \
      -v $IRONIC_SHARED_VOLUME:/shared:z --entrypoint /bin/runhttpd ${IRONIC_IMAGE}
 
 podman run -d --net host --name ipa-downloader \
+     --env CACHEURL="http://172.22.0.1/images" \
      -v $IRONIC_SHARED_VOLUME:/shared:z ${IPA_DOWNLOADER_IMAGE} /usr/local/bin/get-resource.sh
 
 podman run -d --net host --name coreos-downloader \
+     --env CACHEURL="http://172.22.0.1/images" \
      -v $IRONIC_SHARED_VOLUME:/shared:z ${COREOS_DOWNLOADER_IMAGE} /usr/local/bin/get-resource.sh $RHCOS_IMAGE_URL
 
 # Start the conductor so db sync can happen while images download
