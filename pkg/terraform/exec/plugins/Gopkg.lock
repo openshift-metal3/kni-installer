@@ -891,12 +891,11 @@
   version = "v1.3.0"
 
 [[projects]]
-  digest = "1:b8a750f12db9c1591945939fe10d0b11ed69507a4fc0302538686360c7b11886"
+  digest = "1:f3ae869d0de02432e1d3f96e898624db97a9f3fcb5adcb18bf84e2a3cfe45e5f"
   name = "github.com/terraform-providers/terraform-provider-openstack"
   packages = ["openstack"]
   pruneopts = "NUT"
-  revision = "53f154a8f7de16d60198f47b2777c60d6aacac2d"
-  version = "v1.19.0"
+  revision = "b1406b8e4894faad993aff786f0bb50bfec8e281"
 
 [[projects]]
   digest = "1:31a7f8bae17ec284242aa6c319a5119619342ec8ecc7984214d04b4efb4860c4"
