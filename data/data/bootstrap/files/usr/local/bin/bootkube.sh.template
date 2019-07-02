@@ -148,32 +148,6 @@ then
 	touch mco-bootstrap.done
 fi
 
-echo "Waiting for etcd member names to be available from SRV ..."
-CLUSTER_DOMAIN="$(clusterinfo CLUSTER_DOMAIN)"
-while ! DNS_DISC_ANSWERS=$(host -t SRV "_etcd-server-ssl._tcp.$CLUSTER_DOMAIN"); do
-    sleep 1
-done
-
-ETCD_MEMBERS=$(awk '{print $NF}' <<< "$DNS_DISC_ANSWERS")
-echo "Found etcd members!"
-
-function etcd-server-urls {
-    local out
-    local members
-    local delimiter
-
-    members="$*"
-    delimiter=','
-    for member in $members; do
-        if [[ -z "$out" ]]; then
-            out+="https://${member::-1}:2379"
-        else
-            out+="${delimiter}https://${member::-1}:2379"
-        fi
-    done
-    echo $out
-}
-
 if [ ! -f kube-apiserver-bootstrap.done ]
 then
 	echo "Rendering Kubernetes API server core manifests..."
@@ -187,7 +161,7 @@ then
 		"${KUBE_APISERVER_OPERATOR_IMAGE}" \
 		/usr/bin/cluster-kube-apiserver-operator render \
 		--manifest-etcd-serving-ca=etcd-ca-bundle.crt \
-		--manifest-etcd-server-urls=$(etcd-server-urls $ETCD_MEMBERS) \
+		--manifest-etcd-server-urls={{.EtcdCluster}} \
 		--manifest-image=${OPENSHIFT_HYPERSHIFT_IMAGE} \
 		--asset-input-dir=/assets/tls \
 		--asset-output-dir=/assets/kube-apiserver-bootstrap \
@@ -300,7 +274,7 @@ until podman run \
 		--cacert=/opt/openshift/tls/etcd-ca-bundle.crt \
 		--cert=/opt/openshift/tls/etcd-client.crt \
 		--key=/opt/openshift/tls/etcd-client.key \
-		--endpoints=$(etcd-server-urls $ETCD_MEMBERS) \
+		--endpoints={{.EtcdCluster}} \
 		endpoint health
 do
 	echo "etcdctl failed. Retrying in 5 seconds..."
