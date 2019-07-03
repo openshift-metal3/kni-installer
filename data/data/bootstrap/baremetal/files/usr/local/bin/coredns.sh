@@ -14,7 +14,7 @@ grep -Ev "${DNS_VIP}|127.0.0.1" /etc/resolv.conf | tee /etc/coredns/resolv.conf
 NUM_DNS_MEMBERS=$(grep -A 5 'controlPlane' /opt/openshift/manifests/cluster-config.yaml | awk '/replicas/ {print $2}')
 export API_VIP CLUSTER_DOMAIN
 
-COREDNS_IMAGE="quay.io/openshift-metalkube/coredns-mdns:latest"
+COREDNS_IMAGE="quay.io/openshift-metal3/coredns-mdns:latest"
 if ! podman inspect "$COREDNS_IMAGE" &>/dev/null; then
     echo "Pulling release image..."
     podman pull "$COREDNS_IMAGE"
