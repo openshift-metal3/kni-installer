@@ -89,24 +89,21 @@ func (lrt *LogRoundTripper) RoundTrip(request *http.Request) (*http.Response, er
 // logRequest will log the HTTP Request details.
 // If the body is JSON, it will attempt to be pretty-formatted.
 func (lrt *LogRoundTripper) logRequest(original io.ReadCloser, contentType string) (io.ReadCloser, error) {
-	// Handle request contentType
-	if strings.HasPrefix(contentType, "application/json") {
-		var bs bytes.Buffer
-		defer original.Close()
+	defer original.Close()
 
-		_, err := io.Copy(&bs, original)
-		if err != nil {
-			return nil, err
-		}
-
-		debugInfo := lrt.formatJSON(bs.Bytes())
-		log.Printf("[DEBUG] OpenStack Request Body: %s", debugInfo)
-
-		return ioutil.NopCloser(strings.NewReader(bs.String())), nil
+	var bs bytes.Buffer
+	_, err := io.Copy(&bs, original)
+	if err != nil {
+		return nil, err
 	}
 
-	log.Printf("[DEBUG] Not logging because OpenStack request body isn't JSON")
-	return original, nil
+	// Handle request contentType
+	if strings.HasPrefix(contentType, "application/json") {
+		debugInfo := lrt.formatJSON(bs.Bytes())
+		log.Printf("[DEBUG] OpenStack Request Body: %s", debugInfo)
+	}
+
+	return ioutil.NopCloser(strings.NewReader(bs.String())), nil
 }
 
 // logResponse will log the HTTP Response details.
@@ -115,17 +112,14 @@ func (lrt *LogRoundTripper) logResponse(original io.ReadCloser, contentType stri
 	if strings.HasPrefix(contentType, "application/json") {
 		var bs bytes.Buffer
 		defer original.Close()
-
 		_, err := io.Copy(&bs, original)
 		if err != nil {
 			return nil, err
 		}
-
 		debugInfo := lrt.formatJSON(bs.Bytes())
 		if debugInfo != "" {
 			log.Printf("[DEBUG] OpenStack Response Body: %s", debugInfo)
 		}
-
 		return ioutil.NopCloser(strings.NewReader(bs.String())), nil
 	}
 
@@ -157,14 +151,6 @@ func (lrt *LogRoundTripper) formatJSON(raw []byte) string {
 
 	// Mask known password fields
 	if v, ok := data["auth"].(map[string]interface{}); ok {
-		// v2 auth methods
-		if v, ok := v["passwordCredentials"].(map[string]interface{}); ok {
-			v["password"] = "***"
-		}
-		if v, ok := v["token"].(map[string]interface{}); ok {
-			v["id"] = "***"
-		}
-		// v3 auth methods
 		if v, ok := v["identity"].(map[string]interface{}); ok {
 			if v, ok := v["password"].(map[string]interface{}); ok {
 				if v, ok := v["user"].(map[string]interface{}); ok {
