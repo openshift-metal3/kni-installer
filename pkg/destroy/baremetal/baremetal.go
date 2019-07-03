@@ -4,10 +4,10 @@ package baremetal
 
 import (
 	"github.com/libvirt/libvirt-go"
+	"github.com/openshift-metalkube/kni-installer/pkg/destroy/providers"
 	"github.com/pkg/errors"
 	"github.com/sirupsen/logrus"
 
-	"github.com/openshift-metalkube/kni-installer/pkg/destroy"
 	"github.com/openshift-metalkube/kni-installer/pkg/types"
 )
 
@@ -34,7 +34,7 @@ func (o *ClusterUninstaller) Run() error {
 }
 
 // New returns bare metal Uninstaller from ClusterMetadata.
-func New(logger logrus.FieldLogger, metadata *types.ClusterMetadata) (destroy.Destroyer, error) {
+func New(logger logrus.FieldLogger, metadata *types.ClusterMetadata) (providers.Destroyer, error) {
 	return &ClusterUninstaller{
 		LibvirtURI: metadata.ClusterPlatformMetadata.BareMetal.LibvirtURI,
 		IronicURI:  metadata.ClusterPlatformMetadata.BareMetal.IronicURI,
