@@ -1,6 +1,7 @@
 package manifests
 
 import (
+	"fmt"
 	"path/filepath"
 
 	"github.com/ghodss/yaml"
@@ -14,6 +15,7 @@ import (
 	"github.com/openshift-metalkube/kni-installer/pkg/types/aws"
 	"github.com/openshift-metalkube/kni-installer/pkg/types/azure"
 	"github.com/openshift-metalkube/kni-installer/pkg/types/baremetal"
+	"github.com/openshift-metalkube/kni-installer/pkg/types/gcp"
 	"github.com/openshift-metalkube/kni-installer/pkg/types/libvirt"
 	"github.com/openshift-metalkube/kni-installer/pkg/types/none"
 	"github.com/openshift-metalkube/kni-installer/pkg/types/openstack"
@@ -54,26 +56,6 @@ func (i *Infrastructure) Generate(dependencies asset.Parents) error {
 	cloudproviderconfig := &CloudProviderConfig{}
 	dependencies.Get(clusterID, installConfig, cloudproviderconfig)
 
-	var platform configv1.PlatformType
-	switch installConfig.Config.Platform.Name() {
-	case aws.Name:
-		platform = configv1.AWSPlatformType
-	case none.Name:
-		platform = configv1.NonePlatformType
-	case libvirt.Name:
-		platform = configv1.LibvirtPlatformType
-	case openstack.Name:
-		platform = configv1.OpenStackPlatformType
-	case vsphere.Name:
-		platform = configv1.VSpherePlatformType
-	case azure.Name:
-		platform = configv1.AzurePlatformType
-	case baremetal.Name:
-		platform = configv1.BareMetalPlatformType
-	default:
-		platform = configv1.NonePlatformType
-	}
-
 	config := &configv1.Infrastructure{
 		TypeMeta: metav1.TypeMeta{
 			APIVersion: configv1.SchemeGroupVersion.String(),
@@ -85,12 +67,44 @@ func (i *Infrastructure) Generate(dependencies asset.Parents) error {
 		},
 		Status: configv1.InfrastructureStatus{
 			InfrastructureName:   clusterID.InfraID,
-			Platform:             platform,
 			APIServerURL:         getAPIServerURL(installConfig.Config),
 			APIServerInternalURL: getInternalAPIServerURL(installConfig.Config),
 			EtcdDiscoveryDomain:  getEtcdDiscoveryDomain(installConfig.Config),
+			PlatformStatus:       &configv1.PlatformStatus{},
 		},
 	}
+
+	switch installConfig.Config.Platform.Name() {
+	case aws.Name:
+		config.Status.PlatformStatus.Type = configv1.AWSPlatformType
+		config.Status.PlatformStatus.AWS = &configv1.AWSPlatformStatus{
+			Region: installConfig.Config.Platform.AWS.Region,
+		}
+	case azure.Name:
+		config.Status.PlatformStatus.Type = configv1.AzurePlatformType
+		config.Status.PlatformStatus.Azure = &configv1.AzurePlatformStatus{
+			ResourceGroupName: fmt.Sprintf("%s-rg", clusterID.InfraID),
+		}
+	case baremetal.Name:
+		config.Status.PlatformStatus.Type = configv1.BareMetalPlatformType
+	case gcp.Name:
+		config.Status.PlatformStatus.Type = configv1.GCPPlatformType
+		config.Status.PlatformStatus.GCP = &configv1.GCPPlatformStatus{
+			ProjectID: installConfig.Config.Platform.GCP.ProjectID,
+			Region:    installConfig.Config.Platform.GCP.Region,
+		}
+	case libvirt.Name:
+		config.Status.PlatformStatus.Type = configv1.LibvirtPlatformType
+	case none.Name:
+		config.Status.PlatformStatus.Type = configv1.NonePlatformType
+	case openstack.Name:
+		config.Status.PlatformStatus.Type = configv1.OpenStackPlatformType
+	case vsphere.Name:
+		config.Status.PlatformStatus.Type = configv1.VSpherePlatformType
+	default:
+		config.Status.PlatformStatus.Type = configv1.NonePlatformType
+	}
+	config.Status.Platform = config.Status.PlatformStatus.Type
 
 	if cloudproviderconfig.ConfigMap != nil {
 		// set the configmap reference.

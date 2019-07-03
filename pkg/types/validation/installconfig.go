@@ -16,6 +16,8 @@ import (
 	azurevalidation "github.com/openshift-metalkube/kni-installer/pkg/types/azure/validation"
 	"github.com/openshift-metalkube/kni-installer/pkg/types/baremetal"
 	baremetalvalidation "github.com/openshift-metalkube/kni-installer/pkg/types/baremetal/validation"
+	"github.com/openshift-metalkube/kni-installer/pkg/types/gcp"
+	gcpvalidation "github.com/openshift-metalkube/kni-installer/pkg/types/gcp/validation"
 	"github.com/openshift-metalkube/kni-installer/pkg/types/libvirt"
 	libvirtvalidation "github.com/openshift-metalkube/kni-installer/pkg/types/libvirt/validation"
 	"github.com/openshift-metalkube/kni-installer/pkg/types/openstack"
@@ -222,6 +224,9 @@ func validatePlatform(platform *types.Platform, fldPath *field.Path, openStackVa
 	if platform.Azure != nil {
 		validate(azure.Name, platform.Azure, func(f *field.Path) field.ErrorList { return azurevalidation.ValidatePlatform(platform.Azure, f) })
 	}
+	if platform.GCP != nil {
+		validate(gcp.Name, platform.GCP, func(f *field.Path) field.ErrorList { return gcpvalidation.ValidatePlatform(platform.GCP, f) })
+	}
 	if platform.Libvirt != nil {
 		validate(libvirt.Name, platform.Libvirt, func(f *field.Path) field.ErrorList { return libvirtvalidation.ValidatePlatform(platform.Libvirt, f) })
 	}
@@ -248,12 +253,12 @@ func validateProxy(p *types.Proxy, fldPath *field.Path) field.ErrorList {
 		allErrs = append(allErrs, field.Required(fldPath, "must include httpProxy or httpsProxy"))
 	}
 	if p.HTTPProxy != "" {
-		if err := validate.URIWithProtocol(p.HTTPProxy, "http"); err != nil {
+		if err := validate.URI(p.HTTPProxy); err != nil {
 			allErrs = append(allErrs, field.Invalid(field.NewPath("HTTPProxy"), p.HTTPProxy, err.Error()))
 		}
 	}
 	if p.HTTPSProxy != "" {
-		if err := validate.URIWithProtocol(p.HTTPSProxy, "https"); err != nil {
+		if err := validate.URI(p.HTTPSProxy); err != nil {
 			allErrs = append(allErrs, field.Invalid(field.NewPath("HTTPSProxy"), p.HTTPSProxy, err.Error()))
 		}
 	}

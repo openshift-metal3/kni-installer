@@ -9,7 +9,7 @@ import (
 
 	"github.com/openshift-metalkube/kni-installer/pkg/types"
 	"github.com/openshift-metalkube/kni-installer/pkg/types/azure"
-	clusterapi "sigs.k8s.io/cluster-api/pkg/apis/cluster/v1alpha1"
+	clusterapi "github.com/openshift/cluster-api/pkg/apis/machine/v1beta1"
 )
 
 // MachineSets returns a list of machinesets for a machinepool.

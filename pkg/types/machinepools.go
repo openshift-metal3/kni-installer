@@ -4,6 +4,7 @@ import (
 	"github.com/openshift-metalkube/kni-installer/pkg/types/aws"
 	"github.com/openshift-metalkube/kni-installer/pkg/types/azure"
 	"github.com/openshift-metalkube/kni-installer/pkg/types/baremetal"
+	"github.com/openshift-metalkube/kni-installer/pkg/types/gcp"
 	"github.com/openshift-metalkube/kni-installer/pkg/types/libvirt"
 	"github.com/openshift-metalkube/kni-installer/pkg/types/openstack"
 	"github.com/openshift-metalkube/kni-installer/pkg/types/vsphere"
@@ -45,6 +46,15 @@ type MachinePoolPlatform struct {
 	// AWS is the configuration used when installing on AWS.
 	AWS *aws.MachinePool `json:"aws,omitempty"`
 
+	// Azure is the configuration used when installing on OpenStack.
+	Azure *azure.MachinePool `json:"azure,omitempty"`
+
+	// BareMetal is the configuration used when installing on bare metal.
+	BareMetal *baremetal.MachinePool `json:"baremetal,omitempty"`
+
+	// GCP is the configuration used when installing on GCP
+	GCP *gcp.MachinePool `json:"gcp,omitempty"`
+
 	// Libvirt is the configuration used when installing on libvirt.
 	Libvirt *libvirt.MachinePool `json:"libvirt,omitempty"`
 
@@ -53,12 +63,6 @@ type MachinePoolPlatform struct {
 
 	// VSphere is the configuration used when installing on vSphere.
 	VSphere *vsphere.MachinePool `json:"vsphere,omitempty"`
-
-	// Azure is the configuration used when installing on OpenStack.
-	Azure *azure.MachinePool `json:"azure,omitempty"`
-
-	// BareMetal is the configuration used when installing on bare metal.
-	BareMetal *baremetal.MachinePool `json:"baremetal,omitempty"`
 }
 
 // Name returns a string representation of the platform (e.g. "aws" if
@@ -70,16 +74,18 @@ func (p *MachinePoolPlatform) Name() string {
 		return ""
 	case p.AWS != nil:
 		return aws.Name
+	case p.Azure != nil:
+		return azure.Name
+	case p.BareMetal != nil:
+		return baremetal.Name
+	case p.GCP != nil:
+		return gcp.Name
 	case p.Libvirt != nil:
 		return libvirt.Name
 	case p.OpenStack != nil:
 		return openstack.Name
 	case p.VSphere != nil:
 		return vsphere.Name
-	case p.Azure != nil:
-		return azure.Name
-	case p.BareMetal != nil:
-		return baremetal.Name
 	default:
 		return ""
 	}
