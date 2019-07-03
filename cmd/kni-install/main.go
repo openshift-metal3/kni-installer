@@ -2,7 +2,6 @@ package main
 
 import (
 	"flag"
-	"github.com/openshift-metalkube/kni-installer/pkg/terraform/exec/provisioners"
 	"io/ioutil"
 	"os"
 	"path/filepath"
@@ -29,29 +28,12 @@ func main() {
 	flag.CommandLine.Parse([]string{})
 	flag.CommandLine.Set("stderrthreshold", "4")
 
-	if argLen := len(os.Args); argLen > 0 {
-		// Support external terraform plugins
+	if len(os.Args) > 0 {
 		base := filepath.Base(os.Args[0])
 		cname := strings.TrimSuffix(base, filepath.Ext(base))
 		if pluginRunner, ok := plugins.KnownPlugins[cname]; ok {
 			pluginRunner()
 			return
-		}
-
-		// Support internal terraform plugins
-		if argLen > 3 {
-			if os.Args[1] == "internal-plugin" {
-				pluginType := os.Args[2]
-				plugin := os.Args[3]
-
-				switch pluginType {
-				case "provisioner":
-					if provisioner, ok := provisioners.KnownProvisioners[plugin]; ok {
-						provisioner()
-						return
-					}
-				}
-			}
 		}
 	}
 
