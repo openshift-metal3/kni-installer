@@ -4,7 +4,7 @@ package baremetal
 type BMC struct {
 	Username string `json:"username"`
 	Password string `json:"password"`
-	Address  string `json":"address"`
+	Address  string `json:"address"`
 }
 
 // Host stores all the configuration data for a baremetal host.
