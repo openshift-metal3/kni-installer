@@ -7,6 +7,7 @@ import (
 	"github.com/openshift-metalkube/kni-installer/pkg/types/aws"
 	"github.com/openshift-metalkube/kni-installer/pkg/types/azure"
 	"github.com/openshift-metalkube/kni-installer/pkg/types/baremetal"
+	"github.com/openshift-metalkube/kni-installer/pkg/types/gcp"
 	"github.com/openshift-metalkube/kni-installer/pkg/types/libvirt"
 	"github.com/openshift-metalkube/kni-installer/pkg/types/none"
 	"github.com/openshift-metalkube/kni-installer/pkg/types/openstack"
@@ -28,6 +29,7 @@ var (
 	PlatformNames = []string{
 		aws.Name,
 		azure.Name,
+		gcp.Name,
 	}
 	// HiddenPlatformNames is a slice with all the
 	// hidden-but-supported platform names. This list isn't presented
@@ -91,6 +93,18 @@ type Platform struct {
 	// +optional
 	AWS *aws.Platform `json:"aws,omitempty"`
 
+	// Azure is the configuration used when installing on Azure.
+	// +optional
+	Azure *azure.Platform `json:"azure,omitempty"`
+
+	// BareMetal is the configuration used when installing on bare metal.
+	// +optional
+	BareMetal *baremetal.Platform `json:"baremetal,omitempty"`
+
+	// GCP is the configuration used when installing on Google Cloud Platform.
+	// +optional
+	GCP *gcp.Platform `json:"gcp,omitempty"`
+
 	// Libvirt is the configuration used when installing on libvirt.
 	// +optional
 	Libvirt *libvirt.Platform `json:"libvirt,omitempty"`
@@ -106,14 +120,6 @@ type Platform struct {
 	// VSphere is the configuration used when installing on vSphere.
 	// +optional
 	VSphere *vsphere.Platform `json:"vsphere,omitempty"`
-
-	// Azure is the configuration used when installing on Azure.
-	// +optional
-	Azure *azure.Platform `json:"azure,omitempty"`
-
-	// BareMetal is the configuration used when installing on bare metal.
-	// +optional
-	BareMetal *baremetal.Platform `json:"baremetal,omitempty"`
 }
 
 // Name returns a string representation of the platform (e.g. "aws" if
@@ -125,6 +131,12 @@ func (p *Platform) Name() string {
 		return ""
 	case p.AWS != nil:
 		return aws.Name
+	case p.Azure != nil:
+		return azure.Name
+	case p.BareMetal != nil:
+		return baremetal.Name
+	case p.GCP != nil:
+		return gcp.Name
 	case p.Libvirt != nil:
 		return libvirt.Name
 	case p.None != nil:
@@ -133,10 +145,6 @@ func (p *Platform) Name() string {
 		return openstack.Name
 	case p.VSphere != nil:
 		return vsphere.Name
-	case p.Azure != nil:
-		return azure.Name
-	case p.BareMetal != nil:
-		return baremetal.Name
 	default:
 		return ""
 	}

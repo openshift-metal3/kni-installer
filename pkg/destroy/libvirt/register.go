@@ -3,9 +3,9 @@
 package libvirt
 
 import (
-	"github.com/openshift-metalkube/kni-installer/pkg/destroy"
+	"github.com/openshift-metalkube/kni-installer/pkg/destroy/providers"
 )
 
 func init() {
-	destroy.Registry["libvirt"] = New
+	providers.Registry["libvirt"] = New
 }
