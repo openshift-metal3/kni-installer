@@ -25,11 +25,9 @@ import (
 	clientwatch "k8s.io/client-go/tools/watch"
 
 	"github.com/openshift-metalkube/kni-installer/pkg/asset"
-	"github.com/openshift-metalkube/kni-installer/pkg/asset/installconfig"
 	assetstore "github.com/openshift-metalkube/kni-installer/pkg/asset/store"
 	targetassets "github.com/openshift-metalkube/kni-installer/pkg/asset/targets"
 	destroybootstrap "github.com/openshift-metalkube/kni-installer/pkg/destroy/bootstrap"
-	baremetaltypes "github.com/openshift-metalkube/kni-installer/pkg/types/baremetal"
 	configv1 "github.com/openshift/api/config/v1"
 	configclient "github.com/openshift/client-go/config/clientset/versioned"
 	routeclient "github.com/openshift/client-go/route/clientset/versioned"
@@ -108,18 +106,6 @@ var (
 				err = destroybootstrap.Destroy(rootOpts.dir)
 				if err != nil {
 					logrus.Fatal(err)
-				}
-
-				// FIXME: baremetal platform needs to perform additional steps after bootstrap completes
-				// See https://github.com/openshift-metal3/kni-installer/issues/60
-				if assetStore, err := assetstore.NewStore(rootOpts.dir); err == nil {
-					installConfig := &installconfig.InstallConfig{}
-					if err := assetStore.Fetch(installConfig); err == nil {
-						if installConfig.Config.Platform.Name() == baremetaltypes.Name {
-							logrus.Warn("Exiting, baremetal platform needs intervention to continue")
-							return
-						}
-					}
 				}
 
 				err = waitForInstallComplete(ctx, config, rootOpts.dir)
