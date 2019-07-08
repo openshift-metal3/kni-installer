@@ -4,10 +4,10 @@ package baremetal
 
 import (
 	"github.com/libvirt/libvirt-go"
-	"github.com/openshift-metalkube/kni-installer/pkg/destroy/providers"
 	"github.com/pkg/errors"
 	"github.com/sirupsen/logrus"
 
+	"github.com/openshift-metalkube/kni-installer/pkg/destroy/providers"
 	"github.com/openshift-metalkube/kni-installer/pkg/types"
 )
 
