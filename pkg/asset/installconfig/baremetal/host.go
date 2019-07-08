@@ -83,6 +83,5 @@ func Host() (*baremetal.Host, error) {
 		return nil, err
 	}
 
-
 	return &host, nil
 }
