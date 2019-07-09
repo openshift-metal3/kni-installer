@@ -1,4 +1,7 @@
 #!/usr/libexec/platform-python
+
+# Script to determine the network CIDR for a given VIP.
+
 import sys
 import socket
 import struct

@@ -1,3 +1,5 @@
+# Systemd service file used to start the bootstrap Keepalived instance.
+
 [Unit]
 Description=Manage node VIPs with keepalived
 Wants=network-online.target
