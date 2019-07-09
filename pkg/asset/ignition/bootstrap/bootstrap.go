@@ -137,16 +137,17 @@ func (a *Bootstrap) Generate(dependencies asset.Parents) error {
 	platform := installConfig.Config.Platform.Name()
 	platformFilePath := fmt.Sprintf("bootstrap/%s/files", platform)
 	directory, err := data.Assets.Open(platformFilePath)
-	if directory != nil {
+	if err == nil {
 		directory.Close()
 		err = a.addStorageFiles("/", platformFilePath, templateData)
 		if err != nil {
 			return err
 		}
 	}
+
 	platformUnitPath := fmt.Sprintf("bootstrap/%s/systemd/units", platform)
 	directory, err = data.Assets.Open(platformUnitPath)
-	if directory != nil {
+	if err == nil {
 		directory.Close()
 		err = a.addSystemdUnits(platformUnitPath, templateData)
 		if err != nil {
