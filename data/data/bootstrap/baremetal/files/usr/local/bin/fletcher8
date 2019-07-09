@@ -1,4 +1,8 @@
 #!/usr/libexec/platform-python
+
+# Script that uses the fletcher8 algorithm to generate a hash from an input
+# string. This is used to generate VRRP ids for use with Keepalived.
+
 import sys
 
 data = map(ord, sys.argv[1])

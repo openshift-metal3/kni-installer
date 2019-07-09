@@ -1,6 +1,9 @@
 #!/usr/bin/env bash
 set -e
 
+# Script to configure and run the CoreDNS instance used to provide DNS
+# resolution between nodes in the cluster.
+
 
 mkdir --parents /etc/keepalived
 

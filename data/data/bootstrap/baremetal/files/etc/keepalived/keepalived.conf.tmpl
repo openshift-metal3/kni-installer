@@ -1,3 +1,6 @@
+# Configuration template for Keepalived, which is used to manage the DNS and
+# API VIPs.
+
 vrrp_instance ${CLUSTER_NAME}_API {
     state BACKUP
     interface ${INTERFACE}

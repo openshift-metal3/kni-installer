@@ -1,6 +1,9 @@
 #!/usr/bin/env bash
 set -e
 
+# Script to configure and run the Keepalived instance used to manage the DNS
+# and API VIPs.
+
 mkdir --parents /etc/keepalived
 
 KEEPALIVED_IMAGE=quay.io/celebdor/keepalived:latest
