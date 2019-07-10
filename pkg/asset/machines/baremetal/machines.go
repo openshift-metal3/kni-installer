@@ -7,9 +7,9 @@ import (
 	baremetalprovider "github.com/metal3-io/cluster-api-provider-baremetal/pkg/apis/baremetal/v1alpha1"
 
 	machineapi "github.com/openshift/cluster-api/pkg/apis/machine/v1beta1"
+	corev1 "k8s.io/api/core/v1"
 	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
 	"k8s.io/apimachinery/pkg/runtime"
-        corev1 "k8s.io/api/core/v1"
 
 	"github.com/openshift-metalkube/kni-installer/pkg/types"
 	"github.com/openshift-metalkube/kni-installer/pkg/types/baremetal"
@@ -62,10 +62,10 @@ func Machines(clusterID string, config *types.InstallConfig, pool *types.Machine
 
 func provider(clusterName string, networkInterfaceAddress string, platform *baremetal.Platform, userDataSecret string) *baremetalprovider.BareMetalMachineProviderSpec {
 	return &baremetalprovider.BareMetalMachineProviderSpec{
-                Image: baremetalprovider.Image{
-                        URL: platform.Image.Source,
-                        Checksum: platform.Image.Checksum,
-                },
-                UserData: &corev1.SecretReference{Name: userDataSecret},
-        }
+		Image: baremetalprovider.Image{
+			URL:      platform.Image.Source,
+			Checksum: platform.Image.Checksum,
+		},
+		UserData: &corev1.SecretReference{Name: userDataSecret},
+	}
 }
