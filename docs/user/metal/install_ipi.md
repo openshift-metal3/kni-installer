@@ -136,7 +136,7 @@ controlPlane:
     baremetal: {}
 platform:
   baremetal:
-    api_vip: 192.168.111.5
+    apiVIP: 192.168.111.5
     hosts:
       - name: openshift-master-0
         role: master

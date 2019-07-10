@@ -31,20 +31,20 @@ type Platform struct {
 	// reachable from the host where the installer is run.
 	// +optional
 	// Default is qemu:///system
-	LibvirtURI string `json:"libvirt_uri,omitempty"`
+	LibvirtURI string `json:"libvirtURI,omitempty"`
 
 	// IronicURI is the identifier for the Ironic connection.  It must be
 	// reachable from the host where the installer is run.
 	// +optional
-	IronicURI string `json:"ironic_uri,omitempty"`
+	IronicURI string `json:"ironicURI,omitempty"`
 
 	// External bridge is used for external communication.
 	// +optional
-	ExternalBridge string `json:"external_bridge,omitempty"`
+	ExternalBridge string `json:"externalBridge,omitempty"`
 
 	// Provisioning bridge is used for provisioning nodes.
 	// +optional
-	ProvisioningBridge string `json:"provisioning_bridge,omitempty"`
+	ProvisioningBridge string `json:"provisioningBridge,omitempty"`
 
 	// Hosts is the information needed to create the objects in Ironic.
 	Hosts []*Host `json:"hosts"`
@@ -59,8 +59,8 @@ type Platform struct {
 	DefaultMachinePlatform *MachinePool `json:"defaultMachinePlatform,omitempty"`
 
 	// APIVIP is the VIP to use for internal API communication
-	APIVIP string `json:"api_vip"`
+	APIVIP string `json:"apiVIP"`
 
 	// IngressVIP is the VIP to use for ingress traffic
-	IngressVIP string `json:"ingress_vip"`
+	IngressVIP string `json:"ingressVIP"`
 }
