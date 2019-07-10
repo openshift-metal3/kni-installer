@@ -31,4 +31,22 @@ Relevant files:
 
 ## Internal DNS
 
-TODO
+Another key area addressed with some of the bootstrap assets is DNS.  The goal
+of these changes is to automate as much of the DNS requirements internal to the
+cluster as possible, leaving only a small amount of public DNS work to be
+done.  Because of these changes, the only external DNS records that the cluster
+administrator must create are:
+
+* api.<cluster-name>.<base-domain>
+* *.apps.<cluster-name>.<base-domain>
+
+TODO - explain how this works ...
+
+Relevant files:
+* files/etc/coredns/Corefile
+* files/etc/keepalived/keepalived.conf.tmpl
+* files/etc/dhcp/dhclient.conf
+* files/usr/local/bin/fletcher8
+* files/usr/local/bin/get_vip_subnet_cidr
+* files/usr/local/bin/coredns.sh
+* systemd/units/coredns.service
