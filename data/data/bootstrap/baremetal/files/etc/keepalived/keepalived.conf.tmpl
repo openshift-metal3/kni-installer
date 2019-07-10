@@ -1,5 +1,8 @@
 # Configuration template for Keepalived, which is used to manage the DNS and
 # API VIPs.
+#
+# For more information, see installer/data/data/bootstrap/baremetal/README.md
+#
 
 vrrp_instance ${CLUSTER_NAME}_API {
     state BACKUP
