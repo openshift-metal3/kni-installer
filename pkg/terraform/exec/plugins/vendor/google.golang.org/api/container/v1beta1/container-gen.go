@@ -337,14 +337,6 @@ type AddonsConfig struct {
 	IstioConfig *IstioConfig `json:"istioConfig,omitempty"`
 
 	// KubernetesDashboard: Configuration for the Kubernetes Dashboard.
-	// This addon is deprecated, and will be disabled in 1.15. It is
-	// recommended
-	// to use the Cloud Console to manage and monitor your Kubernetes
-	// clusters,
-	// workloads and applications. For more information,
-	// see:
-	// https://cloud.google.com/kubernetes-engine/docs/concepts/dashboar
-	// ds
 	KubernetesDashboard *KubernetesDashboard `json:"kubernetesDashboard,omitempty"`
 
 	// NetworkPolicyConfig: Configuration for NetworkPolicy. This only
@@ -451,43 +443,6 @@ type AutoUpgradeOptions struct {
 
 func (s *AutoUpgradeOptions) MarshalJSON() ([]byte, error) {
 	type NoMethod AutoUpgradeOptions
-	raw := NoMethod(*s)
-	return gensupport.MarshalJSON(raw, s.ForceSendFields, s.NullFields)
-}
-
-// AutoprovisioningNodePoolDefaults: AutoprovisioningNodePoolDefaults
-// contains defaults for a node pool created
-// by NAP.
-type AutoprovisioningNodePoolDefaults struct {
-	// OauthScopes: Scopes that are used by NAP when creating node pools. If
-	// oauth_scopes are
-	// specified, service_account should be empty.
-	OauthScopes []string `json:"oauthScopes,omitempty"`
-
-	// ServiceAccount: The Google Cloud Platform Service Account to be used
-	// by the node VMs. If
-	// service_account is specified, scopes should be empty.
-	ServiceAccount string `json:"serviceAccount,omitempty"`
-
-	// ForceSendFields is a list of field names (e.g. "OauthScopes") to
-	// unconditionally include in API requests. By default, fields with
-	// empty values are omitted from API requests. However, any non-pointer,
-	// non-interface field appearing in ForceSendFields will be sent to the
-	// server regardless of whether the field is empty or not. This may be
-	// used to include empty fields in Patch requests.
-	ForceSendFields []string `json:"-"`
-
-	// NullFields is a list of field names (e.g. "OauthScopes") to include
-	// in API requests with the JSON null value. By default, fields with
-	// empty values are omitted from API requests. However, any field with
-	// an empty value appearing in NullFields will be sent to the server as
-	// null. It is an error if a field in this list has a non-empty value.
-	// This may be used to include null fields in Patch requests.
-	NullFields []string `json:"-"`
-}
-
-func (s *AutoprovisioningNodePoolDefaults) MarshalJSON() ([]byte, error) {
-	type NoMethod AutoprovisioningNodePoolDefaults
 	raw := NoMethod(*s)
 	return gensupport.MarshalJSON(raw, s.ForceSendFields, s.NullFields)
 }
@@ -737,7 +692,7 @@ type Cluster struct {
 	// CurrentNodeVersion: [Output only] Deprecated,
 	// use
 	// [NodePool.version](/kubernetes-engine/docs/reference/rest/v1beta1/
-	// projects.locations.clusters.nodePools)
+	// projects.zones.clusters.nodePool)
 	// instead. The current version of the node software components.
 	// If they are currently at multiple versions because they're in the
 	// process
@@ -823,8 +778,6 @@ type Cluster struct {
 	// an
 	// auto-generated name. Do not use this and a node_pool at the same
 	// time.
-	//
-	// This field is deprecated, use node_pool.initial_node_count instead.
 	InitialNodeCount int64 `json:"initialNodeCount,omitempty"`
 
 	// InstanceGroupUrls: Deprecated. Use node_pools.instance_group_urls.
@@ -929,6 +882,7 @@ type Cluster struct {
 	NetworkPolicy *NetworkPolicy `json:"networkPolicy,omitempty"`
 
 	// NodeConfig: Parameters used in creating the cluster's nodes.
+	// See `nodeConfig` for the description of its properties.
 	// For requests, this field should only be used in lieu of a
 	// "node_pool" object, since this configuration (along with
 	// the
@@ -938,21 +892,16 @@ type Cluster struct {
 	// time.
 	// For responses, this field will be populated with the node
 	// configuration of
-	// the first node pool. (For configuration of each node pool,
-	// see
-	// `node_pool.config`)
+	// the first node pool.
 	//
 	// If unspecified, the defaults are used.
-	// This field is deprecated, use node_pool.config instead.
 	NodeConfig *NodeConfig `json:"nodeConfig,omitempty"`
 
 	// NodeIpv4CidrSize: [Output only] The size of the address space on each
 	// node for hosting
 	// containers. This is provisioned from within the
 	// `container_ipv4_cidr`
-	// range. This field will only be set when cluster is in route-based
-	// network
-	// mode.
+	// range.
 	NodeIpv4CidrSize int64 `json:"nodeIpv4CidrSize,omitempty"`
 
 	// NodePools: The node pools associated with this cluster.
@@ -1039,9 +988,6 @@ type Cluster struct {
 	// the name.
 	Subnetwork string `json:"subnetwork,omitempty"`
 
-	// TierSettings: Cluster tier settings.
-	TierSettings *TierSettings `json:"tierSettings,omitempty"`
-
 	// TpuIpv4CidrBlock: [Output only] The IP address range of the Cloud
 	// TPUs in this cluster,
 	// in
@@ -1053,11 +999,6 @@ type Cluster struct {
 	// VerticalPodAutoscaling: Cluster-level Vertical Pod Autoscaling
 	// configuration.
 	VerticalPodAutoscaling *VerticalPodAutoscaling `json:"verticalPodAutoscaling,omitempty"`
-
-	// WorkloadIdentityConfig: Configuration for the use of Kubernetes
-	// Service Accounts in GCP IAM
-	// policies.
-	WorkloadIdentityConfig *WorkloadIdentityConfig `json:"workloadIdentityConfig,omitempty"`
 
 	// Zone: [Output only] The name of the Google Compute
 	// Engine
@@ -1100,16 +1041,6 @@ func (s *Cluster) MarshalJSON() ([]byte, error) {
 // the size of the cluster and create/delete
 // node pools based on the current needs.
 type ClusterAutoscaling struct {
-	// AutoprovisioningLocations: The list of Google Compute Engine
-	// [zones](/compute/docs/zones#available)
-	// in which the NodePool's nodes can be created by NAP.
-	AutoprovisioningLocations []string `json:"autoprovisioningLocations,omitempty"`
-
-	// AutoprovisioningNodePoolDefaults: AutoprovisioningNodePoolDefaults
-	// contains defaults for a node pool
-	// created by NAP.
-	AutoprovisioningNodePoolDefaults *AutoprovisioningNodePoolDefaults `json:"autoprovisioningNodePoolDefaults,omitempty"`
-
 	// EnableNodeAutoprovisioning: Enables automatic node pool creation and
 	// deletion.
 	EnableNodeAutoprovisioning bool `json:"enableNodeAutoprovisioning,omitempty"`
@@ -1120,7 +1051,7 @@ type ClusterAutoscaling struct {
 	ResourceLimits []*ResourceLimit `json:"resourceLimits,omitempty"`
 
 	// ForceSendFields is a list of field names (e.g.
-	// "AutoprovisioningLocations") to unconditionally include in API
+	// "EnableNodeAutoprovisioning") to unconditionally include in API
 	// requests. By default, fields with empty values are omitted from API
 	// requests. However, any non-pointer, non-interface field appearing in
 	// ForceSendFields will be sent to the server regardless of whether the
@@ -1129,10 +1060,10 @@ type ClusterAutoscaling struct {
 	ForceSendFields []string `json:"-"`
 
 	// NullFields is a list of field names (e.g.
-	// "AutoprovisioningLocations") to include in API requests with the JSON
-	// null value. By default, fields with empty values are omitted from API
-	// requests. However, any field with an empty value appearing in
-	// NullFields will be sent to the server as null. It is an error if a
+	// "EnableNodeAutoprovisioning") to include in API requests with the
+	// JSON null value. By default, fields with empty values are omitted
+	// from API requests. However, any field with an empty value appearing
+	// in NullFields will be sent to the server as null. It is an error if a
 	// field in this list has a non-empty value. This may be used to include
 	// null fields in Patch requests.
 	NullFields []string `json:"-"`
@@ -1236,11 +1167,11 @@ type ClusterUpdate struct {
 
 	// DesiredNodePoolId: The node pool to be upgraded. This field is
 	// mandatory if
-	// "desired_node_version",
-	// "desired_image_family",
-	// "desired_node_pool_autoscaling", or
-	// "desired_workload_metadata_config"
-	// is specified and there is more than one node pool on the cluster.
+	// "desired_node_version", "desired_image_family"
+	// or
+	// "desired_node_pool_autoscaling" is specified and there is more than
+	// one
+	// node pool on the cluster.
 	DesiredNodePoolId string `json:"desiredNodePoolId,omitempty"`
 
 	// DesiredNodeVersion: The Kubernetes version to change the nodes to
@@ -1263,10 +1194,6 @@ type ClusterUpdate struct {
 	// the PodSecurityPolicy feature.
 	DesiredPodSecurityPolicyConfig *PodSecurityPolicyConfig `json:"desiredPodSecurityPolicyConfig,omitempty"`
 
-	// DesiredPrivateClusterConfig: The desired private cluster
-	// configuration.
-	DesiredPrivateClusterConfig *PrivateClusterConfig `json:"desiredPrivateClusterConfig,omitempty"`
-
 	// DesiredResourceUsageExportConfig: The desired configuration for
 	// exporting resource usage.
 	DesiredResourceUsageExportConfig *ResourceUsageExportConfig `json:"desiredResourceUsageExportConfig,omitempty"`
@@ -1274,9 +1201,6 @@ type ClusterUpdate struct {
 	// DesiredVerticalPodAutoscaling: Cluster-level Vertical Pod Autoscaling
 	// configuration.
 	DesiredVerticalPodAutoscaling *VerticalPodAutoscaling `json:"desiredVerticalPodAutoscaling,omitempty"`
-
-	// DesiredWorkloadIdentityConfig: Configuration for Workload Identity.
-	DesiredWorkloadIdentityConfig *WorkloadIdentityConfig `json:"desiredWorkloadIdentityConfig,omitempty"`
 
 	// ForceSendFields is a list of field names (e.g. "DesiredAddonsConfig")
 	// to unconditionally include in API requests. By default, fields with
@@ -1349,39 +1273,6 @@ type CompleteIPRotationRequest struct {
 
 func (s *CompleteIPRotationRequest) MarshalJSON() ([]byte, error) {
 	type NoMethod CompleteIPRotationRequest
-	raw := NoMethod(*s)
-	return gensupport.MarshalJSON(raw, s.ForceSendFields, s.NullFields)
-}
-
-// ConsumptionMeteringConfig: Parameters for controlling consumption
-// metering.
-type ConsumptionMeteringConfig struct {
-	// Enabled: Whether to enable consumption metering for this cluster. If
-	// enabled, a
-	// second BigQuery table will be created to hold resource
-	// consumption
-	// records.
-	Enabled bool `json:"enabled,omitempty"`
-
-	// ForceSendFields is a list of field names (e.g. "Enabled") to
-	// unconditionally include in API requests. By default, fields with
-	// empty values are omitted from API requests. However, any non-pointer,
-	// non-interface field appearing in ForceSendFields will be sent to the
-	// server regardless of whether the field is empty or not. This may be
-	// used to include empty fields in Patch requests.
-	ForceSendFields []string `json:"-"`
-
-	// NullFields is a list of field names (e.g. "Enabled") to include in
-	// API requests with the JSON null value. By default, fields with empty
-	// values are omitted from API requests. However, any field with an
-	// empty value appearing in NullFields will be sent to the server as
-	// null. It is an error if a field in this list has a non-empty value.
-	// This may be used to include null fields in Patch requests.
-	NullFields []string `json:"-"`
-}
-
-func (s *ConsumptionMeteringConfig) MarshalJSON() ([]byte, error) {
-	type NoMethod ConsumptionMeteringConfig
 	raw := NoMethod(*s)
 	return gensupport.MarshalJSON(raw, s.ForceSendFields, s.NullFields)
 }
@@ -1501,7 +1392,7 @@ type DailyMaintenanceWindow struct {
 
 	// StartTime: Time within the maintenance window to start the
 	// maintenance operations.
-	// It must be in format "HH:MM", where HH : [00-23] and MM : [00-59]
+	// It must be in format "HH:MM”, where HH : [00-23] and MM : [00-59]
 	// GMT.
 	StartTime string `json:"startTime,omitempty"`
 
@@ -1544,7 +1435,7 @@ type DatabaseEncryption struct {
 	//   "ENCRYPTED" - Secrets in etcd are encrypted.
 	//   "DECRYPTED" - Secrets in etcd are stored in plain text (at etcd
 	// level) - this is
-	// unrelated to Google Compute Engine level full disk encryption.
+	// unrelated to GCE level full disk encryption.
 	State string `json:"state,omitempty"`
 
 	// ForceSendFields is a list of field names (e.g. "KeyName") to
@@ -1627,26 +1518,25 @@ func (s *GetJSONWebKeysResponse) MarshalJSON() ([]byte, error) {
 // document for the cluster.
 // See the OpenID Connect Discovery 1.0 specification for details.
 type GetOpenIDConfigResponse struct {
-	// ClaimsSupported: Supported claims.
+	// ClaimsSupported: NOLINT
 	ClaimsSupported []string `json:"claims_supported,omitempty"`
 
-	// GrantTypes: Supported grant types.
+	// GrantTypes: NOLINT
 	GrantTypes []string `json:"grant_types,omitempty"`
 
-	// IdTokenSigningAlgValuesSupported: supported ID Token signing
-	// Algorithms.
+	// IdTokenSigningAlgValuesSupported: NOLINT
 	IdTokenSigningAlgValuesSupported []string `json:"id_token_signing_alg_values_supported,omitempty"`
 
-	// Issuer: OIDC Issuer.
+	// Issuer: NOLINT
 	Issuer string `json:"issuer,omitempty"`
 
-	// JwksUri: JSON Web Key uri.
+	// JwksUri: NOLINT
 	JwksUri string `json:"jwks_uri,omitempty"`
 
-	// ResponseTypesSupported: Supported response types.
+	// ResponseTypesSupported: NOLINT
 	ResponseTypesSupported []string `json:"response_types_supported,omitempty"`
 
-	// SubjectTypesSupported: Supported subject types.
+	// SubjectTypesSupported: NOLINT
 	SubjectTypesSupported []string `json:"subject_types_supported,omitempty"`
 
 	// ServerResponse contains the HTTP response code and headers from the
@@ -2003,31 +1893,33 @@ func (s *IstioConfig) MarshalJSON() ([]byte, error) {
 
 // Jwk: Jwk is a JSON Web Key as specified in RFC 7517
 type Jwk struct {
-	// Alg: Algorithm.
+	// Alg: NOLINT
 	Alg string `json:"alg,omitempty"`
 
-	// Crv: Used for ECDSA keys.
+	// Crv: NOLINT
 	Crv string `json:"crv,omitempty"`
 
-	// E: Used for RSA keys.
+	// E: NOLINT
 	E string `json:"e,omitempty"`
 
-	// Kid: Key ID.
+	// Kid: NOLINT
 	Kid string `json:"kid,omitempty"`
 
-	// Kty: Key Type.
+	// Kty: NOLINT
 	Kty string `json:"kty,omitempty"`
 
-	// N: Used for RSA keys.
+	// N: Fields for RSA keys.
+	// NOLINT
 	N string `json:"n,omitempty"`
 
-	// Use: Permitted uses for the public keys.
+	// Use: NOLINT
 	Use string `json:"use,omitempty"`
 
-	// X: Used for ECDSA keys.
+	// X: Fields for ECDSA keys.
+	// NOLINT
 	X string `json:"x,omitempty"`
 
-	// Y: Used for ECDSA keys.
+	// Y: NOLINT
 	Y string `json:"y,omitempty"`
 
 	// ForceSendFields is a list of field names (e.g. "Alg") to
@@ -2448,6 +2340,9 @@ type MasterAuth struct {
 	// to the cluster endpoint.
 	ClientKey string `json:"clientKey,omitempty"`
 
+	// ClusterCaCertificate: [Output only] Base64-encoded public certificate
+	// that is the root of
+	// trust for the cluster.
 	ClusterCaCertificate string `json:"clusterCaCertificate,omitempty"`
 
 	// Password: The password to use for HTTP basic authentication to the
@@ -2814,13 +2709,7 @@ type NodeConfig struct {
 	//  "kube-env"
 	//  "startup-script"
 	//  "user-data"
-	//  "disable-address-manager"
-	//  "windows-startup-script-ps1"
-	//  "common-psm1"
-	//  "k8s-node-setup-psm1"
-	//  "install-ssh-psm1"
-	//  "user-profile-psm1"
-	//  "serial-port-logging-enable"
+	//
 	// Values are free-form strings, and only have meaning as interpreted
 	// by
 	// the image running in the instance. The only restriction placed on
@@ -2875,17 +2764,11 @@ type NodeConfig struct {
 	// inforamtion about preemptible VM instances.
 	Preemptible bool `json:"preemptible,omitempty"`
 
-	// SandboxConfig: Sandbox configuration for this node.
-	SandboxConfig *SandboxConfig `json:"sandboxConfig,omitempty"`
-
 	// ServiceAccount: The Google Cloud Platform Service Account to be used
 	// by the node VMs. If
 	// no Service Account is specified, the "default" service account is
 	// used.
 	ServiceAccount string `json:"serviceAccount,omitempty"`
-
-	// ShieldedInstanceConfig: Shielded Instance options.
-	ShieldedInstanceConfig *ShieldedInstanceConfig `json:"shieldedInstanceConfig,omitempty"`
 
 	// Tags: The list of instance tags applied to all nodes. Tags are used
 	// to identify
@@ -3006,11 +2889,6 @@ type NodePool struct {
 	// associated with this node pool.
 	InstanceGroupUrls []string `json:"instanceGroupUrls,omitempty"`
 
-	// Locations: The list of Google Compute Engine
-	// [zones](/compute/docs/zones#available)
-	// in which the NodePool's nodes should be located.
-	Locations []string `json:"locations,omitempty"`
-
 	// Management: NodeManagement configuration for this NodePool.
 	Management *NodeManagement `json:"management,omitempty"`
 
@@ -3021,10 +2899,6 @@ type NodePool struct {
 
 	// Name: The name of the node pool.
 	Name string `json:"name,omitempty"`
-
-	// PodIpv4CidrSize: [Output only] The pod CIDR block size per node in
-	// this node pool.
-	PodIpv4CidrSize int64 `json:"podIpv4CidrSize,omitempty"`
 
 	// SelfLink: [Output only] Server-defined URL for the resource.
 	SelfLink string `json:"selfLink,omitempty"`
@@ -3384,10 +3258,6 @@ func (s *PodSecurityPolicyConfig) MarshalJSON() ([]byte, error) {
 
 // PrivateClusterConfig: Configuration options for private clusters.
 type PrivateClusterConfig struct {
-	// EnablePeeringRouteSharing: Whether to enable route sharing over the
-	// network peering.
-	EnablePeeringRouteSharing bool `json:"enablePeeringRouteSharing,omitempty"`
-
 	// EnablePrivateEndpoint: Whether the master's internal IP address is
 	// used as the cluster endpoint.
 	EnablePrivateEndpoint bool `json:"enablePrivateEndpoint,omitempty"`
@@ -3417,21 +3287,21 @@ type PrivateClusterConfig struct {
 	PublicEndpoint string `json:"publicEndpoint,omitempty"`
 
 	// ForceSendFields is a list of field names (e.g.
-	// "EnablePeeringRouteSharing") to unconditionally include in API
-	// requests. By default, fields with empty values are omitted from API
-	// requests. However, any non-pointer, non-interface field appearing in
+	// "EnablePrivateEndpoint") to unconditionally include in API requests.
+	// By default, fields with empty values are omitted from API requests.
+	// However, any non-pointer, non-interface field appearing in
 	// ForceSendFields will be sent to the server regardless of whether the
 	// field is empty or not. This may be used to include empty fields in
 	// Patch requests.
 	ForceSendFields []string `json:"-"`
 
-	// NullFields is a list of field names (e.g.
-	// "EnablePeeringRouteSharing") to include in API requests with the JSON
-	// null value. By default, fields with empty values are omitted from API
-	// requests. However, any field with an empty value appearing in
-	// NullFields will be sent to the server as null. It is an error if a
-	// field in this list has a non-empty value. This may be used to include
-	// null fields in Patch requests.
+	// NullFields is a list of field names (e.g. "EnablePrivateEndpoint") to
+	// include in API requests with the JSON null value. By default, fields
+	// with empty values are omitted from API requests. However, any field
+	// with an empty value appearing in NullFields will be sent to the
+	// server as null. It is an error if a field in this list has a
+	// non-empty value. This may be used to include null fields in Patch
+	// requests.
 	NullFields []string `json:"-"`
 }
 
@@ -3483,10 +3353,6 @@ type ResourceUsageExportConfig struct {
 	// BigqueryDestination: Configuration to use BigQuery as usage export
 	// destination.
 	BigqueryDestination *BigQueryDestination `json:"bigqueryDestination,omitempty"`
-
-	// ConsumptionMeteringConfig: Configuration to enable resource
-	// consumption metering.
-	ConsumptionMeteringConfig *ConsumptionMeteringConfig `json:"consumptionMeteringConfig,omitempty"`
 
 	// EnableNetworkEgressMetering: Whether to enable network egress
 	// metering for this cluster. If enabled, a
@@ -3573,35 +3439,6 @@ type RollbackNodePoolUpgradeRequest struct {
 
 func (s *RollbackNodePoolUpgradeRequest) MarshalJSON() ([]byte, error) {
 	type NoMethod RollbackNodePoolUpgradeRequest
-	raw := NoMethod(*s)
-	return gensupport.MarshalJSON(raw, s.ForceSendFields, s.NullFields)
-}
-
-// SandboxConfig: SandboxConfig contains configurations of the sandbox
-// to use for the node.
-type SandboxConfig struct {
-	// SandboxType: Type of the sandbox to use for the node (e.g. 'gvisor')
-	SandboxType string `json:"sandboxType,omitempty"`
-
-	// ForceSendFields is a list of field names (e.g. "SandboxType") to
-	// unconditionally include in API requests. By default, fields with
-	// empty values are omitted from API requests. However, any non-pointer,
-	// non-interface field appearing in ForceSendFields will be sent to the
-	// server regardless of whether the field is empty or not. This may be
-	// used to include empty fields in Patch requests.
-	ForceSendFields []string `json:"-"`
-
-	// NullFields is a list of field names (e.g. "SandboxType") to include
-	// in API requests with the JSON null value. By default, fields with
-	// empty values are omitted from API requests. However, any field with
-	// an empty value appearing in NullFields will be sent to the server as
-	// null. It is an error if a field in this list has a non-empty value.
-	// This may be used to include null fields in Patch requests.
-	NullFields []string `json:"-"`
-}
-
-func (s *SandboxConfig) MarshalJSON() ([]byte, error) {
-	type NoMethod SandboxConfig
 	raw := NoMethod(*s)
 	return gensupport.MarshalJSON(raw, s.ForceSendFields, s.NullFields)
 }
@@ -4361,55 +4198,6 @@ func (s *SetNodePoolSizeRequest) MarshalJSON() ([]byte, error) {
 	return gensupport.MarshalJSON(raw, s.ForceSendFields, s.NullFields)
 }
 
-// ShieldedInstanceConfig: A set of Shielded Instance options.
-type ShieldedInstanceConfig struct {
-	// EnableIntegrityMonitoring: Defines whether the instance has integrity
-	// monitoring enabled.
-	//
-	// Enables monitoring and attestation of the boot integrity of the
-	// instance.
-	// The attestation is performed against the integrity policy baseline.
-	// This
-	// baseline is initially derived from the implicitly trusted boot image
-	// when
-	// the instance is created.
-	EnableIntegrityMonitoring bool `json:"enableIntegrityMonitoring,omitempty"`
-
-	// EnableSecureBoot: Defines whether the instance has Secure Boot
-	// enabled.
-	//
-	// Secure Boot helps ensure that the system only runs authentic software
-	// by
-	// verifying the digital signature of all boot components, and halting
-	// the
-	// boot process if signature verification fails.
-	EnableSecureBoot bool `json:"enableSecureBoot,omitempty"`
-
-	// ForceSendFields is a list of field names (e.g.
-	// "EnableIntegrityMonitoring") to unconditionally include in API
-	// requests. By default, fields with empty values are omitted from API
-	// requests. However, any non-pointer, non-interface field appearing in
-	// ForceSendFields will be sent to the server regardless of whether the
-	// field is empty or not. This may be used to include empty fields in
-	// Patch requests.
-	ForceSendFields []string `json:"-"`
-
-	// NullFields is a list of field names (e.g.
-	// "EnableIntegrityMonitoring") to include in API requests with the JSON
-	// null value. By default, fields with empty values are omitted from API
-	// requests. However, any field with an empty value appearing in
-	// NullFields will be sent to the server as null. It is an error if a
-	// field in this list has a non-empty value. This may be used to include
-	// null fields in Patch requests.
-	NullFields []string `json:"-"`
-}
-
-func (s *ShieldedInstanceConfig) MarshalJSON() ([]byte, error) {
-	type NoMethod ShieldedInstanceConfig
-	raw := NoMethod(*s)
-	return gensupport.MarshalJSON(raw, s.ForceSendFields, s.NullFields)
-}
-
 // StartIPRotationRequest: StartIPRotationRequest creates a new IP for
 // the cluster and then performs
 // a node upgrade on each node pool to point to the new IP.
@@ -4506,42 +4294,6 @@ type StatusCondition struct {
 
 func (s *StatusCondition) MarshalJSON() ([]byte, error) {
 	type NoMethod StatusCondition
-	raw := NoMethod(*s)
-	return gensupport.MarshalJSON(raw, s.ForceSendFields, s.NullFields)
-}
-
-// TierSettings: Cluster tier settings.
-type TierSettings struct {
-	// Tier: Cluster tier.
-	//
-	// Possible values:
-	//   "UNSPECIFIED" - UNSPECIFIED is the default value. If this value is
-	// set during create or
-	// update, it defaults to the project level tier setting.
-	//   "STANDARD" - Represents the standard tier or base Google Kubernetes
-	// Engine offering.
-	//   "ADVANCED" - Represents the advanced tier.
-	Tier string `json:"tier,omitempty"`
-
-	// ForceSendFields is a list of field names (e.g. "Tier") to
-	// unconditionally include in API requests. By default, fields with
-	// empty values are omitted from API requests. However, any non-pointer,
-	// non-interface field appearing in ForceSendFields will be sent to the
-	// server regardless of whether the field is empty or not. This may be
-	// used to include empty fields in Patch requests.
-	ForceSendFields []string `json:"-"`
-
-	// NullFields is a list of field names (e.g. "Tier") to include in API
-	// requests with the JSON null value. By default, fields with empty
-	// values are omitted from API requests. However, any field with an
-	// empty value appearing in NullFields will be sent to the server as
-	// null. It is an error if a field in this list has a non-empty value.
-	// This may be used to include null fields in Patch requests.
-	NullFields []string `json:"-"`
-}
-
-func (s *TierSettings) MarshalJSON() ([]byte, error) {
-	type NoMethod TierSettings
 	raw := NoMethod(*s)
 	return gensupport.MarshalJSON(raw, s.ForceSendFields, s.NullFields)
 }
@@ -4673,17 +4425,6 @@ type UpdateNodePoolRequest struct {
 	// ImageType: The desired image type for the node pool.
 	ImageType string `json:"imageType,omitempty"`
 
-	// Locations: The desired list of Google Compute
-	// Engine
-	// [zones](/compute/docs/zones#available) in which the node pool's
-	// nodes
-	// should be located. Changing the locations for a node pool will
-	// result
-	// in nodes being either created or removed from the node pool,
-	// depending
-	// on whether locations are being added or removed.
-	Locations []string `json:"locations,omitempty"`
-
 	// Name: The name (project, location, cluster, node pool) of the node
 	// pool to
 	// update. Specified in the
@@ -4717,9 +4458,6 @@ type UpdateNodePoolRequest struct {
 	// This
 	//  field has been deprecated and replaced by the name field.
 	ProjectId string `json:"projectId,omitempty"`
-
-	// WorkloadMetadataConfig: The desired image type for the node pool.
-	WorkloadMetadataConfig *WorkloadMetadataConfig `json:"workloadMetadataConfig,omitempty"`
 
 	// Zone: Deprecated. The name of the Google Compute
 	// Engine
@@ -4891,45 +4629,13 @@ func (s *VerticalPodAutoscaling) MarshalJSON() ([]byte, error) {
 	return gensupport.MarshalJSON(raw, s.ForceSendFields, s.NullFields)
 }
 
-// WorkloadIdentityConfig: Configuration for the use of Kubernetes
-// Service Accounts in GCP IAM
-// policies.
-type WorkloadIdentityConfig struct {
-	// IdentityNamespace: IAM Identity Namespace to attach all Kubernetes
-	// Service Accounts to.
-	IdentityNamespace string `json:"identityNamespace,omitempty"`
-
-	// ForceSendFields is a list of field names (e.g. "IdentityNamespace")
-	// to unconditionally include in API requests. By default, fields with
-	// empty values are omitted from API requests. However, any non-pointer,
-	// non-interface field appearing in ForceSendFields will be sent to the
-	// server regardless of whether the field is empty or not. This may be
-	// used to include empty fields in Patch requests.
-	ForceSendFields []string `json:"-"`
-
-	// NullFields is a list of field names (e.g. "IdentityNamespace") to
-	// include in API requests with the JSON null value. By default, fields
-	// with empty values are omitted from API requests. However, any field
-	// with an empty value appearing in NullFields will be sent to the
-	// server as null. It is an error if a field in this list has a
-	// non-empty value. This may be used to include null fields in Patch
-	// requests.
-	NullFields []string `json:"-"`
-}
-
-func (s *WorkloadIdentityConfig) MarshalJSON() ([]byte, error) {
-	type NoMethod WorkloadIdentityConfig
-	raw := NoMethod(*s)
-	return gensupport.MarshalJSON(raw, s.ForceSendFields, s.NullFields)
-}
-
 // WorkloadMetadataConfig: WorkloadMetadataConfig defines the metadata
 // configuration to expose to
 // workloads on the node pool.
 type WorkloadMetadataConfig struct {
-	// NodeMetadata: NodeMetadata is the configuration for how to expose
-	// metadata to the
-	// workloads running on the node.
+	// NodeMetadata: NodeMetadata is the configuration for how to expose the
+	// node metadata to
+	// the workload running on the node.
 	//
 	// Possible values:
 	//   "UNSPECIFIED" - Not set.
@@ -4947,15 +4653,6 @@ type WorkloadMetadataConfig struct {
 	// be
 	// deprecated in the future and later removed.
 	//   "EXPOSE" - Expose all VM metadata to pods.
-	//   "GKE_METADATA_SERVER" - Run the GKE Metadata Server on this node.
-	// The GKE Metadata Server exposes
-	// a metadata API to workloads that is compatible with the V1
-	// Compute
-	// Metadata APIs exposed by the Compute Engine and App Engine
-	// Metadata
-	// Servers. This feature can only be enabled if Workload Identity is
-	// enabled
-	// at the cluster level.
 	NodeMetadata string `json:"nodeMetadata,omitempty"`
 
 	// ForceSendFields is a list of field names (e.g. "NodeMetadata") to
@@ -4992,7 +4689,7 @@ type ProjectsAggregatedUsableSubnetworksListCall struct {
 	header_      http.Header
 }
 
-// List: Lists subnetworks that can be used for creating clusters in a
+// List: Lists subnetworks that are usable for creating clusters in a
 // project.
 func (r *ProjectsAggregatedUsableSubnetworksService) List(parent string) *ProjectsAggregatedUsableSubnetworksListCall {
 	c := &ProjectsAggregatedUsableSubnetworksListCall{s: r.s, urlParams_: make(gensupport.URLParams)}
@@ -5130,7 +4827,7 @@ func (c *ProjectsAggregatedUsableSubnetworksListCall) Do(opts ...googleapi.CallO
 	}
 	return ret, nil
 	// {
-	//   "description": "Lists subnetworks that can be used for creating clusters in a project.",
+	//   "description": "Lists subnetworks that are usable for creating clusters in a project.",
 	//   "flatPath": "v1beta1/projects/{projectsId}/aggregated/usableSubnetworks",
 	//   "httpMethod": "GET",
 	//   "id": "container.projects.aggregated.usableSubnetworks.list",
@@ -5205,8 +4902,8 @@ type ProjectsLocationsGetServerConfigCall struct {
 	header_      http.Header
 }
 
-// GetServerConfig: Returns configuration info about the Google
-// Kubernetes Engine service.
+// GetServerConfig: Returns configuration info about the Kubernetes
+// Engine service.
 func (r *ProjectsLocationsService) GetServerConfig(name string) *ProjectsLocationsGetServerConfigCall {
 	c := &ProjectsLocationsGetServerConfigCall{s: r.s, urlParams_: make(gensupport.URLParams)}
 	c.name = name
@@ -5331,7 +5028,7 @@ func (c *ProjectsLocationsGetServerConfigCall) Do(opts ...googleapi.CallOption) 
 	}
 	return ret, nil
 	// {
-	//   "description": "Returns configuration info about the Google Kubernetes Engine service.",
+	//   "description": "Returns configuration info about the Kubernetes Engine service.",
 	//   "flatPath": "v1beta1/projects/{projectsId}/locations/{locationsId}/serverConfig",
 	//   "httpMethod": "GET",
 	//   "id": "container.projects.locations.getServerConfig",
@@ -5379,7 +5076,7 @@ type ProjectsLocationsListCall struct {
 	header_      http.Header
 }
 
-// List: Fetches locations that offer Google Kubernetes Engine.
+// List: Used to fetch locations that offer GKE.
 func (r *ProjectsLocationsService) List(parent string) *ProjectsLocationsListCall {
 	c := &ProjectsLocationsListCall{s: r.s, urlParams_: make(gensupport.URLParams)}
 	c.parent = parent
@@ -5484,7 +5181,7 @@ func (c *ProjectsLocationsListCall) Do(opts ...googleapi.CallOption) (*ListLocat
 	}
 	return ret, nil
 	// {
-	//   "description": "Fetches locations that offer Google Kubernetes Engine.",
+	//   "description": "Used to fetch locations that offer GKE.",
 	//   "flatPath": "v1beta1/projects/{projectsId}/locations",
 	//   "httpMethod": "GET",
 	//   "id": "container.projects.locations.list",
@@ -5670,14 +5367,14 @@ type ProjectsLocationsClustersCreateCall struct {
 // network](/compute/docs/networks-and-firewalls#networks).
 //
 // One firewall is added for the cluster. After cluster creation,
-// the Kubelet creates routes for each node to allow the containers
+// the cluster creates routes for each node to allow the containers
 // on that node to communicate with all other instances in
 // the
 // cluster.
 //
 // Finally, an entry is added to the project's global metadata
 // indicating
-// which CIDR range the cluster is using.
+// which CIDR range is being used by the cluster.
 func (r *ProjectsLocationsClustersService) Create(parent string, createclusterrequest *CreateClusterRequest) *ProjectsLocationsClustersCreateCall {
 	c := &ProjectsLocationsClustersCreateCall{s: r.s, urlParams_: make(gensupport.URLParams)}
 	c.parent = parent
@@ -5775,7 +5472,7 @@ func (c *ProjectsLocationsClustersCreateCall) Do(opts ...googleapi.CallOption) (
 	}
 	return ret, nil
 	// {
-	//   "description": "Creates a cluster, consisting of the specified number and type of Google\nCompute Engine instances.\n\nBy default, the cluster is created in the project's\n[default network](/compute/docs/networks-and-firewalls#networks).\n\nOne firewall is added for the cluster. After cluster creation,\nthe Kubelet creates routes for each node to allow the containers\non that node to communicate with all other instances in the\ncluster.\n\nFinally, an entry is added to the project's global metadata indicating\nwhich CIDR range the cluster is using.",
+	//   "description": "Creates a cluster, consisting of the specified number and type of Google\nCompute Engine instances.\n\nBy default, the cluster is created in the project's\n[default network](/compute/docs/networks-and-firewalls#networks).\n\nOne firewall is added for the cluster. After cluster creation,\nthe cluster creates routes for each node to allow the containers\non that node to communicate with all other instances in the\ncluster.\n\nFinally, an entry is added to the project's global metadata indicating\nwhich CIDR range is being used by the cluster.",
 	//   "flatPath": "v1beta1/projects/{projectsId}/locations/{locationsId}/clusters",
 	//   "httpMethod": "POST",
 	//   "id": "container.projects.locations.clusters.create",
@@ -5823,10 +5520,10 @@ type ProjectsLocationsClustersDeleteCall struct {
 // are also deleted.
 //
 // Other Google Compute Engine resources that might be in use by the
-// cluster,
-// such as load balancer resources, are not deleted if they weren't
+// cluster
+// (e.g. load balancer resources) will not be deleted if they weren't
 // present
-// when the cluster was initially created.
+// at the initial create time.
 func (r *ProjectsLocationsClustersService) Delete(name string) *ProjectsLocationsClustersDeleteCall {
 	c := &ProjectsLocationsClustersDeleteCall{s: r.s, urlParams_: make(gensupport.URLParams)}
 	c.name = name
@@ -5948,7 +5645,7 @@ func (c *ProjectsLocationsClustersDeleteCall) Do(opts ...googleapi.CallOption) (
 	}
 	return ret, nil
 	// {
-	//   "description": "Deletes the cluster, including the Kubernetes endpoint and all worker\nnodes.\n\nFirewalls and routes that were configured during cluster creation\nare also deleted.\n\nOther Google Compute Engine resources that might be in use by the cluster,\nsuch as load balancer resources, are not deleted if they weren't present\nwhen the cluster was initially created.",
+	//   "description": "Deletes the cluster, including the Kubernetes endpoint and all worker\nnodes.\n\nFirewalls and routes that were configured during cluster creation\nare also deleted.\n\nOther Google Compute Engine resources that might be in use by the cluster\n(e.g. load balancer resources) will not be deleted if they weren't present\nat the initial create time.",
 	//   "flatPath": "v1beta1/projects/{projectsId}/locations/{locationsId}/clusters/{clustersId}",
 	//   "httpMethod": "DELETE",
 	//   "id": "container.projects.locations.clusters.delete",
@@ -6189,8 +5886,8 @@ type ProjectsLocationsClustersGetJwksCall struct {
 	header_      http.Header
 }
 
-// GetJwks: Gets the public component of the cluster signing keys
-// in
+// GetJwks: GetJSONWebKeys gets the public component of the cluster
+// signing keys in
 // JSON Web Key format.
 // This API is not yet intended for general use, and is not available
 // for all
@@ -6299,7 +5996,7 @@ func (c *ProjectsLocationsClustersGetJwksCall) Do(opts ...googleapi.CallOption) 
 	}
 	return ret, nil
 	// {
-	//   "description": "Gets the public component of the cluster signing keys in\nJSON Web Key format.\nThis API is not yet intended for general use, and is not available for all\nclusters.",
+	//   "description": "GetJSONWebKeys gets the public component of the cluster signing keys in\nJSON Web Key format.\nThis API is not yet intended for general use, and is not available for all\nclusters.",
 	//   "flatPath": "v1beta1/projects/{projectsId}/locations/{locationsId}/clusters/{clustersId}/jwks",
 	//   "httpMethod": "GET",
 	//   "id": "container.projects.locations.clusters.getJwks",
@@ -6318,7 +6015,10 @@ func (c *ProjectsLocationsClustersGetJwksCall) Do(opts ...googleapi.CallOption) 
 	//   "path": "v1beta1/{+parent}/jwks",
 	//   "response": {
 	//     "$ref": "GetJSONWebKeysResponse"
-	//   }
+	//   },
+	//   "scopes": [
+	//     "https://www.googleapis.com/auth/cloud-platform"
+	//   ]
 	// }
 
 }
@@ -7206,11 +6906,11 @@ type ProjectsLocationsClustersSetMasterAuthCall struct {
 	header_              http.Header
 }
 
-// SetMasterAuth: Sets master auth materials. Currently supports
-// changing the admin password
-// or a specific cluster, either via password generation or explicitly
-// setting
-// the password.
+// SetMasterAuth: Used to set master auth materials. Currently supports
+// :-
+// Changing the admin password for a specific cluster.
+// This can be either via password generation or explicitly set.
+// Modify basic_auth.csv and reset the K8S API server.
 func (r *ProjectsLocationsClustersService) SetMasterAuth(name string, setmasterauthrequest *SetMasterAuthRequest) *ProjectsLocationsClustersSetMasterAuthCall {
 	c := &ProjectsLocationsClustersSetMasterAuthCall{s: r.s, urlParams_: make(gensupport.URLParams)}
 	c.name = name
@@ -7308,7 +7008,7 @@ func (c *ProjectsLocationsClustersSetMasterAuthCall) Do(opts ...googleapi.CallOp
 	}
 	return ret, nil
 	// {
-	//   "description": "Sets master auth materials. Currently supports changing the admin password\nor a specific cluster, either via password generation or explicitly setting\nthe password.",
+	//   "description": "Used to set master auth materials. Currently supports :-\nChanging the admin password for a specific cluster.\nThis can be either via password generation or explicitly set.\nModify basic_auth.csv and reset the K8S API server.",
 	//   "flatPath": "v1beta1/projects/{projectsId}/locations/{locationsId}/clusters/{clustersId}:setMasterAuth",
 	//   "httpMethod": "POST",
 	//   "id": "container.projects.locations.clusters.setMasterAuth",
@@ -7488,7 +7188,7 @@ type ProjectsLocationsClustersSetNetworkPolicyCall struct {
 	header_                 http.Header
 }
 
-// SetNetworkPolicy: Enables or disables Network Policy for a cluster.
+// SetNetworkPolicy: Enables/Disables Network Policy for a cluster.
 func (r *ProjectsLocationsClustersService) SetNetworkPolicy(name string, setnetworkpolicyrequest *SetNetworkPolicyRequest) *ProjectsLocationsClustersSetNetworkPolicyCall {
 	c := &ProjectsLocationsClustersSetNetworkPolicyCall{s: r.s, urlParams_: make(gensupport.URLParams)}
 	c.name = name
@@ -7586,7 +7286,7 @@ func (c *ProjectsLocationsClustersSetNetworkPolicyCall) Do(opts ...googleapi.Cal
 	}
 	return ret, nil
 	// {
-	//   "description": "Enables or disables Network Policy for a cluster.",
+	//   "description": "Enables/Disables Network Policy for a cluster.",
 	//   "flatPath": "v1beta1/projects/{projectsId}/locations/{locationsId}/clusters/{clustersId}:setNetworkPolicy",
 	//   "httpMethod": "POST",
 	//   "id": "container.projects.locations.clusters.setNetworkPolicy",
@@ -7766,7 +7466,7 @@ type ProjectsLocationsClustersStartIpRotationCall struct {
 	header_                http.Header
 }
 
-// StartIpRotation: Starts master IP rotation.
+// StartIpRotation: Start master IP rotation.
 func (r *ProjectsLocationsClustersService) StartIpRotation(name string, startiprotationrequest *StartIPRotationRequest) *ProjectsLocationsClustersStartIpRotationCall {
 	c := &ProjectsLocationsClustersStartIpRotationCall{s: r.s, urlParams_: make(gensupport.URLParams)}
 	c.name = name
@@ -7864,7 +7564,7 @@ func (c *ProjectsLocationsClustersStartIpRotationCall) Do(opts ...googleapi.Call
 	}
 	return ret, nil
 	// {
-	//   "description": "Starts master IP rotation.",
+	//   "description": "Start master IP rotation.",
 	//   "flatPath": "v1beta1/projects/{projectsId}/locations/{locationsId}/clusters/{clustersId}:startIpRotation",
 	//   "httpMethod": "POST",
 	//   "id": "container.projects.locations.clusters.startIpRotation",
@@ -8509,7 +8209,7 @@ type ProjectsLocationsClustersNodePoolsGetCall struct {
 	header_      http.Header
 }
 
-// Get: Retrieves the requested node pool.
+// Get: Retrieves the node pool requested.
 func (r *ProjectsLocationsClustersNodePoolsService) Get(name string) *ProjectsLocationsClustersNodePoolsGetCall {
 	c := &ProjectsLocationsClustersNodePoolsGetCall{s: r.s, urlParams_: make(gensupport.URLParams)}
 	c.name = name
@@ -8652,7 +8352,7 @@ func (c *ProjectsLocationsClustersNodePoolsGetCall) Do(opts ...googleapi.CallOpt
 	}
 	return ret, nil
 	// {
-	//   "description": "Retrieves the requested node pool.",
+	//   "description": "Retrieves the node pool requested.",
 	//   "flatPath": "v1beta1/projects/{projectsId}/locations/{locationsId}/clusters/{clustersId}/nodePools/{nodePoolsId}",
 	//   "httpMethod": "GET",
 	//   "id": "container.projects.locations.clusters.nodePools.get",
@@ -8898,9 +8598,9 @@ type ProjectsLocationsClustersNodePoolsRollbackCall struct {
 	header_                        http.Header
 }
 
-// Rollback: Rolls back a previously Aborted or Failed NodePool
+// Rollback: Roll back the previously Aborted or Failed NodePool
 // upgrade.
-// This makes no changes if the last upgrade successfully completed.
+// This will be an no-op if the last upgrade successfully completed.
 func (r *ProjectsLocationsClustersNodePoolsService) Rollback(name string, rollbacknodepoolupgraderequest *RollbackNodePoolUpgradeRequest) *ProjectsLocationsClustersNodePoolsRollbackCall {
 	c := &ProjectsLocationsClustersNodePoolsRollbackCall{s: r.s, urlParams_: make(gensupport.URLParams)}
 	c.name = name
@@ -8998,7 +8698,7 @@ func (c *ProjectsLocationsClustersNodePoolsRollbackCall) Do(opts ...googleapi.Ca
 	}
 	return ret, nil
 	// {
-	//   "description": "Rolls back a previously Aborted or Failed NodePool upgrade.\nThis makes no changes if the last upgrade successfully completed.",
+	//   "description": "Roll back the previously Aborted or Failed NodePool upgrade.\nThis will be an no-op if the last upgrade successfully completed.",
 	//   "flatPath": "v1beta1/projects/{projectsId}/locations/{locationsId}/clusters/{clustersId}/nodePools/{nodePoolsId}:rollback",
 	//   "httpMethod": "POST",
 	//   "id": "container.projects.locations.clusters.nodePools.rollback",
@@ -9597,16 +9297,14 @@ type ProjectsLocationsClustersWellKnownGetOpenidConfigurationCall struct {
 	header_      http.Header
 }
 
-// GetOpenidConfiguration: Gets the OIDC discovery document for the
-// cluster.
-// See the
-// [OpenID Connect Discovery
-// 1.0
-// specification](https://openid.net/specs/openid-connect-discovery-1
-// _0.html)
-// for details.
-// This API is not yet intended for general use, and is not available
-// for all
+// GetOpenidConfiguration: GetOpenIDConfig gets the OIDC discovery
+// document for the cluster.
+// See the OpenID Connect Discovery 1.0 specification for
+// details.
+// https://openid.net/specs/openid-connect-discovery-1_0.html
+// Th
+// is API is not yet intended for general use, and is not available for
+// all
 // clusters.
 func (r *ProjectsLocationsClustersWellKnownService) GetOpenidConfiguration(parent string) *ProjectsLocationsClustersWellKnownGetOpenidConfigurationCall {
 	c := &ProjectsLocationsClustersWellKnownGetOpenidConfigurationCall{s: r.s, urlParams_: make(gensupport.URLParams)}
@@ -9712,7 +9410,7 @@ func (c *ProjectsLocationsClustersWellKnownGetOpenidConfigurationCall) Do(opts .
 	}
 	return ret, nil
 	// {
-	//   "description": "Gets the OIDC discovery document for the cluster.\nSee the\n[OpenID Connect Discovery 1.0\nspecification](https://openid.net/specs/openid-connect-discovery-1_0.html)\nfor details.\nThis API is not yet intended for general use, and is not available for all\nclusters.",
+	//   "description": "GetOpenIDConfig gets the OIDC discovery document for the cluster.\nSee the OpenID Connect Discovery 1.0 specification for details.\nhttps://openid.net/specs/openid-connect-discovery-1_0.html\nThis API is not yet intended for general use, and is not available for all\nclusters.",
 	//   "flatPath": "v1beta1/projects/{projectsId}/locations/{locationsId}/clusters/{clustersId}/.well-known/openid-configuration",
 	//   "httpMethod": "GET",
 	//   "id": "container.projects.locations.clusters.well-known.getOpenid-configuration",
@@ -9731,7 +9429,10 @@ func (c *ProjectsLocationsClustersWellKnownGetOpenidConfigurationCall) Do(opts .
 	//   "path": "v1beta1/{+parent}/.well-known/openid-configuration",
 	//   "response": {
 	//     "$ref": "GetOpenIDConfigResponse"
-	//   }
+	//   },
+	//   "scopes": [
+	//     "https://www.googleapis.com/auth/cloud-platform"
+	//   ]
 	// }
 
 }
@@ -10074,7 +9775,7 @@ type ProjectsLocationsOperationsListCall struct {
 	header_      http.Header
 }
 
-// List: Lists all operations in a project in the specified zone or all
+// List: Lists all operations in a project in a specific zone or all
 // zones.
 func (r *ProjectsLocationsOperationsService) List(parent string) *ProjectsLocationsOperationsListCall {
 	c := &ProjectsLocationsOperationsListCall{s: r.s, urlParams_: make(gensupport.URLParams)}
@@ -10202,7 +9903,7 @@ func (c *ProjectsLocationsOperationsListCall) Do(opts ...googleapi.CallOption) (
 	}
 	return ret, nil
 	// {
-	//   "description": "Lists all operations in a project in the specified zone or all zones.",
+	//   "description": "Lists all operations in a project in a specific zone or all zones.",
 	//   "flatPath": "v1beta1/projects/{projectsId}/locations/{locationsId}/operations",
 	//   "httpMethod": "GET",
 	//   "id": "container.projects.locations.operations.list",
@@ -10251,8 +9952,8 @@ type ProjectsZonesGetServerconfigCall struct {
 	header_      http.Header
 }
 
-// GetServerconfig: Returns configuration info about the Google
-// Kubernetes Engine service.
+// GetServerconfig: Returns configuration info about the Kubernetes
+// Engine service.
 func (r *ProjectsZonesService) GetServerconfig(projectId string, zone string) *ProjectsZonesGetServerconfigCall {
 	c := &ProjectsZonesGetServerconfigCall{s: r.s, urlParams_: make(gensupport.URLParams)}
 	c.projectId = projectId
@@ -10367,7 +10068,7 @@ func (c *ProjectsZonesGetServerconfigCall) Do(opts ...googleapi.CallOption) (*Se
 	}
 	return ret, nil
 	// {
-	//   "description": "Returns configuration info about the Google Kubernetes Engine service.",
+	//   "description": "Returns configuration info about the Kubernetes Engine service.",
 	//   "flatPath": "v1beta1/projects/{projectId}/zones/{zone}/serverconfig",
 	//   "httpMethod": "GET",
 	//   "id": "container.projects.zones.getServerconfig",
@@ -10742,14 +10443,14 @@ type ProjectsZonesClustersCreateCall struct {
 // network](/compute/docs/networks-and-firewalls#networks).
 //
 // One firewall is added for the cluster. After cluster creation,
-// the Kubelet creates routes for each node to allow the containers
+// the cluster creates routes for each node to allow the containers
 // on that node to communicate with all other instances in
 // the
 // cluster.
 //
 // Finally, an entry is added to the project's global metadata
 // indicating
-// which CIDR range the cluster is using.
+// which CIDR range is being used by the cluster.
 func (r *ProjectsZonesClustersService) Create(projectId string, zone string, createclusterrequest *CreateClusterRequest) *ProjectsZonesClustersCreateCall {
 	c := &ProjectsZonesClustersCreateCall{s: r.s, urlParams_: make(gensupport.URLParams)}
 	c.projectId = projectId
@@ -10849,7 +10550,7 @@ func (c *ProjectsZonesClustersCreateCall) Do(opts ...googleapi.CallOption) (*Ope
 	}
 	return ret, nil
 	// {
-	//   "description": "Creates a cluster, consisting of the specified number and type of Google\nCompute Engine instances.\n\nBy default, the cluster is created in the project's\n[default network](/compute/docs/networks-and-firewalls#networks).\n\nOne firewall is added for the cluster. After cluster creation,\nthe Kubelet creates routes for each node to allow the containers\non that node to communicate with all other instances in the\ncluster.\n\nFinally, an entry is added to the project's global metadata indicating\nwhich CIDR range the cluster is using.",
+	//   "description": "Creates a cluster, consisting of the specified number and type of Google\nCompute Engine instances.\n\nBy default, the cluster is created in the project's\n[default network](/compute/docs/networks-and-firewalls#networks).\n\nOne firewall is added for the cluster. After cluster creation,\nthe cluster creates routes for each node to allow the containers\non that node to communicate with all other instances in the\ncluster.\n\nFinally, an entry is added to the project's global metadata indicating\nwhich CIDR range is being used by the cluster.",
 	//   "flatPath": "v1beta1/projects/{projectId}/zones/{zone}/clusters",
 	//   "httpMethod": "POST",
 	//   "id": "container.projects.zones.clusters.create",
@@ -10905,10 +10606,10 @@ type ProjectsZonesClustersDeleteCall struct {
 // are also deleted.
 //
 // Other Google Compute Engine resources that might be in use by the
-// cluster,
-// such as load balancer resources, are not deleted if they weren't
+// cluster
+// (e.g. load balancer resources) will not be deleted if they weren't
 // present
-// when the cluster was initially created.
+// at the initial create time.
 func (r *ProjectsZonesClustersService) Delete(projectId string, zone string, clusterId string) *ProjectsZonesClustersDeleteCall {
 	c := &ProjectsZonesClustersDeleteCall{s: r.s, urlParams_: make(gensupport.URLParams)}
 	c.projectId = projectId
@@ -11012,7 +10713,7 @@ func (c *ProjectsZonesClustersDeleteCall) Do(opts ...googleapi.CallOption) (*Ope
 	}
 	return ret, nil
 	// {
-	//   "description": "Deletes the cluster, including the Kubernetes endpoint and all worker\nnodes.\n\nFirewalls and routes that were configured during cluster creation\nare also deleted.\n\nOther Google Compute Engine resources that might be in use by the cluster,\nsuch as load balancer resources, are not deleted if they weren't present\nwhen the cluster was initially created.",
+	//   "description": "Deletes the cluster, including the Kubernetes endpoint and all worker\nnodes.\n\nFirewalls and routes that were configured during cluster creation\nare also deleted.\n\nOther Google Compute Engine resources that might be in use by the cluster\n(e.g. load balancer resources) will not be deleted if they weren't present\nat the initial create time.",
 	//   "flatPath": "v1beta1/projects/{projectId}/zones/{zone}/clusters/{clusterId}",
 	//   "httpMethod": "DELETE",
 	//   "id": "container.projects.zones.clusters.delete",
@@ -12520,11 +12221,11 @@ type ProjectsZonesClustersSetMasterAuthCall struct {
 	header_              http.Header
 }
 
-// SetMasterAuth: Sets master auth materials. Currently supports
-// changing the admin password
-// or a specific cluster, either via password generation or explicitly
-// setting
-// the password.
+// SetMasterAuth: Used to set master auth materials. Currently supports
+// :-
+// Changing the admin password for a specific cluster.
+// This can be either via password generation or explicitly set.
+// Modify basic_auth.csv and reset the K8S API server.
 func (r *ProjectsZonesClustersService) SetMasterAuth(projectId string, zone string, clusterId string, setmasterauthrequest *SetMasterAuthRequest) *ProjectsZonesClustersSetMasterAuthCall {
 	c := &ProjectsZonesClustersSetMasterAuthCall{s: r.s, urlParams_: make(gensupport.URLParams)}
 	c.projectId = projectId
@@ -12626,7 +12327,7 @@ func (c *ProjectsZonesClustersSetMasterAuthCall) Do(opts ...googleapi.CallOption
 	}
 	return ret, nil
 	// {
-	//   "description": "Sets master auth materials. Currently supports changing the admin password\nor a specific cluster, either via password generation or explicitly setting\nthe password.",
+	//   "description": "Used to set master auth materials. Currently supports :-\nChanging the admin password for a specific cluster.\nThis can be either via password generation or explicitly set.\nModify basic_auth.csv and reset the K8S API server.",
 	//   "flatPath": "v1beta1/projects/{projectId}/zones/{zone}/clusters/{clusterId}:setMasterAuth",
 	//   "httpMethod": "POST",
 	//   "id": "container.projects.zones.clusters.setMasterAuth",
@@ -12682,7 +12383,7 @@ type ProjectsZonesClustersSetNetworkPolicyCall struct {
 	header_                 http.Header
 }
 
-// SetNetworkPolicy: Enables or disables Network Policy for a cluster.
+// SetNetworkPolicy: Enables/Disables Network Policy for a cluster.
 func (r *ProjectsZonesClustersService) SetNetworkPolicy(projectId string, zone string, clusterId string, setnetworkpolicyrequest *SetNetworkPolicyRequest) *ProjectsZonesClustersSetNetworkPolicyCall {
 	c := &ProjectsZonesClustersSetNetworkPolicyCall{s: r.s, urlParams_: make(gensupport.URLParams)}
 	c.projectId = projectId
@@ -12784,7 +12485,7 @@ func (c *ProjectsZonesClustersSetNetworkPolicyCall) Do(opts ...googleapi.CallOpt
 	}
 	return ret, nil
 	// {
-	//   "description": "Enables or disables Network Policy for a cluster.",
+	//   "description": "Enables/Disables Network Policy for a cluster.",
 	//   "flatPath": "v1beta1/projects/{projectId}/zones/{zone}/clusters/{clusterId}:setNetworkPolicy",
 	//   "httpMethod": "POST",
 	//   "id": "container.projects.zones.clusters.setNetworkPolicy",
@@ -12840,7 +12541,7 @@ type ProjectsZonesClustersStartIpRotationCall struct {
 	header_                http.Header
 }
 
-// StartIpRotation: Starts master IP rotation.
+// StartIpRotation: Start master IP rotation.
 func (r *ProjectsZonesClustersService) StartIpRotation(projectId string, zone string, clusterId string, startiprotationrequest *StartIPRotationRequest) *ProjectsZonesClustersStartIpRotationCall {
 	c := &ProjectsZonesClustersStartIpRotationCall{s: r.s, urlParams_: make(gensupport.URLParams)}
 	c.projectId = projectId
@@ -12942,7 +12643,7 @@ func (c *ProjectsZonesClustersStartIpRotationCall) Do(opts ...googleapi.CallOpti
 	}
 	return ret, nil
 	// {
-	//   "description": "Starts master IP rotation.",
+	//   "description": "Start master IP rotation.",
 	//   "flatPath": "v1beta1/projects/{projectId}/zones/{zone}/clusters/{clusterId}:startIpRotation",
 	//   "httpMethod": "POST",
 	//   "id": "container.projects.zones.clusters.startIpRotation",
@@ -13656,7 +13357,7 @@ type ProjectsZonesClustersNodePoolsGetCall struct {
 	header_      http.Header
 }
 
-// Get: Retrieves the requested node pool.
+// Get: Retrieves the node pool requested.
 func (r *ProjectsZonesClustersNodePoolsService) Get(projectId string, zone string, clusterId string, nodePoolId string) *ProjectsZonesClustersNodePoolsGetCall {
 	c := &ProjectsZonesClustersNodePoolsGetCall{s: r.s, urlParams_: make(gensupport.URLParams)}
 	c.projectId = projectId
@@ -13777,7 +13478,7 @@ func (c *ProjectsZonesClustersNodePoolsGetCall) Do(opts ...googleapi.CallOption)
 	}
 	return ret, nil
 	// {
-	//   "description": "Retrieves the requested node pool.",
+	//   "description": "Retrieves the node pool requested.",
 	//   "flatPath": "v1beta1/projects/{projectId}/zones/{zone}/clusters/{clusterId}/nodePools/{nodePoolId}",
 	//   "httpMethod": "GET",
 	//   "id": "container.projects.zones.clusters.nodePools.get",
@@ -14018,9 +13719,9 @@ type ProjectsZonesClustersNodePoolsRollbackCall struct {
 	header_                        http.Header
 }
 
-// Rollback: Rolls back a previously Aborted or Failed NodePool
+// Rollback: Roll back the previously Aborted or Failed NodePool
 // upgrade.
-// This makes no changes if the last upgrade successfully completed.
+// This will be an no-op if the last upgrade successfully completed.
 func (r *ProjectsZonesClustersNodePoolsService) Rollback(projectId string, zone string, clusterId string, nodePoolId string, rollbacknodepoolupgraderequest *RollbackNodePoolUpgradeRequest) *ProjectsZonesClustersNodePoolsRollbackCall {
 	c := &ProjectsZonesClustersNodePoolsRollbackCall{s: r.s, urlParams_: make(gensupport.URLParams)}
 	c.projectId = projectId
@@ -14124,7 +13825,7 @@ func (c *ProjectsZonesClustersNodePoolsRollbackCall) Do(opts ...googleapi.CallOp
 	}
 	return ret, nil
 	// {
-	//   "description": "Rolls back a previously Aborted or Failed NodePool upgrade.\nThis makes no changes if the last upgrade successfully completed.",
+	//   "description": "Roll back the previously Aborted or Failed NodePool upgrade.\nThis will be an no-op if the last upgrade successfully completed.",
 	//   "flatPath": "v1beta1/projects/{projectId}/zones/{zone}/clusters/{clusterId}/nodePools/{nodePoolId}:rollback",
 	//   "httpMethod": "POST",
 	//   "id": "container.projects.zones.clusters.nodePools.rollback",
@@ -15024,7 +14725,7 @@ type ProjectsZonesOperationsListCall struct {
 	header_      http.Header
 }
 
-// List: Lists all operations in a project in the specified zone or all
+// List: Lists all operations in a project in a specific zone or all
 // zones.
 func (r *ProjectsZonesOperationsService) List(projectId string, zone string) *ProjectsZonesOperationsListCall {
 	c := &ProjectsZonesOperationsListCall{s: r.s, urlParams_: make(gensupport.URLParams)}
@@ -15141,7 +14842,7 @@ func (c *ProjectsZonesOperationsListCall) Do(opts ...googleapi.CallOption) (*Lis
 	}
 	return ret, nil
 	// {
-	//   "description": "Lists all operations in a project in the specified zone or all zones.",
+	//   "description": "Lists all operations in a project in a specific zone or all zones.",
 	//   "flatPath": "v1beta1/projects/{projectId}/zones/{zone}/operations",
 	//   "httpMethod": "GET",
 	//   "id": "container.projects.zones.operations.list",
