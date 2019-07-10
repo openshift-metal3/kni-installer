@@ -31,8 +31,8 @@ func TFVars(auth Auth, baseDomainResourceGroupName string, masterConfigs []*azur
 	masterConfig := masterConfigs[0]
 	region := masterConfig.Location
 	cfg := &config{
-		Auth:                        auth,
-		Region:                      region,
+		Auth:   auth,
+		Region: region,
 		BaseDomainResourceGroupName: baseDomainResourceGroupName,
 		BootstrapInstanceType:       defaults.BootstrapInstanceType(region),
 		MasterInstanceType:          masterConfig.VMSize,

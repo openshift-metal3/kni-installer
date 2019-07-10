@@ -71,9 +71,9 @@ func TFVars(masterConfigs []*v1beta1.AWSMachineProviderConfig, workerConfigs []*
 	instanceClass := defaults.InstanceClass(masterConfig.Placement.Region)
 
 	cfg := &config{
-		Region:                  masterConfig.Placement.Region,
-		ExtraTags:               tags,
-		AMI:                     *masterConfig.AMI.ID,
+		Region:    masterConfig.Placement.Region,
+		ExtraTags: tags,
+		AMI:       *masterConfig.AMI.ID,
 		MasterAvailabilityZones: masterAvailabilityZones,
 		WorkerAvailabilityZones: workerAvailabilityZones,
 		BootstrapInstanceType:   fmt.Sprintf("%s.large", instanceClass),
