@@ -153,7 +153,7 @@ func ingressVIPValidator(ans interface{}) error {
 }
 
 // interfaceValidator validates if the answer provided is a valid network
-// interface.  net.Interfaces in Go does not let us know if it's a bridge, but
+// interface. net.Interfaces in Go does not let us know if it's a bridge, but
 // we can at least make sure an interface by that name exists.
 func interfaceValidator(ans interface{}) error {
 	return validate.Interface(ans.(string))
