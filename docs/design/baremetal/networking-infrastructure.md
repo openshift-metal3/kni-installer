@@ -45,3 +45,30 @@ and the relevant assets are [rendered by the Machine Config
 Operator](https://github.com/openshift/machine-config-operator/pull/795). See
 [here](FIXME: link to a README in MCO) for more information about
 these assets.
+
+## Internal DNS
+
+Externally resolvable DNS records are required for:
+
+* `api.$cluster_name.$base-domain` -
+* `*.apps.$cluster_name.$base_domain` -
+
+In addition, internally resolvable DNS records are required for:
+
+* `api-int.$cluster_name.$base-domain` -
+* `etcd-NNN.$cluster_name.$base-domain` -
+
+On other platforms (for example, see the CloudFormation templates
+referenced by [the AWS UPI
+instructions](../../user/aws/install_upi.md)), all of these records
+are automatically created using a cloud platform's DNS service.
+
+In the `baremetal` platform, the goal is is to automate as much of the
+DNS requirements internal to the cluster as possible, leaving only a
+small amount of public DNS configuration to be implemented by the user
+before starting the installation process.
+
+TODO - explain how this works ...
+
+Explain that $cluster_name and $base_domain are supplied via
+install-config.yaml
