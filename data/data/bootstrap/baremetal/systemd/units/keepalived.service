@@ -1,4 +1,7 @@
 # Systemd service file used to start the bootstrap Keepalived instance.
+#
+# For more information, see installer/data/data/bootstrap/baremetal/README.md
+#
 
 [Unit]
 Description=Manage node VIPs with keepalived

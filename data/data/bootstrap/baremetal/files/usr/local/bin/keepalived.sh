@@ -1,4 +1,9 @@
 #!/usr/bin/env bash
+
+#
+# For more information, see installer/data/data/bootstrap/baremetal/README.md
+#
+
 set -e
 
 # Script to configure and run the Keepalived instance used to manage the DNS
