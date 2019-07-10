@@ -3,22 +3,16 @@
 The `baremetal` platform (IPI for Bare Metal hosts) includes some additional
 assets on the bootstrap node for automating some infrastructure requirements
 that would have normally been handled by some cloud infrastructure service.
-This document explains these pieces and what they accomplish.
+The [Bare Metal IPI Networking Infrastructure design document]
+(../../../../doc/design/baremetal/networking-infrastructure.md) covers the
+high-level background, and this document explains these bootstrap assets in
+more detail.
 
-## API failover from bootstrap to masters
+## API failover from bootstrap to control plane machines
 
-One problem being addressed is that the installation process expects the API to
-first be reachable on the bootstrap VM, but later in the installation process,
-the API comes up on the masters that have been deployed.
-
-In the `baremetal` platform, the failover of the API server is done by using a
-VIP (Virtual IP) that has been configured as part of `install-config.yaml` and
-then managed by `keepalived`.
-
-The API VIP first resides on the bootstrap VM.  Once the master nodes come up,
-the VIP will move to the masters.  This happens because the masters will be
-running `keepalived` with a higher priority set in their `keepalived`
-configuration for the API VIP.
+`keepalived` is used to manage the failover of a VIP (Virtual IP) for the API
+server. This VIP first resides on the bootstrap VM. Once the master nodes come
+up, the VIP will move to the control plane machines.
 
 Relevant files:
 * **files/etc/keepalived/keepalived.conf.tmpl** - `keepalived` configuration
@@ -31,14 +25,8 @@ Relevant files:
 
 ## Internal DNS
 
-Another key area addressed with some of the bootstrap assets is DNS.  The goal
-of these changes is to automate as much of the DNS requirements internal to the
-cluster as possible, leaving only a small amount of public DNS work to be
-done.  Because of these changes, the only external DNS records that the cluster
-administrator must create are:
-
-* api.<cluster-name>.<base-domain>
-* *.apps.<cluster-name>.<base-domain>
+The bootstrap assets relating to DNS automate as much of the DNS requirements
+internal to the cluster as possible.
 
 TODO - explain how this works ...
 
