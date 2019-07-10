@@ -10,23 +10,23 @@ import (
 func ValidatePlatform(p *baremetal.Platform, fldPath *field.Path) field.ErrorList {
 	allErrs := field.ErrorList{}
 	if err := validate.URI(p.LibvirtURI); err != nil {
-		allErrs = append(allErrs, field.Invalid(fldPath.Child("libvirt_uri"), p.LibvirtURI, err.Error()))
+		allErrs = append(allErrs, field.Invalid(fldPath.Child("libvirtURI"), p.LibvirtURI, err.Error()))
 	}
 
 	if err := validate.URI(p.IronicURI); err != nil {
-		allErrs = append(allErrs, field.Invalid(fldPath.Child("ironic_uri"), p.LibvirtURI, err.Error()))
+		allErrs = append(allErrs, field.Invalid(fldPath.Child("ironicURI"), p.LibvirtURI, err.Error()))
 	}
 
 	if err := validate.Interface(p.ExternalBridge); err != nil {
-		allErrs = append(allErrs, field.Invalid(fldPath.Child("external_bridge"), p.ExternalBridge, err.Error()))
+		allErrs = append(allErrs, field.Invalid(fldPath.Child("externalBridge"), p.ExternalBridge, err.Error()))
 	}
 
 	if err := validate.Interface(p.ProvisioningBridge); err != nil {
-		allErrs = append(allErrs, field.Invalid(fldPath.Child("provisioning_bridge"), p.ProvisioningBridge, err.Error()))
+		allErrs = append(allErrs, field.Invalid(fldPath.Child("provisioningBridge"), p.ProvisioningBridge, err.Error()))
 	}
 
 	if p.Hosts == nil {
-		allErrs = append(allErrs, field.Invalid(fldPath.Child("nodes"), p.Hosts, "bare metal hosts are missing"))
+		allErrs = append(allErrs, field.Invalid(fldPath.Child("hosts"), p.Hosts, "bare metal hosts are missing"))
 	}
 
 	if p.DefaultMachinePlatform != nil {
@@ -34,11 +34,11 @@ func ValidatePlatform(p *baremetal.Platform, fldPath *field.Path) field.ErrorLis
 	}
 
 	if err := validate.IP(p.APIVIP); err != nil {
-		allErrs = append(allErrs, field.Invalid(fldPath.Child("api_vip"), p.APIVIP, err.Error()))
+		allErrs = append(allErrs, field.Invalid(fldPath.Child("apiVIP"), p.APIVIP, err.Error()))
 	}
 
 	if err := validate.IP(p.IngressVIP); err != nil {
-		allErrs = append(allErrs, field.Invalid(fldPath.Child("ingress_vip"), p.IngressVIP, err.Error()))
+		allErrs = append(allErrs, field.Invalid(fldPath.Child("ingressVIP"), p.IngressVIP, err.Error()))
 	}
 	return allErrs
 }
