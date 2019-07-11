@@ -15,13 +15,10 @@ server. This VIP first resides on the bootstrap VM. Once the master nodes come
 up, the VIP will move to the control plane machines.
 
 Relevant files:
-* **files/etc/keepalived/keepalived.conf.tmpl** - `keepalived` configuration
-  template
-* **files/usr/local/bin/keepalived.sh** - This script runs before `keepalived`
-  starts and generates the `keepalived` configuration file from the template.
-* **systemd/units/keepalived.service** - systemd unit file for `keepalived`.
-  This runs `keepalived.sh` to generate the proper configuration from the
-  template and then runs podman to launch `keepalived`.
+* **files/etc/kubernetes/static-pod-resources/keepalived/keepalived.conf.tmpl**
+  - `keepalived` configuration template
+* **files/etc/kubernetes/manifests/keepalived.yaml** - Manifest for running
+  `keepalived` as a static pod
 
 ## Internal DNS
 

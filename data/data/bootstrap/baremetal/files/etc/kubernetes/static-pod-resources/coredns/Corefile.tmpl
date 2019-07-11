@@ -1,0 +1,12 @@
+. {
+    errors
+    health
+    mdns $DOMAIN $NUM_DNS_MEMBERS $NAME
+    forward . /etc/coredns/resolv.conf
+    cache 30
+    reload
+    hosts /etc/coredns/api-int.hosts $DOMAIN {
+        $API_VIP api-int.$DOMAIN
+        fallthrough
+    }
+}
