@@ -2,7 +2,6 @@ package local
 
 import (
 	"crypto/sha1"
-	"encoding/base64"
 	"encoding/hex"
 	"io/ioutil"
 
@@ -24,10 +23,6 @@ func dataSourceLocalFile() *schema.Resource {
 				Type:     schema.TypeString,
 				Computed: true,
 			},
-			"content_base64": {
-				Type:     schema.TypeString,
-				Computed: true,
-			},
 		},
 	}
 }
@@ -40,7 +35,6 @@ func dataSourceLocalFileRead(d *schema.ResourceData, _ interface{}) error {
 	}
 
 	d.Set("content", string(content))
-	d.Set("content_base64", base64.StdEncoding.EncodeToString(content))
 
 	checksum := sha1.Sum([]byte(content))
 	d.SetId(hex.EncodeToString(checksum[:]))
