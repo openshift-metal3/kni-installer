@@ -7,11 +7,6 @@ provider "ironic" {
   microversion = "1.52"
 }
 
-provider "ironic" {
-  url          = var.ironic_uri
-  microversion = "1.52"
-}
-
 module "bootstrap" {
   source = "./bootstrap"
 
