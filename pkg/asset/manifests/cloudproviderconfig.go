@@ -18,6 +18,7 @@ import (
 	awstypes "github.com/openshift-metalkube/kni-installer/pkg/types/aws"
 	azuretypes "github.com/openshift-metalkube/kni-installer/pkg/types/azure"
 	baremetaltypes "github.com/openshift-metalkube/kni-installer/pkg/types/baremetal"
+	gcptypes "github.com/openshift-metalkube/kni-installer/pkg/types/gcp"
 	libvirttypes "github.com/openshift-metalkube/kni-installer/pkg/types/libvirt"
 	nonetypes "github.com/openshift-metalkube/kni-installer/pkg/types/none"
 	openstacktypes "github.com/openshift-metalkube/kni-installer/pkg/types/openstack"
@@ -97,6 +98,7 @@ func (cpc *CloudProviderConfig) Generate(dependencies asset.Parents) error {
 			return errors.Wrap(err, "could not create cloud provider config")
 		}
 		cm.Data[cloudProviderConfigDataKey] = azureConfig
+	case gcptypes.Name:
 	case vspheretypes.Name:
 		vsphereConfig, err := vspheremanifests.CloudProviderConfig(
 			installConfig.Config.ObjectMeta.Name,

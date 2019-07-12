@@ -796,6 +796,14 @@
   version = "v0.1.4"
 
 [[projects]]
+  digest = "1:a0886267c60262a245d6eeb0be12bf8e165026ad088bce106b9c55c5d613144f"
+  name = "github.com/openshift-metalkube/terraform-provider-ironic"
+  packages = ["ironic"]
+  pruneopts = "NUT"
+  revision = "9f5bba54dad78c10ed572eb2541f8178a5500656"
+  version = "v0.1.4"
+
+[[projects]]
   branch = "master"
   digest = "1:3bf17a6e6eaa6ad24152148a631d18662f7212e21637c2699bff3369b7f00fa2"
   name = "github.com/petar/GoLLRB"

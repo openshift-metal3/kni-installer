@@ -7,6 +7,11 @@ provider "ironic" {
   microversion = "1.52"
 }
 
+provider "ironic" {
+  url          = var.ironic_uri
+  microversion = "1.52"
+}
+
 module "bootstrap" {
   source = "./bootstrap"
 
@@ -20,6 +25,7 @@ module "bootstrap" {
 module "masters" {
   source = "./masters"
 
+  ironic_uri     = var.ironic_uri
   master_count   = var.master_count
   ignition       = var.ignition_master
   hosts          = var.hosts

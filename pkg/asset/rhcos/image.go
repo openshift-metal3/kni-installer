@@ -15,6 +15,7 @@ import (
 	"github.com/openshift-metalkube/kni-installer/pkg/types/aws"
 	"github.com/openshift-metalkube/kni-installer/pkg/types/azure"
 	"github.com/openshift-metalkube/kni-installer/pkg/types/baremetal"
+	"github.com/openshift-metalkube/kni-installer/pkg/types/gcp"
 	"github.com/openshift-metalkube/kni-installer/pkg/types/libvirt"
 	"github.com/openshift-metalkube/kni-installer/pkg/types/none"
 	"github.com/openshift-metalkube/kni-installer/pkg/types/openstack"
@@ -59,6 +60,7 @@ func (i *Image) Generate(p asset.Parents) error {
 	switch config.Platform.Name() {
 	case aws.Name:
 		osimage, err = rhcos.AMI(ctx, config.Platform.AWS.Region)
+	case gcp.Name:
 	case libvirt.Name:
 		osimage, err = rhcos.QEMU(ctx)
 	case openstack.Name:

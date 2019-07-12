@@ -4,6 +4,7 @@ import (
 	"github.com/openshift-metalkube/kni-installer/pkg/types/aws"
 	"github.com/openshift-metalkube/kni-installer/pkg/types/azure"
 	"github.com/openshift-metalkube/kni-installer/pkg/types/baremetal"
+	"github.com/openshift-metalkube/kni-installer/pkg/types/gcp"
 	"github.com/openshift-metalkube/kni-installer/pkg/types/libvirt"
 	"github.com/openshift-metalkube/kni-installer/pkg/types/openstack"
 )
@@ -26,6 +27,7 @@ type ClusterPlatformMetadata struct {
 	OpenStack *openstack.Metadata `json:"openstack,omitempty"`
 	Libvirt   *libvirt.Metadata   `json:"libvirt,omitempty"`
 	Azure     *azure.Metadata     `json:"azure,omitempty"`
+	GCP       *gcp.Metadata       `json:"gcp,omitempty"`
 	BareMetal *baremetal.Metadata `json:"baremetal,omitempty"`
 }
 
@@ -37,16 +39,19 @@ func (cpm *ClusterPlatformMetadata) Platform() string {
 		return ""
 	}
 	if cpm.AWS != nil {
-		return "aws"
+		return aws.Name
 	}
 	if cpm.Libvirt != nil {
-		return "libvirt"
+		return libvirt.Name
 	}
 	if cpm.OpenStack != nil {
-		return "openstack"
+		return openstack.Name
 	}
 	if cpm.Azure != nil {
-		return "azure"
+		return azure.Name
+	}
+	if cpm.GCP != nil {
+		return gcp.Name
 	}
 	if cpm.BareMetal != nil {
 		return "baremetal"

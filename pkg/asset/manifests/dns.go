@@ -1,6 +1,7 @@
 package manifests
 
 import (
+	"context"
 	"fmt"
 	"path/filepath"
 	"strings"
@@ -15,9 +16,11 @@ import (
 	"github.com/openshift-metalkube/kni-installer/pkg/asset/installconfig"
 	icaws "github.com/openshift-metalkube/kni-installer/pkg/asset/installconfig/aws"
 	icazure "github.com/openshift-metalkube/kni-installer/pkg/asset/installconfig/azure"
+	icgcp "github.com/openshift-metalkube/kni-installer/pkg/asset/installconfig/gcp"
 	awstypes "github.com/openshift-metalkube/kni-installer/pkg/types/aws"
 	azuretypes "github.com/openshift-metalkube/kni-installer/pkg/types/azure"
 	baremetaltypes "github.com/openshift-metalkube/kni-installer/pkg/types/baremetal"
+	gcptypes "github.com/openshift-metalkube/kni-installer/pkg/types/gcp"
 	libvirttypes "github.com/openshift-metalkube/kni-installer/pkg/types/libvirt"
 	nonetypes "github.com/openshift-metalkube/kni-installer/pkg/types/none"
 	openstacktypes "github.com/openshift-metalkube/kni-installer/pkg/types/openstack"
@@ -97,6 +100,13 @@ func (d *DNS) Generate(dependencies asset.Parents) error {
 		config.Spec.PrivateZone = &configv1.DNSZone{
 			ID: dnsConfig.GetDNSZoneID(clusterID.InfraID+"-rg", installConfig.Config.ClusterDomain()),
 		}
+	case gcptypes.Name:
+		zone, err := icgcp.GetPublicZone(context.TODO(), installConfig.Config.Platform.GCP.ProjectID, installConfig.Config.BaseDomain)
+		if err != nil {
+			return errors.Wrapf(err, "failed to get public zone for %q", installConfig.Config.BaseDomain)
+		}
+		config.Spec.PublicZone = &configv1.DNSZone{ID: zone.Name}
+		config.Spec.PrivateZone = &configv1.DNSZone{ID: fmt.Sprintf("%s-private-zone", clusterID.InfraID)}
 	case libvirttypes.Name, openstacktypes.Name, baremetaltypes.Name, nonetypes.Name, vspheretypes.Name:
 	default:
 		return errors.New("invalid Platform")

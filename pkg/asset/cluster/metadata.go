@@ -9,6 +9,7 @@ import (
 	"github.com/openshift-metalkube/kni-installer/pkg/asset/cluster/aws"
 	"github.com/openshift-metalkube/kni-installer/pkg/asset/cluster/azure"
 	"github.com/openshift-metalkube/kni-installer/pkg/asset/cluster/baremetal"
+	"github.com/openshift-metalkube/kni-installer/pkg/asset/cluster/gcp"
 	"github.com/openshift-metalkube/kni-installer/pkg/asset/cluster/libvirt"
 	"github.com/openshift-metalkube/kni-installer/pkg/asset/cluster/openstack"
 	"github.com/openshift-metalkube/kni-installer/pkg/asset/installconfig"
@@ -16,6 +17,7 @@ import (
 	awstypes "github.com/openshift-metalkube/kni-installer/pkg/types/aws"
 	azuretypes "github.com/openshift-metalkube/kni-installer/pkg/types/azure"
 	baremetaltypes "github.com/openshift-metalkube/kni-installer/pkg/types/baremetal"
+	gcptypes "github.com/openshift-metalkube/kni-installer/pkg/types/gcp"
 	libvirttypes "github.com/openshift-metalkube/kni-installer/pkg/types/libvirt"
 	nonetypes "github.com/openshift-metalkube/kni-installer/pkg/types/none"
 	openstacktypes "github.com/openshift-metalkube/kni-installer/pkg/types/openstack"
@@ -69,6 +71,8 @@ func (m *Metadata) Generate(parents asset.Parents) (err error) {
 		metadata.ClusterPlatformMetadata.OpenStack = openstack.Metadata(clusterID.InfraID, installConfig.Config)
 	case azuretypes.Name:
 		metadata.ClusterPlatformMetadata.Azure = azure.Metadata(installConfig.Config)
+	case gcptypes.Name:
+		metadata.ClusterPlatformMetadata.GCP = gcp.Metadata(installConfig.Config)
 	case baremetaltypes.Name:
 		metadata.ClusterPlatformMetadata.BareMetal = baremetal.Metadata(installConfig.Config)
 	case nonetypes.Name, vspheretypes.Name:
