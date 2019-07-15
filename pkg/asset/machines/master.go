@@ -179,7 +179,6 @@ func (m *Master) Generate(dependencies asset.Parents) error {
 		}
 		azure.ConfigMasters(machines, clusterID.InfraID)
 	case baremetaltypes.Name:
-		// FIXME: baremetal
 		mpool := defaultBareMetalMachinePoolPlatform()
 		mpool.Set(ic.Platform.BareMetal.DefaultMachinePlatform)
 		mpool.Set(pool.Platform.BareMetal)
