@@ -109,7 +109,18 @@ required = [
   version = "1.10.0"
 
 [[constraint]]
+  name = "google.golang.org/api"
+  version = "0.3.0"
+
+[[constraint]]
   branch = "master"
+  name = "golang.org/x/oauth2"
+
+[[constraint]]  
+  branch = "master"
+  name = "github.com/openshift/cluster-api-provider-gcp"
+
+[[constraint]]  
   name = "github.com/metal3-io/cluster-api-provider-baremetal"
   source = "https://github.com/openshift/cluster-api-provider-baremetal/pkg/apis"
 

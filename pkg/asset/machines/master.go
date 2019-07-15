@@ -8,6 +8,8 @@ import (
 	"github.com/ghodss/yaml"
 	baremetalapi "github.com/metal3-io/cluster-api-provider-baremetal/pkg/apis"
 	baremetalprovider "github.com/metal3-io/cluster-api-provider-baremetal/pkg/apis/baremetal/v1alpha1"
+	gcpapi "github.com/openshift/cluster-api-provider-gcp/pkg/apis"
+	gcpprovider "github.com/openshift/cluster-api-provider-gcp/pkg/apis/gcpprovider/v1beta1"
 	libvirtapi "github.com/openshift/cluster-api-provider-libvirt/pkg/apis"
 	libvirtprovider "github.com/openshift/cluster-api-provider-libvirt/pkg/apis/libvirtproviderconfig/v1beta1"
 	machineapi "github.com/openshift/cluster-api/pkg/apis/machine/v1beta1"
@@ -28,6 +30,7 @@ import (
 	"github.com/openshift-metalkube/kni-installer/pkg/asset/machines/aws"
 	"github.com/openshift-metalkube/kni-installer/pkg/asset/machines/azure"
 	"github.com/openshift-metalkube/kni-installer/pkg/asset/machines/baremetal"
+	"github.com/openshift-metalkube/kni-installer/pkg/asset/machines/gcp"
 	"github.com/openshift-metalkube/kni-installer/pkg/asset/machines/libvirt"
 	"github.com/openshift-metalkube/kni-installer/pkg/asset/machines/machineconfig"
 	"github.com/openshift-metalkube/kni-installer/pkg/asset/machines/openstack"
@@ -38,6 +41,7 @@ import (
 	azuretypes "github.com/openshift-metalkube/kni-installer/pkg/types/azure"
 	azuredefaults "github.com/openshift-metalkube/kni-installer/pkg/types/azure/defaults"
 	baremetaltypes "github.com/openshift-metalkube/kni-installer/pkg/types/baremetal"
+	gcptypes "github.com/openshift-metalkube/kni-installer/pkg/types/gcp"
 	libvirttypes "github.com/openshift-metalkube/kni-installer/pkg/types/libvirt"
 	nonetypes "github.com/openshift-metalkube/kni-installer/pkg/types/none"
 	openstacktypes "github.com/openshift-metalkube/kni-installer/pkg/types/openstack"
@@ -125,6 +129,23 @@ func (m *Master) Generate(dependencies asset.Parents) error {
 			return errors.Wrap(err, "failed to create master machine objects")
 		}
 		aws.ConfigMasters(machines, clusterID.InfraID)
+	case gcptypes.Name:
+		mpool := defaultGCPMachinePoolPlatform()
+		mpool.Set(ic.Platform.GCP.DefaultMachinePlatform)
+		mpool.Set(pool.Platform.GCP)
+		if len(mpool.Zones) == 0 {
+			azs, err := gcp.AvailabilityZones(ic.Platform.GCP.ProjectID, ic.Platform.GCP.Region)
+			if err != nil {
+				return errors.Wrap(err, "failed to fetch availability zones")
+			}
+			mpool.Zones = azs
+		}
+		pool.Platform.GCP = &mpool
+		machines, err = gcp.Machines(clusterID.InfraID, ic, pool, string(*rhcosImage), "master", "master-user-data")
+		if err != nil {
+			return errors.Wrap(err, "failed to create master machine objects")
+		}
+		gcp.ConfigMasters(machines, clusterID.InfraID)
 	case libvirttypes.Name:
 		mpool := defaultLibvirtMachinePoolPlatform()
 		mpool.Set(ic.Platform.Libvirt.DefaultMachinePlatform)
@@ -254,12 +275,14 @@ func (m *Master) Machines() ([]machineapi.Machine, error) {
 	scheme := runtime.NewScheme()
 	awsapi.AddToScheme(scheme)
 	azureapi.AddToScheme(scheme)
+	gcpapi.AddToScheme(scheme)
 	libvirtapi.AddToScheme(scheme)
 	openstackapi.AddToScheme(scheme)
 	baremetalapi.AddToScheme(scheme)
 	decoder := serializer.NewCodecFactory(scheme).UniversalDecoder(
 		awsprovider.SchemeGroupVersion,
 		azureprovider.SchemeGroupVersion,
+		gcpprovider.SchemeGroupVersion,
 		libvirtprovider.SchemeGroupVersion,
 		openstackprovider.SchemeGroupVersion,
 		baremetalprovider.SchemeGroupVersion,
