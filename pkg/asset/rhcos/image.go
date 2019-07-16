@@ -69,7 +69,6 @@ func (i *Image) Generate(p asset.Parents) error {
 		//TODO(serbrech): change to right image once available.
 		osimage = "/resourceGroups/rhcos_images/providers/Microsoft.Compute/images/rhcostestimage"
 	case baremetal.Name:
-		// FIXME: baremetal
 		osimage, err = rhcos.QEMU(ctx)
 	case none.Name, vsphere.Name:
 	default:

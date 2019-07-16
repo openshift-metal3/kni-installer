@@ -232,7 +232,6 @@ func (w *Worker) Generate(dependencies asset.Parents) error {
 				machineSets = append(machineSets, set)
 			}
 		case baremetaltypes.Name:
-			// FIXME: baremetal
 			mpool := defaultBareMetalMachinePoolPlatform()
 			mpool.Set(ic.Platform.BareMetal.DefaultMachinePlatform)
 			mpool.Set(pool.Platform.BareMetal)
