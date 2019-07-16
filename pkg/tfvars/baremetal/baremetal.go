@@ -46,7 +46,10 @@ func TFVars(libvirtURI, ironicURI, osImage, externalBridge, provisioningBridge s
 		}
 
 		// BMC Driver Info
-		accessDetails, _ := bmc.NewAccessDetails(host.BMC.Address)
+		accessDetails, err := bmc.NewAccessDetails(host.BMC.Address)
+		if err != nil {
+			return nil, err
+		}
 		credentials := bmc.Credentials{
 			Username: host.BMC.Username,
 			Password: host.BMC.Password,
