@@ -255,7 +255,7 @@ func (t *TerraformVariables) Generate(parents asset.Parents) error {
 	case baremetal.Name:
 		data, err = baremetaltfvars.TFVars(
 			installConfig.Config.Platform.BareMetal.LibvirtURI,
-			installConfig.Config.Platform.BareMetal.IronicURI,
+			installConfig.Config.Platform.BareMetal.BootstrapProvisioningIP,
 			string(*rhcosImage),
 			"baremetal",
 			"provisioning",
