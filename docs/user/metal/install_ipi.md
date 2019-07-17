@@ -163,7 +163,7 @@ platform:
         bootMACAddress: 00:11:07:4e:f6:70
         hardwareProfile: default
     - name: openshift-worker-0
-        role: master
+        role: worker
         bmc:
           address: ipmi://192.168.111.1:6233
           username: admin
